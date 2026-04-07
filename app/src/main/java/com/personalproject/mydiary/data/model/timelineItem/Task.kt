@@ -2,9 +2,11 @@ package com.personalproject.mydiary.data.model.timelineItem
 
 import com.personalproject.mydiary.data.model.person.Contact
 
+import java.time.Instant
+
 class Task (
     id: String,
-    timestamp: Long,
+    timestamp: Instant?,
     title: String,
     location: String?,
     tags: List<Contact>,

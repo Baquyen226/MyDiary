@@ -1,6 +1,7 @@
 package com.personalproject.mydiary.data.model.timelineItem
 
 import com.personalproject.mydiary.data.model.person.Contact
+import java.time.Instant
 
 /**
  * Non-abstract [TimelineEvent]. This depicts events that a regular user
@@ -8,7 +9,7 @@ import com.personalproject.mydiary.data.model.person.Contact
  */
 class Event (
     id: String,
-    timestamp: Long,
+    timestamp: Instant?,
     title: String,
     location: String?,
     tags: List<Contact>,

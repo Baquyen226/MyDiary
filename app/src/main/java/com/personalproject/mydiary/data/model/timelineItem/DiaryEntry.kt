@@ -2,6 +2,8 @@ package com.personalproject.mydiary.data.model.timelineItem
 
 import com.personalproject.mydiary.data.model.person.Contact
 
+import java.time.Instant
+
 /**
  * A specific property in [TimelineItem] uses the following class to describe
  * how the user feels about their day.
@@ -14,7 +16,9 @@ enum class Mood {
  * A concrete implementation of [TimelineItem] representing a personal journal or diary log.
  *
  * This class captures detailed textual content and allows for marking entries as favorites
- * via the [isBookmarked] flag.
+ * via the [isBookmarked] flag. A diary entry should have two ways of showing it, either through
+ * a card for brief summary, or the entire window.
+ *
  *
  * @property description A brief summary or subtitle of the entry.
  * @property content The main body text of the diary entry.
@@ -23,7 +27,7 @@ enum class Mood {
  */
 class DiaryEntry (
     id: String,
-    timestamp: Long?,
+    timestamp: Instant?,
     title: String,
     location: String?,
     tags: List<Contact>,
@@ -32,9 +36,9 @@ class DiaryEntry (
     var mood: Mood = Mood.NEUTRAL,
     var isBookmarked: Boolean
 ) : TimelineItem(id, timestamp, title, location, tags) {
-    override fun render() {};
+    val previewText: String = ""
 
-    //TODO("Convert a dummy diary entry into a window first")
-    override fun fromString(input: String) {
-    }
+    override fun render() {}
+
+    override fun fromString(input: String) {}
 }

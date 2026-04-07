@@ -2,6 +2,8 @@ package com.personalproject.mydiary.data.model.timelineItem
 
 import com.personalproject.mydiary.data.model.person.Contact
 
+import java.time.Instant
+
 /**
  * Defines the frequency at which a [TimelineEvent] reoccurs.
  */
@@ -17,7 +19,7 @@ enum class Recurrence {
  */
 abstract class TimelineEvent(
     id: String,
-    timestamp: Long,
+    timestamp: Instant?,
     title: String,
     location: String?,
     tags: List<Contact>,
