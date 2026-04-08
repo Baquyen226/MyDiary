@@ -4,13 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.personalproject.mydiary.data.mock.MockDiary
+import com.personalproject.mydiary.data.model.timelineItem.DiaryEntry
+import com.personalproject.mydiary.ui.component.timelineItem.DiaryEntryCard
 import com.personalproject.mydiary.ui.theme.MyDiaryTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +27,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyDiaryTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Column(modifier = Modifier.Companion.padding(4.dp)) {
+                        Greeting(
+                            name = "Android",
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        DiaryEntryCard().TimelineCard()
+                        Spacer(modifier = Modifier.Companion.width(36.dp))
+                        DiaryEntryCard().TimelineCard(MockDiary.mockDiaryEntry_2)
+                        Spacer(modifier = Modifier.Companion.width(36.dp))
+                        DiaryEntryCard().TimelineCard(MockDiary.mockDiaryEntry_3)
+                    }
                 }
             }
         }
@@ -43,5 +57,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     MyDiaryTheme {
         Greeting("Android")
+        DiaryEntryCard().TimelineCard()
     }
 }

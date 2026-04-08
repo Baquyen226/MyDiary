@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -33,6 +34,14 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+private val DefaultColorScheme = lightColorScheme(
+    primary = LightBlue,
+    secondary = LighterBlue,
+    surface = SurfaceWhite,
+    onSurface = LightBlue,
+    onSurfaceVariant = Color.DarkGray
+)
+
 @Composable
 fun MyDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -47,7 +56,7 @@ fun MyDiaryTheme(
         }
 
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> DefaultColorScheme
     }
 
     MaterialTheme(

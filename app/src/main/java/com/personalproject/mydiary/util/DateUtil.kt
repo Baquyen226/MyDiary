@@ -18,7 +18,7 @@ class DateUtil {
             try {
                 val dateTime = instant?.atZone(zoneID)
                 val dayOfWeek = dateTime?.dayOfWeek
-                return dayOfWeek?.getDisplayName(TextStyle.SHORT, Locale.ENGLISH) ?: "null"
+                return dayOfWeek?.getDisplayName(TextStyle.SHORT, Locale.ENGLISH).plus(".") ?: "null"
             } catch (e: Exception) {
                 return "[ERROR] Failed to get day of week in DateUtil: $e\n"
             }
