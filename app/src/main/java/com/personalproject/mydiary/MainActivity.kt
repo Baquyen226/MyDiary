@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.personalproject.mydiary.data.mock.MockDiary
-import com.personalproject.mydiary.data.model.timelineItem.DiaryEntry
 import com.personalproject.mydiary.ui.component.timelineItem.DiaryEntryCard
 import com.personalproject.mydiary.ui.theme.MyDiaryTheme
 
@@ -32,11 +31,11 @@ class MainActivity : ComponentActivity() {
                             name = "Android",
                             modifier = Modifier.padding(innerPadding)
                         )
-                        DiaryEntryCard().TimelineCard()
+                        DiaryEntryCard()
                         Spacer(modifier = Modifier.Companion.width(36.dp))
-                        DiaryEntryCard().TimelineCard(MockDiary.mockDiaryEntry_2)
+                        DiaryEntryCard(MockDiary.mockDiaryEntry_2)
                         Spacer(modifier = Modifier.Companion.width(36.dp))
-                        DiaryEntryCard().TimelineCard(MockDiary.mockDiaryEntry_3)
+                        DiaryEntryCard(MockDiary.mockDiaryEntry_3)
                     }
                 }
             }
@@ -57,6 +56,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 fun GreetingPreview() {
     MyDiaryTheme {
         Greeting("Android")
-        DiaryEntryCard().TimelineCard()
+        DiaryEntryCard()
     }
 }

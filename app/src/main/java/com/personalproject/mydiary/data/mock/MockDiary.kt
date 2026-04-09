@@ -49,7 +49,7 @@ object MockDiary {
     val mockDiaryEntry_3 = DiaryEntry(
         id = "D_000003",
         timestamp = twoWeeksAgo,
-        title = "Test Diary 02",
+        title = "Test Diary 03",
         location = null,
         tags = emptyList<Contact>(),
         description = "This is a test!",

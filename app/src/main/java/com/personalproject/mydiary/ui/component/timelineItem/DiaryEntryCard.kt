@@ -29,63 +29,61 @@ import com.personalproject.mydiary.ui.theme.LighterBlue
 import com.personalproject.mydiary.ui.theme.SurfaceWhite
 import com.personalproject.mydiary.util.DateUtil
 
-class DiaryEntryCard () {
-    val mockDiary = MockDiary.mockDiaryEntry_1
+val mockDiary = MockDiary.mockDiaryEntry_1
 
-    @Preview(showBackground = true, backgroundColor = -14330178)
-    @Composable
-    fun TimelineCard(entry: DiaryEntry = mockDiary) {
-        Card(
-            modifier = Modifier.Companion
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(4.dp),
-            border = BorderStroke(1.dp, Color.Companion.Black),
-            colors = CardDefaults.cardColors(containerColor = SurfaceWhite)
-        ) {
-            Row(modifier = Modifier.Companion.padding(8.dp)) {
-                // Date Section
-                Column(
-                    modifier = Modifier.width(48.dp),
-                    horizontalAlignment = Alignment.Companion.CenterHorizontally) {
-                    Text(
-                        text = DateUtil.Companion.getDayOfMonth(entry.timestamp),
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Companion.Normal,
-                        color = LighterBlue,
-                        lineHeight = 40.sp,
-                        fontSize = 40.sp
-                    )
-                    Text(
-                        text = DateUtil.Companion.dayOfWeek(entry.timestamp),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = LighterBlue,
-                        modifier = Modifier.offset(y = (-1).dp)
-                    )
-                }
 
-                Spacer(modifier = Modifier.Companion.width(6.dp))
+@Preview(showBackground = true, backgroundColor = -14330178)
+@Composable
+fun DiaryEntryCard(entry: DiaryEntry = mockDiary) {
+    Card(
+        modifier = Modifier.Companion
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(4.dp),
+        border = BorderStroke(1.dp, Color.Companion.Black),
+        colors = CardDefaults.cardColors(containerColor = SurfaceWhite)
+    ) {
+        Row(modifier = Modifier.Companion.padding(8.dp)) {
+            // Date Section
+            Column(
+                modifier = Modifier.width(48.dp),
+                horizontalAlignment = Alignment.Companion.CenterHorizontally) {
+                Text(
+                    text = DateUtil.Companion.getDayOfMonth(entry.timestamp),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.Companion.Normal,
+                    color = LighterBlue,
+                    lineHeight = 40.sp,
+                    fontSize = 40.sp
+                )
+                Text(
+                    text = DateUtil.Companion.dayOfWeek(entry.timestamp),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LighterBlue,
+                    modifier = Modifier.offset(y = (-1).dp)
+                )
+            }
+            Spacer(modifier = Modifier.Companion.width(6.dp))
 
-                // Content Section
-                Column(modifier = Modifier.Companion.padding(4.dp)) {
-                    Text(
-                        text = DateUtil.Companion.getTime(entry.timestamp),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = LighterBlue
-                    )
-                    Text(
-                        text = entry.title,
-                        fontWeight = FontWeight.Companion.Bold,
-                        color = LighterBlue
-                    )
-                    Text(
-                        text = "${entry.content}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Companion.Ellipsis,
-                        color = Color.Companion.Gray
-                    )
-                }
+            // Content Section
+            Column(modifier = Modifier.padding(4.dp)) {
+                Text(
+                    text = DateUtil.getTime(entry.timestamp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = LighterBlue
+                )
+                Text(
+                    text = entry.title,
+                    fontWeight = FontWeight.Bold,
+                    color = LighterBlue
+                )
+                Text(
+                    text = "${entry.content}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Gray
+                )
             }
         }
     }
