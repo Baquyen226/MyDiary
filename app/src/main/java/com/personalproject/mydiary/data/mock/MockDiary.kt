@@ -9,7 +9,7 @@ object MockDiary {
     val now: Instant = Instant.now()
     val yesterday: Instant = now.minusSeconds(86400)
     val eightDaysAgo: Instant = now.minusSeconds(86400 * 26 / 3)
-    val twoWeeksAgo: Instant = now.minusSeconds(86400 * 100 / 7)
+    val sixWeeksAgo: Instant = now.minusSeconds(86400 * 398 / 7)
     val yearsAgo: Instant = now.plusSeconds(86400 * 36).minusSeconds(86400 * 365);
 
     val mockDiaryEntry_1 = DiaryEntry(
@@ -19,7 +19,10 @@ object MockDiary {
         location = null,
         tags = emptyList<Contact>(),
         description = "This is a test!",
-        content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
+                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," +
+                "when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n\n" +
+                "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         isBookmarked = false,
         mood = Mood.MILD
     )
@@ -48,22 +51,42 @@ object MockDiary {
 
     val mockDiaryEntry_3 = DiaryEntry(
         id = "D_000003",
-        timestamp = twoWeeksAgo,
+        timestamp = sixWeeksAgo,
         title = "Test Diary 03",
         location = null,
         tags = emptyList<Contact>(),
         description = "This is a test!",
-        content = "I messed up at work again...\n" +
-                "\n" +
+        content = "I messed up at work again...\n\n" +
                 "Someone ordered the Insalata di Mare and the Saltimbocca, and I think I got them mixed up? And then the manager started glaring at me with those scary eyes. I got so nervous that I tripped over my own feet near Table 4\uD83D\uDE23\n" +
                 "\n" +
                 "I didn't break anything though!\n" +
                 "\n" +
                 "Okudera-senpai had to come over and help me clean up. She was so nice about it✨ but she asked if \"Taki-kun was feeling a little dizzy today.\" I think I (you?) turned as red as the tomato sauce.\n" +
                 "\n" +
-                "The manager said if I (you.) \"keep daydreaming,\" he’s going to cut our hours next week...\n" +
+                "The manager said if I (you.) \"keep daydreaming,\" he's going to cut our hours next week...\n" +
                 "\n" +
-                "I’m so sorry!! I’ll make it up to you!! \uD83D\uDCAA\uD83D\uDC96",
+                "I'm so sorry!! I'll make it up to you!! \uD83D\uDCAA\uD83D\uDC96",
+        isBookmarked = false,
+        mood = Mood.MILD
+    )
+
+    val mockDiaryEntry_3_JP = DiaryEntry(
+        id = "D_000003",
+        timestamp = sixWeeksAgo,
+        title = "Test Diary 03",
+        location = null,
+        tags = emptyList<Contact>(),
+        description = "This is a test!",
+        content = "またバイトでやらかしちゃった。。。\n\n" +
+                "お客さんに『海の幸のサラダ』と『サルティンボッカ』を注文されたんだけど、出し間違えちゃったみたい。そしたら店長がものすごい怖い顔で睨んできて。焦りすぎて、4番テーブルの近くで派手に転んじゃったよ😫\n" +
+                "\n" +
+                "幸い、何も割らなかったけど！\n" +
+                "\n" +
+                "奥寺先輩がわざわざ片付けを手伝いに来てくれたんだ。先輩はすごく優しかったけど✨、『瀧くん、今日はなんだかフラフラしてるわね』なんて聞かれちゃって。私（瀧くん？）、トマトソース並みに真っ赤になっちゃったと思う。\n" +
+                "\n" +
+                "店長には『これ以上ぼーっとしてるなら』、来週のシフトを削るぞって言われちゃった……。\n" +
+                "\n" +
+                "本当にごめん！！絶対に埋め合わせするから！！💪💖",
         isBookmarked = false,
         mood = Mood.MILD
     )

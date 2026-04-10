@@ -36,8 +36,6 @@ class DiaryEntry (
     var mood: Mood = Mood.NEUTRAL,
     var isBookmarked: Boolean
 ) : TimelineItem(id, timestamp, title, location, tags) {
-    val previewText: String = ""
-
     override fun render() {}
 
     override fun fromString(input: String) {}
