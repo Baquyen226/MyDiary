@@ -26,15 +26,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyDiaryTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.Companion.padding(4.dp)) {
+                    Column(modifier = Modifier.padding(4.dp)) {
                         Greeting(
                             name = "Android",
                             modifier = Modifier.padding(innerPadding)
                         )
                         DiaryEntryCard()
-                        Spacer(modifier = Modifier.Companion.width(36.dp))
+                        Spacer(modifier = Modifier.width(36.dp))
                         DiaryEntryCard(MockDiary.mockDiaryEntry_2)
-                        Spacer(modifier = Modifier.Companion.width(36.dp))
+                        Spacer(modifier = Modifier.width(36.dp))
                         DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
                     }
                 }
