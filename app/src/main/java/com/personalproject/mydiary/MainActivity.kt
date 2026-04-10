@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.Companion.width(36.dp))
                         DiaryEntryCard(MockDiary.mockDiaryEntry_2)
                         Spacer(modifier = Modifier.Companion.width(36.dp))
-                        DiaryEntryCard(MockDiary.mockDiaryEntry_3)
+                        DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
                     }
                 }
             }

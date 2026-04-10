@@ -13,4 +13,4 @@ val Pink40 = Color(0xFF7D5260)
 // Default theme?
 val LightBlue = Color(0xFF2596be)
 val LighterBlue = Color(0xFF6B8EA9)
-val SurfaceWhite = Color(0xFFdee3e6)
+val SurfaceWhite = Color(0xFFeff1f1)

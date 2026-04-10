@@ -15,8 +15,8 @@ class UserPreference (
 val BlueSky : UserPreference = UserPreference(
     TimelineCardPreference(
         primaryTextColor = LighterBlue,
-        surfaceColor = SurfaceWhite,
-        secondaryTextColor = Color.Gray,
+        surfaceColor = Color.White,
+        secondaryTextColor = Color.Black,
         iconColor = LighterBlue,
         secondarySurfaceColor = LighterBlue
     )

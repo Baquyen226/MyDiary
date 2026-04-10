@@ -14,11 +14,11 @@ class DateUtil {
          * Returns string representation the day of the week.
          * @property instant The given timestamp.
          */
-        fun dayOfWeek(instant: Instant?) : String {
+        fun dayOfWeek(instant: Instant?, style: TextStyle = TextStyle.SHORT) : String {
             try {
                 val dateTime = instant?.atZone(zoneID)
                 val dayOfWeek = dateTime?.dayOfWeek
-                return dayOfWeek?.getDisplayName(TextStyle.SHORT, Locale.ENGLISH).plus(".") ?: "null"
+                return dayOfWeek?.getDisplayName(style, Locale.ENGLISH).plus(".") ?: "null"
             } catch (e: Exception) {
                 return "[ERROR] Failed to get day of week in DateUtil: $e\n"
             }
@@ -72,10 +72,10 @@ class DateUtil {
          * a given timestamp
          * @property instant The given timestamp.
          */
-        fun getMonthString(instant: Instant) : String {
+        fun getMonthString(instant: Instant?) : String {
             try {
-                val dateTime = instant.atZone(zoneID)
-                return dateTime.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+                val dateTime = instant?.atZone(zoneID)
+                return dateTime?.month?.getDisplayName(TextStyle.FULL, Locale.ENGLISH) ?: "null"
             } catch (e: Exception) {
                 return "[ERROR] Failed to get month in DateUtil: $e\n"
             }
