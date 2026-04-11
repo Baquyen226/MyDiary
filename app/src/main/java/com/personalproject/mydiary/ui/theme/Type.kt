@@ -41,7 +41,7 @@ val Typography = Typography(
 val displayLargeFontFamily =
     FontFamily(
         Font(
-            R.font.hiraginosansw4,
+            R.font.hiraginosansroundedw4,
             variationSettings = FontVariation.Settings(
                 FontVariation.weight(950),
                 FontVariation.width(30f),

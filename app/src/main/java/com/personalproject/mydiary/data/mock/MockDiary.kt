@@ -3,13 +3,14 @@ package com.personalproject.mydiary.data.mock
 import com.personalproject.mydiary.data.model.person.Contact
 import com.personalproject.mydiary.data.model.timelineItem.Mood
 import com.personalproject.mydiary.data.model.timelineItem.DiaryEntry
+import com.personalproject.mydiary.data.model.timelineItem.Weather
 import java.time.Instant
 
 object MockDiary {
     val now: Instant = Instant.now()
     val yesterday: Instant = now.minusSeconds(86400)
     val eightDaysAgo: Instant = now.minusSeconds(86400 * 26 / 3)
-    val sixWeeksAgo: Instant = now.minusSeconds(86400 * 398 / 7)
+    val sixWeeksAgo: Instant = now.minusSeconds(86400 * 405 / 7)
     val yearsAgo: Instant = now.plusSeconds(86400 * 36).minusSeconds(86400 * 365);
 
     val mockDiaryEntry_1 = DiaryEntry(
@@ -24,7 +25,9 @@ object MockDiary {
                 "when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n\n" +
                 "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         isBookmarked = false,
-        mood = Mood.MILD
+        mood = Mood.MILD,
+        weather = Weather.SUNNY,
+        temperature = Pair(24, 16)
     )
 
     val mockDiaryEntry_2 = DiaryEntry(
@@ -46,7 +49,9 @@ object MockDiary {
                 "\n" +
                 "WORK: Because you blew so much cash on this, DO NOT MESS UP THE SHIFTS COMING UP!! I can't afford to lose this job or get our pay docked. If that happens, I'll make sure you pay for it.",
         isBookmarked = false,
-        mood = Mood.MILD
+        mood = Mood.MILD,
+        weather = Weather.STORM,
+        temperature = Pair(19, 12)
     )
 
     val mockDiaryEntry_3 = DiaryEntry(
@@ -67,27 +72,33 @@ object MockDiary {
                 "\n" +
                 "I'm so sorry!! I'll make it up to you!! \uD83D\uDCAA\uD83D\uDC96",
         isBookmarked = false,
-        mood = Mood.MILD
+        mood = Mood.MILD,
+        weather = Weather.CLOUDY,
+        temperature = Pair(24, 19)
     )
 
     val mockDiaryEntry_3_JP = DiaryEntry(
         id = "D_000003",
         timestamp = sixWeeksAgo,
         title = "Test Diary 03",
-        location = null,
+        location = "Shibuya-ku, Tokyo, JAPAN",
         tags = emptyList<Contact>(),
         description = "This is a test!",
-        content = "またバイトでやらかしちゃった。。。\n\n" +
+        content = "またバイト怒られちゃった。。。\n\n" +
                 "お客さんに『海の幸のサラダ』と『サルティンボッカ』を注文されたんだけど、出し間違えちゃったみたい。そしたら店長がものすごい怖い顔で睨んできて。焦りすぎて、4番テーブルの近くで派手に転んじゃったよ😫\n" +
                 "\n" +
                 "幸い、何も割らなかったけど！\n" +
                 "\n" +
-                "奥寺先輩がわざわざ片付けを手伝いに来てくれたんだ。先輩はすごく優しかったけど✨、『瀧くん、今日はなんだかフラフラしてるわね』なんて聞かれちゃって。私（瀧くん？）、トマトソース並みに真っ赤になっちゃったと思う。\n" +
+                "奥寺先輩がわざわざ片付けを手伝いに来てくれたんだ。先輩はすごく優しかったけど✨、『瀧くん、今日はなんだかフラフラしてるわね』なんて聞かれちゃって。私（瀧くん）、トマトソース並みに真っ赤になっちゃったと思う。\n" +
                 "\n" +
                 "店長には『これ以上ぼーっとしてるなら』、来週のシフトを削るぞって言われちゃった……。\n" +
                 "\n" +
                 "本当にごめん！！絶対に埋め合わせするから！！💪💖",
         isBookmarked = false,
-        mood = Mood.MILD
+        mood = Mood.MILD,
+        weather = Weather.CLOUDY,
+        temperature = Pair(24, 19)
     )
+
+    val mockFolder = listOf<DiaryEntry>(mockDiaryEntry_1, mockDiaryEntry_2, mockDiaryEntry_3, mockDiaryEntry_3_JP)
 }
