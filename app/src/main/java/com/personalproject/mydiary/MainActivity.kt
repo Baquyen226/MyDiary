@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.personalproject.mydiary.data.mock.MockDiary
 import com.personalproject.mydiary.ui.component.timelineItem.DiaryEntryCard
+import com.personalproject.mydiary.ui.component.timelineItem.DiaryEntryWindow
 import com.personalproject.mydiary.ui.theme.MyDiaryTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,16 +27,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyDiaryTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(4.dp)) {
+                    Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp)) {
                         Greeting(
                             name = "Android",
                             modifier = Modifier.padding(innerPadding)
                         )
                         DiaryEntryCard()
-                        Spacer(modifier = Modifier.width(36.dp))
                         DiaryEntryCard(MockDiary.mockDiaryEntry_2)
-                        Spacer(modifier = Modifier.width(36.dp))
                         DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
+                        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_1)
                     }
                 }
             }
@@ -49,6 +49,13 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
+
+    Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp)) {
+        DiaryEntryCard()
+        DiaryEntryCard(MockDiary.mockDiaryEntry_2)
+        DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
+        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_3_JP)
+    }
 }
 
 @Preview(showBackground = true)

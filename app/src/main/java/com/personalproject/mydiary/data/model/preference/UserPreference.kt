@@ -1,6 +1,7 @@
 package com.personalproject.mydiary.data.model.preference
 
 import androidx.compose.ui.graphics.Color
+import com.personalproject.mydiary.ui.theme.LightBlue
 import com.personalproject.mydiary.ui.theme.LighterBlue
 import com.personalproject.mydiary.ui.theme.SurfaceWhite
 

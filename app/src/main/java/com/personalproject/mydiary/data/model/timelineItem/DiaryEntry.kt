@@ -1,5 +1,7 @@
 package com.personalproject.mydiary.data.model.timelineItem
 
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.personalproject.mydiary.R
 import com.personalproject.mydiary.data.model.person.Contact
 
 import java.time.Instant
@@ -10,6 +12,28 @@ import java.time.Instant
  */
 enum class Mood {
     ABYSMAL, SAD, ANGRY, ANNOYED, NEUTRAL, MILD, FOND, HAPPY, SUPERCALIFRAGILISTICEXPIALIDOCIOUS
+}
+
+/**
+ * A specific property in [TimelineItem] uses the following class to describe
+ * the weather of a day.
+ */
+enum class Weather(val label: String, val iconRes: Int) {
+    SUNNY("SUNNY", R.drawable.ic_weather_sunny_24dp),
+    CLOUDY("CLOUDY", R.drawable.ic_weather_cloud_24dp),
+    RAINY("RAINY", R.drawable.ic_weather_rainy_24dp),
+    SNOWY("SNOWY", R.drawable.ic_weather_snow_24dp),
+    STORM("STORM", R.drawable.ic_weather_rainy_heavy_24dp),
+    UNKNOWN("Unknown", R.drawable.ic_weather_unknown);
+
+    companion object {
+        /**
+         * Convert a string to a [Weather] instance.
+         */
+        fun fromString(value: String?): Weather {
+            return entries.find { it.label.equals(value, ignoreCase = true) } ?: UNKNOWN
+        }
+    }
 }
 
 /**
@@ -24,6 +48,8 @@ enum class Mood {
  * @property content The main body text of the diary entry.
  * @property mood How the user feels about their day.
  * @property isBookmarked True if the entry has been starred or pinned by the user.
+ * @property weather The weather of this place during the day.
+ * @property temperature A pair <lowest, highest> temperature of the day.
  */
 class DiaryEntry (
     id: String,
@@ -34,7 +60,9 @@ class DiaryEntry (
     var description: String?,
     var content: String?,
     var mood: Mood = Mood.NEUTRAL,
-    var isBookmarked: Boolean
+    var isBookmarked: Boolean,
+    var weather: Weather,
+    var temperature: Pair<Int, Int>
 ) : TimelineItem(id, timestamp, title, location, tags) {
     override fun render() {}
 

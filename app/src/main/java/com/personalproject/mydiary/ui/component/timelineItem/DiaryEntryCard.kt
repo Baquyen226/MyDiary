@@ -41,8 +41,12 @@ import com.personalproject.mydiary.util.DateUtil
 
 val mockDiary = MockDiary.mockDiaryEntry_1
 
+
 /**
- * This composable element
+ * A simplified card display a diary entry.
+ *
+ * @param entry The [DiaryEntry] data object containing the timestamp, title, and content.
+ * @param theme The color and style preferences to apply to the window components.
  */
 @Preview(showBackground = true, backgroundColor = -14330178)
 @Composable
