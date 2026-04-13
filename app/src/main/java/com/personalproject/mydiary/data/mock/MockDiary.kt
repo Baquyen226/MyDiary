@@ -81,7 +81,7 @@ object MockDiary {
         id = "D_000003",
         timestamp = sixWeeksAgo,
         title = "Test Diary 03",
-        location = "Shibuya-ku, Tokyo, JAPAN",
+        location = "Shinjuku-ku, Tokyo, JAPAN",
         tags = emptyList<Contact>(),
         description = "This is a test!",
         content = "またバイト怒られちゃった。。。\n\n" +
