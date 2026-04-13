@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                         DiaryEntryCard()
                         DiaryEntryCard(MockDiary.mockDiaryEntry_2)
                         DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
-                        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_1)
+                        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_3_JP)
                     }
                 }
             }
