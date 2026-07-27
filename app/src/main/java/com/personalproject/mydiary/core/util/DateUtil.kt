@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.util
+package com.personalproject.mydiary.core.util
 
 import java.time.Instant
 import java.time.ZoneId

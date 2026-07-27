@@ -1,9 +1,8 @@
-package com.personalproject.mydiary.data.mock
+package com.personalproject.mydiary.data.timelineItem
 
-import com.personalproject.mydiary.data.model.person.Contact
-import com.personalproject.mydiary.data.model.timelineItem.Mood
-import com.personalproject.mydiary.data.model.timelineItem.DiaryEntry
-import com.personalproject.mydiary.data.model.timelineItem.Weather
+import com.personalproject.mydiary.data.schema.timelineItem.DiaryEntry
+import com.personalproject.mydiary.data.schema.timelineItem.Mood
+import com.personalproject.mydiary.data.schema.timelineItem.Weather
 import java.time.Instant
 
 object MockDiary {
@@ -18,7 +17,7 @@ object MockDiary {
         timestamp = yesterday,
         title = "Test Diary 01",
         location = null,
-        tags = emptyList<Contact>(),
+        tags = emptyList<String>(),
         description = "This is a test!",
         content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
                 "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," +
@@ -27,7 +26,8 @@ object MockDiary {
         isBookmarked = false,
         mood = Mood.MILD,
         weather = Weather.SUNNY,
-        temperature = Pair(24, 16)
+        temperatureHigh = 24,
+        temperatureLow = 19
     )
 
     val mockDiaryEntry_2 = DiaryEntry(
@@ -35,7 +35,7 @@ object MockDiary {
         timestamp = eightDaysAgo,
         title = "Test Diary 02",
         location = null,
-        tags = emptyList<Contact>(),
+        tags = emptyList<String>(),
         description = "This is a test!",
         content = "HEY!! We need to talk.\n" +
                 "\n" +
@@ -51,7 +51,8 @@ object MockDiary {
         isBookmarked = false,
         mood = Mood.MILD,
         weather = Weather.STORM,
-        temperature = Pair(19, 12)
+        temperatureHigh = 24,
+        temperatureLow = 19
     )
 
     val mockDiaryEntry_3 = DiaryEntry(
@@ -59,7 +60,7 @@ object MockDiary {
         timestamp = sixWeeksAgo,
         title = "Test Diary 03",
         location = null,
-        tags = emptyList<Contact>(),
+        tags = emptyList<String>(),
         description = "This is a test!",
         content = "I messed up at work again...\n\n" +
                 "Someone ordered the Insalata di Mare and the Saltimbocca, and I think I got them mixed up? And then the manager started glaring at me with those scary eyes. I got so nervous that I tripped over my own feet near Table 4\uD83D\uDE23\n" +
@@ -74,7 +75,8 @@ object MockDiary {
         isBookmarked = false,
         mood = Mood.MILD,
         weather = Weather.CLOUDY,
-        temperature = Pair(24, 19)
+        temperatureHigh = 24,
+        temperatureLow = 19
     )
 
     val mockDiaryEntry_3_JP = DiaryEntry(
@@ -82,7 +84,7 @@ object MockDiary {
         timestamp = sixWeeksAgo,
         title = "Test Diary 03",
         location = "Shinjuku-ku, Tokyo, JAPAN",
-        tags = emptyList<Contact>(),
+        tags = emptyList<String>(),
         description = "This is a test!",
         content = "またバイト怒られちゃった。。。\n\n" +
                 "お客さんに『海の幸のサラダ』と『サルティンボッカ』を注文されたんだけど、出し間違えちゃったみたい。そしたら店長がものすごい怖い顔で睨んできて。焦りすぎて、4番テーブルの近くで派手に転んじゃったよ😫\n" +
@@ -97,7 +99,8 @@ object MockDiary {
         isBookmarked = false,
         mood = Mood.MILD,
         weather = Weather.CLOUDY,
-        temperature = Pair(24, 19)
+        temperatureHigh = 24,
+        temperatureLow = 19
     )
 
     val mockFolder = listOf<DiaryEntry>(mockDiaryEntry_1, mockDiaryEntry_2, mockDiaryEntry_3, mockDiaryEntry_3_JP)

@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.component.timelineItem
+package com.personalproject.mydiary.ui.feature_diary_entry.component
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,14 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.personalproject.mydiary.R
-import com.personalproject.mydiary.data.mock.MockDiary
+import com.personalproject.mydiary.data.timelineItem.MockDiary
+import com.personalproject.mydiary.data.schema.timelineItem.DiaryEntry
+import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
+import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.data.model.preference.BlueSky
 import com.personalproject.mydiary.data.model.preference.TimelineCardPreference
-import com.personalproject.mydiary.data.model.timelineItem.DiaryEntry
-import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
-import com.personalproject.mydiary.util.DateUtil
 import java.time.format.TextStyle
-import java.util.Properties
 
 /**
  * A modal dialog window that displays a full diary entry.
@@ -82,10 +82,10 @@ fun DiaryEntryWindow(
                .background(color = theme.primaryTextColor) // I am sorry.
                .fillMaxWidth()
                .padding(top = 4.dp),
-            horizontalAlignment = Alignment.Companion.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally
          ) {
             Spacer(modifier = Modifier.padding(2.dp))
-            DiaryHeader(entry, theme)
+            DiaryHeader(entry, theme, onDismiss)
             Spacer(modifier = Modifier.padding(4.dp))
             DiaryBody(entry, theme)
             DiaryFooter(entry, theme)
@@ -95,7 +95,7 @@ fun DiaryEntryWindow(
 }
 
 @Composable
-fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference) {
+fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () -> Unit) {
    val month = DateUtil.getMonthString(entry.timestamp)
    val date = DateUtil.getDayOfMonth(entry.timestamp)
    val specificTime = DateUtil.dayOfWeek(entry.timestamp, style = TextStyle.FULL)
@@ -103,84 +103,106 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference) {
       .plus( ", ")
       .plus(DateUtil.getTime(entry.timestamp))
 
-   Text(
-      text = month,
-      color = theme.surfaceColor // I am sorry.
-   )
+   Box(modifier = Modifier.fillMaxWidth().offset()) {
+      Column(
+         modifier = Modifier
+            .background(color = theme.primaryTextColor) // I am sorry.
+            .fillMaxWidth()
+            .padding(top = 4.dp),
+         horizontalAlignment = Alignment.CenterHorizontally
+      ) {
+         Text(
+            text = month,
+            color = theme.surfaceColor // I am sorry.
+         )
 
-   Spacer(Modifier.padding(1.dp))
+         Spacer(Modifier.padding(1.dp))
 
-   Text(
-      text = date,
-      color = theme.surfaceColor,
-      fontFamily = displayLargeFontFamily,
-      fontWeight = FontWeight.ExtraLight,
-      fontSize = 60.sp
-   )
+         Text(
+            text = date,
+            color = theme.surfaceColor,
+            fontFamily = displayLargeFontFamily,
+            fontWeight = FontWeight.ExtraLight,
+            fontSize = 60.sp
+         )
 
-   Text(
-      text = specificTime,
-      fontSize = 9.sp,
-      color = theme.surfaceColor
-   )
-   Spacer(Modifier.padding(4.dp))
+         Text(
+            text = specificTime,
+            fontSize = 9.sp,
+            color = theme.surfaceColor
+         )
+         Spacer(Modifier.padding(4.dp))
 
-   val weather = entry.weather.label
-   val temperatureDisplay = "${entry.temperature.first}°/  ${entry.temperature.second}°"
+         val weather = entry.weather.label
+         val temperatureDisplay = "${entry.temperatureHigh}°/  ${entry.temperatureLow}°"
 
-   Row() {
-      Icon(
-         painter = painterResource(id = entry.weather.iconRes),
-         contentDescription = weather,
-         modifier = Modifier.size(14.dp),
-         tint = theme.surfaceColor
-      )
+         Row() {
+            Icon(
+               painter = painterResource(id = entry.weather.iconRes),
+               contentDescription = weather,
+               modifier = Modifier.size(14.dp),
+               tint = theme.surfaceColor
+            )
 
-      Spacer(Modifier.padding(2.dp))
+            Spacer(Modifier.padding(2.dp))
 
-      Text(
-         text = weather,
-         color = theme.surfaceColor,
-         fontFamily = displayLargeFontFamily,
-         fontSize = 8.sp,
-         modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
-      )
+            Text(
+               text = weather,
+               color = theme.surfaceColor,
+               fontFamily = displayLargeFontFamily,
+               fontSize = 8.sp,
+               modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
+            )
 
-      Spacer(Modifier.padding(4.dp))
+            Spacer(Modifier.padding(4.dp))
 
 
-      Text(
-         text = temperatureDisplay,
-         color = theme.surfaceColor,
-         fontFamily = displayLargeFontFamily,
-         fontSize = 8.sp,
-         modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
-      )
+            Text(
+               text = temperatureDisplay,
+               color = theme.surfaceColor,
+               fontFamily = displayLargeFontFamily,
+               fontSize = 8.sp,
+               modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
+            )
 
-      Spacer(Modifier.padding(8.dp))
+            Spacer(Modifier.padding(8.dp))
 
-      val location = entry.location?: "UNKNOWN"
-      val iconId = if (location == "UNKNOWN") {
-         R.drawable.ic_ui_wrong_location_24dp
-      } else {
-         R.drawable.ic_ui_location_24dp
+            val location = entry.location ?: "UNKNOWN"
+            val iconId = if (location == "UNKNOWN") {
+               R.drawable.ic_ui_wrong_location_24dp
+            } else {
+               R.drawable.ic_ui_location_24dp
+            }
+            Icon(
+               painter = painterResource(id = iconId),
+               contentDescription = location,
+               modifier = Modifier.size(12.dp),
+               tint = theme.surfaceColor
+            )
+
+            Spacer(Modifier.padding(2.dp))
+
+            Text(
+               text = location,
+               color = theme.surfaceColor,
+               fontFamily = displayLargeFontFamily,
+               fontSize = 8.sp,
+               modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
+            )
+         }
       }
-      Icon(
-         painter = painterResource(id = iconId),
-         contentDescription = location,
-         modifier = Modifier.size(12.dp),
-         tint = theme.surfaceColor
-      )
 
-      Spacer(Modifier.padding(2.dp))
-
-      Text(
-         text = location,
-         color = theme.surfaceColor,
-         fontFamily = displayLargeFontFamily,
-         fontSize = 8.sp,
-         modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
-      )
+      IconButton(
+         onClick = { onDismiss() },
+         modifier = Modifier.align(Alignment.TopEnd)
+      ) {
+         Icon(
+            painter = painterResource(id = R.drawable.ic_ui_close),
+            modifier = Modifier.size(36.dp),
+            contentDescription = "exit",
+            tint = theme.surfaceColor
+         )
+      }
    }
 }
 

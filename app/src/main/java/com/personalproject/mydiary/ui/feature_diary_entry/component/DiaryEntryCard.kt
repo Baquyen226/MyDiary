@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.component.timelineItem
+package com.personalproject.mydiary.ui.feature_diary_entry.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,20 +24,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.personalproject.mydiary.data.mock.MockDiary
+import com.personalproject.mydiary.data.timelineItem.MockDiary
+import com.personalproject.mydiary.data.schema.timelineItem.DiaryEntry
+import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
+import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.data.model.preference.BlueSky
 import com.personalproject.mydiary.data.model.preference.TimelineCardPreference
-import com.personalproject.mydiary.data.model.timelineItem.DiaryEntry
-import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
-import com.personalproject.mydiary.util.DateUtil
 
-val mockDiary = MockDiary.mockDiaryEntry_1
+val mockDiary = MockDiary.mockDiaryEntry_3_JP
 
 
 /**
@@ -83,7 +79,7 @@ fun DiaryEntryCard(
             // Date Section
             Column(
                 modifier = Modifier.width(54.dp),
-                horizontalAlignment = Alignment.Companion.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = DateUtil.getDayOfMonth(entry.timestamp),
                     style = MaterialTheme.typography.headlineLarge,
