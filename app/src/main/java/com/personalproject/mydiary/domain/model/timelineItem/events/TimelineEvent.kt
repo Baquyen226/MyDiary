@@ -1,7 +1,6 @@
-package com.personalproject.mydiary.data.model.timelineItem
+package com.personalproject.mydiary.data.schema.timelineItem
 
-import com.personalproject.mydiary.data.model.person.Contact
-
+import com.personalproject.mydiary.domain.model.timelineItem.TimelineItem
 import java.time.Instant
 
 /**
@@ -12,7 +11,7 @@ enum class Recurrence {
 }
 
 /**
- * A specialized [TimelineItem] that represents an actionable or scheduled occurrence.
+ * A specialized [com.personalproject.mydiary.domain.model.timelineItem.TimelineItem] that represents an actionable or scheduled occurrence.
  * @property recurrence The length of recurrence cycle.
  * @property timestampStringRepresentation String representation of each recurrence
  * (Every X days/ Weekly on Wednesdays / Month...)
@@ -22,8 +21,10 @@ abstract class TimelineEvent(
     timestamp: Instant?,
     title: String,
     location: String?,
-    tags: List<Contact>,
+    tags: List<String>?,
     open var recurrence: Recurrence,
     var timestampStringRepresentation: String?
-) : TimelineItem(id, timestamp, title, location, tags) {
+) : TimelineItem(id, timestamp, title, location, tags, itemType = "EVENT") {
 }
+
+

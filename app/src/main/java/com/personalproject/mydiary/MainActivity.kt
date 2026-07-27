@@ -5,19 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.personalproject.mydiary.data.mock.MockDiary
-import com.personalproject.mydiary.ui.component.timelineItem.DiaryEntryCard
-import com.personalproject.mydiary.ui.component.timelineItem.DiaryEntryWindow
+import com.personalproject.mydiary.data.timelineItem.MockDiary
+import com.personalproject.mydiary.ui.feature_diary_entry.component.DiaryEntryCard
+import com.personalproject.mydiary.ui.feature_diary_entry.component.DiaryEntryWindow
 import com.personalproject.mydiary.ui.theme.MyDiaryTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,10 +30,9 @@ class MainActivity : ComponentActivity() {
                             name = "Android",
                             modifier = Modifier.padding(innerPadding)
                         )
-                        DiaryEntryCard()
-                        DiaryEntryCard(MockDiary.mockDiaryEntry_2)
-                        DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
-                        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_3_JP)
+//                        DiaryEntryCard(MockDiary.mockDiaryEntry_2)
+//                        DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
+                        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_1)
                     }
                 }
             }
@@ -54,7 +51,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         DiaryEntryCard()
         DiaryEntryCard(MockDiary.mockDiaryEntry_2)
         DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
-        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_3_JP)
+        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_1)
     }
 }
 
