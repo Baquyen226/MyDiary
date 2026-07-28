@@ -16,25 +16,39 @@ import androidx.compose.ui.unit.dp
 import com.personalproject.mydiary.data.timelineItem.MockDiary
 import com.personalproject.mydiary.ui.feature_diary_entry.component.DiaryEntryCard
 import com.personalproject.mydiary.ui.feature_diary_entry.component.DiaryEntryWindow
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.personalproject.mydiary.data.folder.MockFolderRepository
+import com.personalproject.mydiary.data.profile.MockProfileRepository
+import com.personalproject.mydiary.ui.feature_folder_list.FolderListScreen
+import com.personalproject.mydiary.ui.feature_folder_list.FolderListViewModel
 import com.personalproject.mydiary.ui.theme.MyDiaryTheme
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val folderRepository = MockFolderRepository()
+        val profileRepository = MockProfileRepository()
+        
         enableEdgeToEdge()
         setContent {
             MyDiaryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp)) {
-                        Greeting(
-                            name = "Android",
-                            modifier = Modifier.padding(innerPadding)
-                        )
-//                        DiaryEntryCard(MockDiary.mockDiaryEntry_2)
-//                        DiaryEntryCard(MockDiary.mockDiaryEntry_3_JP)
-                        DiaryEntryWindow(entry = MockDiary.mockDiaryEntry_1)
+                val viewModel: FolderListViewModel = viewModel(
+                    factory = object : ViewModelProvider.Factory {
+                        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                            return FolderListViewModel(folderRepository, profileRepository) as T
+                        }
                     }
-                }
+                )
+
+                FolderListScreen(
+                    viewModel = viewModel,
+                    onFolderClick = { uuid ->
+                        // Handle folder click
+                    }
+                )
             }
         }
     }
