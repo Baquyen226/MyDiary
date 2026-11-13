@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
-import com.personalproject.mydiary.domain.model.profile.model.Profile
+import com.personalproject.mydiary.domain.profile.model.Profile
 
 @Composable
 fun ProfileHeader(

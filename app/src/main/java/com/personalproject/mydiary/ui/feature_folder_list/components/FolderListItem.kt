@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
-import com.personalproject.mydiary.domain.model.folder.model.FolderType
+import com.personalproject.mydiary.domain.folder.model.FolderType
 import com.personalproject.mydiary.ui.feature_folder_list.FolderSummary
 
 import androidx.core.graphics.toColorInt

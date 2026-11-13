@@ -1,7 +1,7 @@
 package com.personalproject.mydiary.ui.feature_folder_list
 
-import com.personalproject.mydiary.domain.model.folder.model.Folder
-import com.personalproject.mydiary.domain.model.profile.model.Profile
+import com.personalproject.mydiary.domain.folder.model.Folder
+import com.personalproject.mydiary.domain.profile.model.Profile
 
 data class FolderListUiState(
     val profile: Profile? = null,
