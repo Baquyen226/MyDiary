@@ -15,13 +15,15 @@ import com.personalproject.mydiary.data.mock.MockDiary
 import com.personalproject.mydiary.ui.feature_diary_entry.components.DiaryEntryCard
 import com.personalproject.mydiary.ui.feature_diary_entry.components.DiaryEntryWindow
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.personalproject.mydiary.data.folder.MockFolderRepository
 import com.personalproject.mydiary.data.mock.MockProfileRepository
 import com.personalproject.mydiary.ui.feature_folder_list.FolderListScreen
 import com.personalproject.mydiary.ui.feature_folder_list.FolderListViewModel
 import com.personalproject.mydiary.ui.theme.MyDiaryTheme
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.personalproject.mydiary.data.mock.MockFolderRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyDiaryTheme {
+                val navController = rememberNavController()
+
                 val viewModel: FolderListViewModel = viewModel(
                     factory = object : ViewModelProvider.Factory {
                         override fun <T : ViewModel> create(modelClass: Class<T>): T {
