@@ -4,17 +4,16 @@ import com.personalproject.mydiary.domain.folder.model.Folder
 import com.personalproject.mydiary.domain.folder.model.FolderType
 import kotlinx.coroutines.flow.Flow
 
-
 interface FolderRepository {
     fun getFolders(): Flow<List<Folder>>
 
-    fun getFolderByUuid(uuid: String): Flow<Folder?>
+    fun getFolderById(id: String): Flow<Folder?>
 
-    suspend fun createFolder(name: String, type: FolderType)
+    suspend fun createFolder(name: String, type: FolderType, color: String? = null)
 
-    suspend fun renameFolder(uuid: String, newName: String)
+    suspend fun renameFolder(id: String, newName: String)
 
-    suspend fun deleteFolder(uuid: String)
+    suspend fun deleteFolder(id: String)
 
     fun getFoldersByType(type: FolderType): Flow<List<Folder>>
 }

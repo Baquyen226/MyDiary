@@ -9,7 +9,7 @@ class MockProfileRepository : ProfileRepository {
     override fun getProfile(): Flow<Profile?> {
         return flowOf(
             Profile(
-                uuid = "user_1",
+                id = "user_1",
                 name = "Some guy",
                 location = "I swallowed a whole pack of gum yesterday",
                 note = "I love diaries!"

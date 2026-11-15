@@ -4,68 +4,81 @@ import com.personalproject.mydiary.domain.folder.FolderRepository
 import com.personalproject.mydiary.domain.folder.model.Folder
 import com.personalproject.mydiary.domain.folder.model.FolderType
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import java.util.UUID
 
 class MockFolderRepository : FolderRepository {
 
-    private val mockFolders = listOf(
-        Folder(
-            uuid = "1",
-            name = "緊急時以外かけちゃダメ",
-            type = FolderType.CONTACTS,
-            color = null // Use default color
-        ),
-        Folder(
-            uuid = "2",
-            name = "DIARY",
-            type = FolderType.DIARY,
-            color = null
-        ),
-        Folder(
-            uuid = "3",
-            name = "みつはのにっき",
-            type = FolderType.DIARY,
-            color = "#E57373"
-        ),
-        Folder(
-            uuid = "4",
-            name = "禁止事項",
-            type = FolderType.NOTES,
-            color = null
-        ),
-        Folder(
-            uuid = "5",
-            name = "行きたいおみせメモ",
-            type = FolderType.NOTES,
-            color = "#E57373"
+    private val _folders = MutableStateFlow(
+        listOf(
+            Folder(
+                id = "1",
+                name = "DIARY",
+                type = FolderType.DIARY,
+                color = null
+            ),
+            Folder(
+                id = "2",
+                name = "みつはのにっき",
+                type = FolderType.DIARY,
+                color = "#E57373"
+            )
+//            Folder(
+//                id = "3",
+//                name = "禁止事項",
+//                type = FolderType.NOTES,
+//                color = null
+//            ),
+//            Folder(
+//                id = "4",
+//                name = "行きたいおみせメモ",
+//                type = FolderType.NOTES,
+//                color = "#E57373"
+//            ),
+//            Folder(
+//                id = "5",
+//                name = "緊急時以外かけちゃダメ",
+//                type = FolderType.CONTACTS,
+//                color = null
+//            )
         )
     )
 
-    // WHAT DOES ANY OF THIS DO
     override fun getFolders(): Flow<List<Folder>> {
-        return flowOf(mockFolders);
+        return _folders.asStateFlow()
     }
 
-    override fun getFolderByUuid(uuid: String): Flow<Folder?> {
-        TODO("Not yet implemented")
+    override fun getFolderById(id: String): Flow<Folder?> {
+        return _folders.map { folders -> folders.find { it.id == id } }
     }
 
     override suspend fun createFolder(
         name: String,
-        type: FolderType
+        type: FolderType,
+        color: String?
     ) {
-        TODO("Not yet implemented")
+        val newFolder = Folder(
+            id = UUID.randomUUID().toString(),
+            name = name,
+            type = type,
+            color = color
+        )
+        _folders.value += newFolder
     }
 
-    override suspend fun renameFolder(uuid: String, newName: String) {
-        TODO("Not yet implemented")
+    override suspend fun renameFolder(id: String, newName: String) {
+        _folders.value = _folders.value.map { folder ->
+            if (folder.id == id) folder.copy(name = newName) else folder
+        }
     }
 
-    override suspend fun deleteFolder(uuid: String) {
-        TODO("Not yet implemented")
+    override suspend fun deleteFolder(id: String) {
+        _folders.value = _folders.value.filterNot { it.id == id }
     }
 
     override fun getFoldersByType(type: FolderType): Flow<List<Folder>> {
-        TODO("Not yet implemented")
+        return _folders.map { folders -> folders.filter { it.type == type } }
     }
 }

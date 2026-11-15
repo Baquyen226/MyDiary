@@ -29,11 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.data.mock.MockDiary
-import com.personalproject.mydiary.domain.timelineItem.diary.DiaryEntry
+import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import com.personalproject.mydiary.core.util.DateUtil
-import com.personalproject.mydiary.domain.preference.BlueSky
-import com.personalproject.mydiary.domain.preference.TimelineCardPreference
+import com.personalproject.mydiary.ui.theme.BlueSky
+import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 
 val mockDiary = MockDiary.mockDiaryEntry_3_JP
 

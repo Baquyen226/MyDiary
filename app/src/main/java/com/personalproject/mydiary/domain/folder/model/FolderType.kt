@@ -1,6 +1,8 @@
-package com.personalproject.mydiary.domain.folder.model;
+package com.personalproject.mydiary.domain.folder.model
 
-public enum FolderType {
-    CONTACTS, DIARY, EVENT, NOTES
+enum class FolderType {
+    CONTACTS,
+    DIARY,
+    EVENT,
+    NOTES
 }
-

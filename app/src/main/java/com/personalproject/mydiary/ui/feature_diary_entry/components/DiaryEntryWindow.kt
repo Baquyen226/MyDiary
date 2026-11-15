@@ -39,11 +39,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.data.mock.MockDiary
-import com.personalproject.mydiary.domain.timelineItem.diary.DiaryEntry
+import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import com.personalproject.mydiary.core.util.DateUtil
-import com.personalproject.mydiary.domain.preference.BlueSky
-import com.personalproject.mydiary.domain.preference.TimelineCardPreference
+import com.personalproject.mydiary.ui.theme.BlueSky
+import com.personalproject.mydiary.ui.feature_diary_entry.iconRes
+import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import java.time.format.TextStyle
 
 /**
