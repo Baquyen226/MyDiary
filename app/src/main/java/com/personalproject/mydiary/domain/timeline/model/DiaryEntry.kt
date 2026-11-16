@@ -10,6 +10,7 @@ import java.time.Instant
  * Oh? OOP concept? Inheritance? Much cool? IT'S NOT.
  *
  * @property id Unique identifier for the diary entry.
+ * @property folderId Folder ID of parent.
  * @property timestamp The instant the entry represents.
  * @property title Headline or title of the entry.
  * @property location Optional location where the entry was recorded.
@@ -29,8 +30,10 @@ data class DiaryEntry(
     override val location: String? = null,
     val description: String? = null,
     val content: String? = null,
+    val colorHex: String? = null,
     val moodScore: Int = 3,
     val isBookmarked: Boolean = false,
+    val isFavorite: Boolean = false,
     val weather: Weather = Weather.UNKNOWN,
     val temperatureHigh: Int = 0,
     val temperatureLow: Int = 0,

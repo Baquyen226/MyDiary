@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_folder_list
+package com.personalproject.mydiary.ui.feature.folder_list
 
 import com.personalproject.mydiary.domain.folder.model.Folder
 import com.personalproject.mydiary.domain.profile.model.Profile

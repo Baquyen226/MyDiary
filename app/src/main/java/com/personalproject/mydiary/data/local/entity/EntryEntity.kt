@@ -41,6 +41,9 @@ data class EntryEntity(
     @ColumnInfo(name = "body")
     val body: String,
 
+    @ColumnInfo(name = "color_hex")
+    val colorHex: String,
+
     //Depending on what I'll do this can support multiple formats like HTML n
     //stuff. Might be a pain in the ass tho
     @ColumnInfo(name = "body_format", defaultValue = "markdown")
@@ -62,7 +65,10 @@ data class EntryEntity(
     val entryDate: LocalDate,
 
     @ColumnInfo(name = "is_favorite")
-    val isFavorite: Boolean = false,
+    val isFavorite: Boolean,
+
+    @ColumnInfo(name = "is_bookmarked")
+    val isBookmarked: Boolean,
 
     @ColumnInfo(name = "temperature_high")
     val temperatureHigh: Int,

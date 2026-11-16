@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_folder_list.components
+package com.personalproject.mydiary.ui.feature.folder_list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,13 +49,11 @@ fun BottomBar(
                 .background(Color(0xFF4A5D74))
         )
         
-        IconButton(onClick = onSettingsClick) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = "Settings",
-                tint = Color(0xFF4A5D74),
-                modifier = Modifier.size(28.dp)
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.Settings,
+            contentDescription = "Settings",
+            tint = Color(0xFF4A5D74),
+            modifier = Modifier.size(28.dp)
+        )
     }
 }

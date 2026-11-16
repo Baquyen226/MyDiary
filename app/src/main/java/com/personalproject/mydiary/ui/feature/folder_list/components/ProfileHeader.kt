@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_folder_list.components
+package com.personalproject.mydiary.ui.feature.folder_list.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,9 +36,8 @@ fun ProfileHeader(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Mock Avatar (its just the icon)
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // Placeholder
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(64.dp)
@@ -50,18 +49,28 @@ fun ProfileHeader(
         
         Column {
             Text(
-                text = profile?.name ?: "UNKNOWN",
+                text = profile?.name ?: "Unknown User",
                 color = Color.White,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.headlineLarge
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
-            Text(
-                text = profile?.location ?: "",
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 14.sp,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            
+            profile?.location?.let {
+                Text(
+                    text = it,
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontSize = 12.sp
+                )
+            }
+            
+            profile?.note?.let {
+                Text(
+                    text = it,
+                    color = Color.White.copy(alpha = 0.6f),
+                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }

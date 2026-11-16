@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_diary_entry.components
+package com.personalproject.mydiary.ui.feature.diary_entry.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke

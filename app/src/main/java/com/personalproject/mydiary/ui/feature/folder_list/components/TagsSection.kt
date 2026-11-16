@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_folder_list.components
+package com.personalproject.mydiary.ui.feature.folder_list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -51,18 +51,20 @@ fun TagsSection(
 }
 
 @Composable
-fun TagChip(tag: String) {
+fun TagChip(
+    tag: String,
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFFF0F2F5))
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFFE0E0E0))
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Text(
             text = tag,
-            color = Color.DarkGray,
-            fontSize = 14.sp,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.DarkGray
         )
     }
 }

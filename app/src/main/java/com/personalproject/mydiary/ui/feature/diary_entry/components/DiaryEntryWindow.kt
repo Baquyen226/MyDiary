@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_diary_entry.components
+package com.personalproject.mydiary.ui.feature.diary_entry.components
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -43,7 +43,7 @@ import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.ui.theme.BlueSky
-import com.personalproject.mydiary.ui.feature_diary_entry.iconRes
+import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import java.time.format.TextStyle
 

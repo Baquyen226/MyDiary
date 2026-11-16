@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_diary_entry
+package com.personalproject.mydiary.ui.feature.diary_entry
 
 import androidx.annotation.DrawableRes
 import com.personalproject.mydiary.R

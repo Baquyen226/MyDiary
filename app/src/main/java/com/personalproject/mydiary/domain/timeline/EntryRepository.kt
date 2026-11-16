@@ -3,13 +3,16 @@ package com.personalproject.mydiary.domain.timeline
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import kotlinx.coroutines.flow.Flow
 
-interface EntryRepository
-{
-    fun getEntries()
+interface EntryRepository {
+    fun getEntries(): Flow<List<DiaryEntry>>
 
-    fun getEntriesFromFolder(folderName: String): Flow<DiaryEntry?>
+    fun observeEntriesFromFolder(folderId: String): Flow<List<DiaryEntry>>
 
-    fun addEntries(entry: DiaryEntry)
+    fun getEntryById(id: String): Flow<DiaryEntry?>
+
+    fun addEntry(entry: DiaryEntry)
+
+    fun update(entry: DiaryEntry)
 
     fun deleteEntry(id: String)
 }

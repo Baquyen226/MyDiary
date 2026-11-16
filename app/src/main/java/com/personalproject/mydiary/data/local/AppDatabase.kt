@@ -3,6 +3,7 @@ package com.personalproject.mydiary.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.personalproject.mydiary.data.dao.EntryDao
 import com.personalproject.mydiary.data.dao.FolderDao
 import com.personalproject.mydiary.data.dao.ProfileDao
 import com.personalproject.mydiary.data.local.entity.EntryEntity
@@ -18,4 +19,5 @@ import com.personalproject.mydiary.data.local.entity.ProfileEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun folderDao(): FolderDao
     abstract fun profileDao(): ProfileDao
+    abstract fun entryDao(): EntryDao
 }

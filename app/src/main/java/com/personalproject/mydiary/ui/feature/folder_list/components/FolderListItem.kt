@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature_folder_list.components
+package com.personalproject.mydiary.ui.feature.folder_list.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,11 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.domain.folder.model.FolderType
-import com.personalproject.mydiary.ui.feature_folder_list.FolderSummary
-
-import androidx.core.graphics.toColorInt
+import com.personalproject.mydiary.ui.feature.folder_list.FolderSummary
 
 @Composable
 fun FolderListItem(
@@ -52,35 +51,42 @@ fun FolderListItem(
         ) {
             Icon(
                 painter = painterResource(id = iconRes),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-                tint = textColor
+                contentDescription = folder.name,
+                tint = textColor,
+                modifier = Modifier.size(28.dp)
             )
-            
-            Spacer(modifier = Modifier.width(24.dp))
-            
+
+            Spacer(modifier = Modifier.width(16.dp))
+
             Text(
                 text = folder.name,
-                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleMedium,
                 color = textColor,
-                fontSize = 18.sp,
-                style = MaterialTheme.typography.bodyLarge
+                fontSize = 16.sp,
+                modifier = Modifier.weight(1f)
             )
-            
+
             Text(
                 text = summary.itemCount.toString(),
                 color = textColor,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                fontSize = 16.sp,
+                modifier = Modifier.padding(end = 8.dp)
             )
-            
+
             Icon(
                 painter = painterResource(id = R.drawable.ic_ui_arrow),
                 contentDescription = null,
-                modifier = Modifier.size(16.dp).rotate(180.0f),
-                tint = textColor.copy(alpha = 0.5f)
+                tint = textColor,
+                modifier = Modifier
+                    .size(16.dp)
+                    .rotate(180f)
             )
         }
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp, color = Color.LightGray)
+
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 0.5.dp,
+            color = Color.LightGray.copy(alpha = 0.5f)
+        )
     }
 }

@@ -12,7 +12,6 @@ interface FolderDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun addFolder(folder: FolderEntity)
 
-    // TODO: Check on this again when dealing with items in the folder later
     @Delete
     suspend fun removeFolder(folder: FolderEntity)
 

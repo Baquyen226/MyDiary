@@ -13,9 +13,10 @@ object MockDiary {
 
     val mockDiaryEntry_1 = DiaryEntry(
         id = "D_000001",
-        folderId = "1",
+        folderId = "2",
         timestamp = yesterday,
         title = "Test Diary 01",
+        colorHex = "#E57373",
         location = null,
         description = "This is a test!",
         content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
@@ -34,7 +35,7 @@ object MockDiary {
 
     val mockDiaryEntry_2 = DiaryEntry(
         id = "D_000002",
-        folderId = "1",
+        folderId = "3",
         timestamp = eightDaysAgo,
         title = "Test Diary 02",
         location = null,
@@ -63,6 +64,7 @@ object MockDiary {
         timestamp = sixWeeksAgo,
         title = "Test Diary 03",
         location = null,
+        colorHex = "#E57373",
         description = "This is a test!",
         content = "I messed up at work again...\n\n" +
                 "Someone ordered the Insalata di Mare and the Saltimbocca, and I think I got them mixed up? And then the manager started glaring at me with those scary eyes. I got so nervous that I tripped over my own feet near Table 4\uD83D\uDE23\n" +
@@ -82,11 +84,12 @@ object MockDiary {
     )
 
     val mockDiaryEntry_3_JP = DiaryEntry(
-        id = "D_000003",
-        folderId = "1",
+        id = "D_000004",
+        folderId = "3",
         timestamp = sixWeeksAgo,
         title = "Test Diary 03",
         location = "Shinjuku-ku, Tokyo, JAPAN",
+        colorHex = "#E57373",
         description = "This is a test!",
         content = "またバイト怒られちゃった。。。\n\n" +
                 "お客さんに『海の幸のサラダ』と『サルティンボッカ』を注文されたんだけど、出し間違えちゃったみたい。そしたら店長がものすごい怖い顔で睨んできて。焦りすぎて、4番テーブルの近くで派手に転んじゃったよ😫\n" +
