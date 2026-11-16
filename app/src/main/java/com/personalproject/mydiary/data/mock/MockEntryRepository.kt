@@ -13,7 +13,11 @@ class MockEntryRepository : EntryRepository {
             MockDiary.mockDiaryEntry_1,
             MockDiary.mockDiaryEntry_2,
             MockDiary.mockDiaryEntry_3,
-            MockDiary.mockDiaryEntry_3_JP
+            MockDiary.mockDiaryEntry_3_JP,
+            MockDiary.mockDiaryEntry_5,
+            MockDiary.mockDiaryEntry_6,
+            MockDiary.mockDiaryEntry_7,
+            MockDiary.mockDiaryEntry_8
         )
     )
 

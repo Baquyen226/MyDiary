@@ -11,10 +11,14 @@ import com.personalproject.mydiary.data.mock.MockEntryRepository
 import com.personalproject.mydiary.data.mock.MockFolderRepository
 import com.personalproject.mydiary.domain.folder.FolderRepository
 import com.personalproject.mydiary.domain.timeline.EntryRepository
+import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.util.UUID
 
 class FolderViewViewModel(
     private val folderId: String,
@@ -36,6 +40,19 @@ class FolderViewViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = FolderViewUiState(isLoading = true)
     )
+
+    fun addEntry(title: String, content: String) {
+        val entry = DiaryEntry(
+            id = UUID.randomUUID().toString(),
+            folderId = folderId,
+            timestamp = Instant.now(),
+            title = title,
+            content = content
+        )
+        viewModelScope.launch {
+            entryRepository.addEntry(entry)
+        }
+    }
 
     companion object {
         fun provideFactory(folderId: String): ViewModelProvider.Factory = viewModelFactory {

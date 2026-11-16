@@ -1,5 +1,6 @@
 package com.personalproject.mydiary.data.mock
 
+import com.personalproject.mydiary.core.util.DateUtil.Companion.daysAgo
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import com.personalproject.mydiary.domain.timeline.model.Weather
 import java.time.Instant
@@ -17,7 +18,7 @@ object MockDiary {
         timestamp = yesterday,
         title = "Test Diary 01",
         colorHex = "#E57373",
-        location = null,
+        location = "Paris, France",
         description = "This is a test!",
         content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
                 "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," +
@@ -29,16 +30,16 @@ object MockDiary {
         isBookmarked = false,
         moodScore = 3,
         weather = Weather.SUNNY,
-        temperatureHigh = 24,
+        temperatureHigh = 27,
         temperatureLow = 19
     )
 
     val mockDiaryEntry_2 = DiaryEntry(
         id = "D_000002",
-        folderId = "3",
+        folderId = "1",
         timestamp = eightDaysAgo,
         title = "Test Diary 02",
-        location = null,
+        location = "Shinjuku-ku, Tokyo, JAPAN",
         description = "This is a test!",
         content = "HEY!! We need to talk.\n" +
                 "\n" +
@@ -54,16 +55,16 @@ object MockDiary {
         isBookmarked = false,
         moodScore = 3,
         weather = Weather.STORM,
-        temperatureHigh = 24,
-        temperatureLow = 19
+        temperatureHigh = 28,
+        temperatureLow = 22
     )
 
     val mockDiaryEntry_3 = DiaryEntry(
         id = "D_000003",
         folderId = "2",
-        timestamp = sixWeeksAgo,
+        timestamp = eightDaysAgo,
         title = "Test Diary 03",
-        location = null,
+        location = "Shinjuku-ku, Tokyo, JAPAN",
         colorHex = "#E57373",
         description = "This is a test!",
         content = "I messed up at work again...\n\n" +
@@ -85,26 +86,119 @@ object MockDiary {
 
     val mockDiaryEntry_3_JP = DiaryEntry(
         id = "D_000004",
-        folderId = "3",
-        timestamp = sixWeeksAgo,
-        title = "Test Diary 03",
+        folderId = "2",
+        timestamp = daysAgo(now, 29),
+        title = "東京生活９",
         location = "Shinjuku-ku, Tokyo, JAPAN",
         colorHex = "#E57373",
         description = "This is a test!",
         content = "またバイト怒られちゃった。。。\n\n" +
-                "お客さんに『海の幸のサラダ』と『サルティンボッカ』を注文されたんだけど、出し間違えちゃったみたい。そしたら店長がものすごい怖い顔で睨んできて。焦りすぎて、4番テーブルの近くで派手に転んじゃったよ😫\n" +
+                "お客さんに『海の幸のサラダ』と『サルティンボッカ』" +
+                "を注文されたんやけど、" +
+                "出し間違えちゃったみたいやわ。" +
+                "そしたら店長がものすごい怖い顔して睨んできてさ。" +
+                "焦りすぎて、4番テーブルの近くで派手に転んじゃったんやて😫\n" +
                 "\n" +
-                "幸い、何も割らなかったけど！\n" +
+                "何も割らんかったけど\n" +
                 "\n" +
-                "奥寺先輩がわざわざ片付けを手伝いに来てくれたんだ。先輩はすごく優しかったけど✨、『瀧くん、今日はなんだかフラフラしてるわね』なんて聞かれちゃって。私（瀧くん）、トマトソース並みに真っ赤になっちゃったと思う。\n" +
+                "奥寺先輩がわざわざ片付けを手伝いに来てくれたんだ。先輩はすごく優しか" +
+                "ったんやけど✨" +
+                "\n\n『瀧くん、今日はなんやフラフラしとるね』なんて聞かれちゃって。瀧くん、トマトソース並みに真っ赤になっちゃったと思った\n" +
                 "\n" +
-                "店長には『これ以上ぼーっとしてるなら』、来週のシフトを削るぞって言われちゃった……。\n" +
+                "店長には『これ以上ぼーっとしとるんなら』、来週のシフトを減らすぞって言われちゃったんやて……\n" +
                 "\n" +
-                "本当にごめん！！絶対に埋め合わせするから！！💪💖",
+                "ほんとごめんな！！絶対に埋め合わせするでな！！💪💖",
         isBookmarked = false,
         moodScore = 3,
         weather = Weather.CLOUDY,
+        temperatureHigh = 21,
+        temperatureLow = 16
+    )
+
+    val mockDiaryEntry_5 = DiaryEntry(
+        id = "D_000005",
+        folderId = "2",
+        timestamp = daysAgo(now, 32),
+        title = "東京生活８",
+        location = "Shinjuku-ku, Tokyo, JAPAN",
+        colorHex = "#E57373",
+        description = "This is a test!",
+        content = "小旅行❤\uFE0F鎌倉でカフェ巡り！\uD83C\uDFB6\n\n"
+                + "東京のドリンクよりカッコイイ🍵✨\n"
+                + "縁側から見えるお庭が最高すぎて、時間を忘れてまったりしちゃった🌿\n\n"
+                + "そのあとは海沿いをブラブラお散歩して、江ノ電のレトロな雰囲気に癒やされた🚃🌊\n\n"
+                + "自分の目で本物の海を見るのは今日が人生初…！\uD83E\uDD79\uD83C\uDF0A\n\n"
+                + "リフレッシュ完了！💪💕\n\n",
+        isBookmarked = false,
+        moodScore = 3,
+        weather = Weather.SUNNY,
         temperatureHigh = 24,
+        temperatureLow = 21
+    )
+
+    val mockDiaryEntry_6 = DiaryEntry(
+        id = "D_000006",
+        folderId = "2",
+        timestamp = daysAgo(now, 41),
+        title = "Test Diary 02",
+        colorHex = "#E57373",
+        location = "Paris, France",
+        description = "This is a test!",
+        content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
+                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," +
+                "when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n\n" +
+                "It has survived not only five centuries, but also the leap into electronic typesetting, remaining " +
+                "essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing " +
+                "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including " +
+                "versions of Lorem Ipsum.",
+        isBookmarked = false,
+        moodScore = 3,
+        weather = Weather.SUNNY,
+        temperatureHigh = 23,
+        temperatureLow = 14
+    )
+
+    val mockDiaryEntry_7 = DiaryEntry(
+        id = "D_000007",
+        folderId = "2",
+        timestamp = daysAgo(now, 52),
+        title = "Test Diary 04",
+        colorHex = "#E57373",
+        location = "Paris, France",
+        description = "This is a test!",
+        content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
+                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," +
+                "when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n\n" +
+                "It has survived not only five centuries, but also the leap into electronic typesetting, remaining " +
+                "essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing " +
+                "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including " +
+                "versions of Lorem Ipsum.",
+        isBookmarked = false,
+        moodScore = 3,
+        weather = Weather.SUNNY,
+        temperatureHigh = 27,
+        temperatureLow = 19
+    )
+
+    val mockDiaryEntry_8 = DiaryEntry(
+        id = "D_000008",
+        folderId = "2",
+        timestamp = daysAgo(now, 61),
+        title = "Test Diary 01",
+        colorHex = "#E57373",
+        location = "Paris, France",
+        description = "This is a test!",
+        content = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n\n" +
+                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s," +
+                "when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n\n" +
+                "It has survived not only five centuries, but also the leap into electronic typesetting, remaining " +
+                "essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing " +
+                "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including " +
+                "versions of Lorem Ipsum.",
+        isBookmarked = false,
+        moodScore = 3,
+        weather = Weather.SUNNY,
+        temperatureHigh = 27,
         temperatureLow = 19
     )
 }

@@ -16,6 +16,7 @@ import java.time.Instant
  * @property location Optional location where the entry was recorded.
  * @property description A brief summary or subtitle of the entry.
  * @property content The main body text of the diary entry.
+ * @property colorHex Main color of the diary.
  * @property moodScore User rating of their day (e.g., 1 to 5).
  * @property isBookmarked Whether the entry is starred or pinned.
  * @property weather The recorded weather conditions for this day.

@@ -1,5 +1,6 @@
 package com.personalproject.mydiary.core.util
 
+import java.lang.Math.random
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -78,6 +79,14 @@ class DateUtil {
                 return dateTime?.month?.getDisplayName(TextStyle.FULL, Locale.ENGLISH) ?: "null"
             } catch (e: Exception) {
                 return "[ERROR] Failed to get month in DateUtil: $e\n"
+            }
+        }
+
+        fun daysAgo(instant: Instant, day: Long) : Instant {
+            return try {
+                instant.minusSeconds(((day - random()) * 86400).toLong())
+            } catch (e: Exception) {
+                instant
             }
         }
     }

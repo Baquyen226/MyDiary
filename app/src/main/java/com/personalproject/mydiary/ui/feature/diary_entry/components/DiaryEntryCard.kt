@@ -61,7 +61,7 @@ fun DiaryEntryCard(
     Card(
         modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 16.dp, vertical = 5.dp)
                     .graphicsLayer(
                         scaleX = scale,
                         scaleY = scale
@@ -99,7 +99,7 @@ fun DiaryEntryCard(
             Spacer(modifier = Modifier.width(6.dp))
 
             // Content Section
-            Column(modifier = Modifier.padding(4.dp)) {
+            Column(modifier = Modifier.padding(2.dp).width(196.dp)) {
                 Text(
                     text = DateUtil.getTime(entry.timestamp),
                     style = MaterialTheme.typography.labelSmall,
@@ -107,16 +107,20 @@ fun DiaryEntryCard(
                 )
                 Text(
                     text = entry.title,
+                    modifier = Modifier.offset(y = (-2).dp),
                     fontWeight = FontWeight.Bold,
+                    maxLines = 1,
                     fontFamily = displayLargeFontFamily,
                     color = theme.primaryTextColor
                 )
                 Text(
                     text = "${entry.content}",
+                    modifier = Modifier.offset(y = (-1).dp),
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = displayLargeFontFamily,
                     maxLines = 1,
-                    color = theme.secondaryTextColor
+                    color = theme.subtitleTextColor,
+                    fontSize = 12.sp
                 )
             }
         }

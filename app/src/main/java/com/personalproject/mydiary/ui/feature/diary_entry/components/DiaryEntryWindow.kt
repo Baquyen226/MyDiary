@@ -213,7 +213,7 @@ fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
       modifier = Modifier
          .background(color = theme.surfaceColor)
          .fillMaxWidth()
-         .height(400.dp)
+         .height(500.dp)
    ) {
       val scrollState = rememberScrollState()
       Column(
