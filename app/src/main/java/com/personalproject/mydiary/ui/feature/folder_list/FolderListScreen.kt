@@ -1,7 +1,6 @@
 package com.personalproject.mydiary.ui.feature.folder_list
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.personalproject.mydiary.ui.feature.folder_list.components.BottomBar
 import com.personalproject.mydiary.ui.feature.folder_list.components.FolderListItem
 import com.personalproject.mydiary.ui.feature.folder_list.components.ProfileHeader
-import com.personalproject.mydiary.ui.feature.folder_list.components.TagsSection
 
 @Composable
 fun FolderListScreen(
@@ -28,6 +26,9 @@ fun FolderListScreen(
 
     Scaffold(
         modifier = modifier,
+        topBar = {
+            ProfileHeader(profile = uiState.profile)
+        },
         bottomBar = {
             BottomBar()
         }
@@ -42,24 +43,16 @@ fun FolderListScreen(
                 CircularProgressIndicator()
             }
         } else {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                ProfileHeader(profile = uiState.profile)
-
-                // TagsSection(tags = uiState.tags)
-
-                LazyColumn(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(uiState.folders, key = { it.folder.id }) { summary ->
-                        FolderListItem(
-                            summary = summary,
-                            onClick = { onFolderClick(summary.folder.id) }
-                        )
-                    }
+                items(uiState.folders, key = { it.folder.id }) { summary ->
+                    FolderListItem(
+                        summary = summary,
+                        onClick = { onFolderClick(summary.folder.id) }
+                    )
                 }
             }
         }

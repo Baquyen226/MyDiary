@@ -8,12 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,11 +35,10 @@ fun HeaderSection(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
+            .statusBarsPadding()
             .padding(horizontal = 12.dp, vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.padding(12.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -60,7 +54,7 @@ fun HeaderSection(
                     selectedIndex = selectedTab.ordinal,
                     onSelect = { index -> onTabSelect(FolderTab.entries[index]) },
                     tintColor = tintColor,
-                    modifier = Modifier.fillMaxWidth(0.6f)
+                    modifier = Modifier.fillMaxWidth(0.75f)
                 )
             }
         }
@@ -68,7 +62,7 @@ fun HeaderSection(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "Diary",
+            text = title,
             style = MaterialTheme.typography.titleMedium,
             fontFamily = displayLargeFontFamily,
             fontWeight = FontWeight.Normal,

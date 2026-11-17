@@ -14,3 +14,4 @@ val Weather.iconRes: Int
         Weather.STORM -> R.drawable.ic_weather_rainy_heavy_24dp
         Weather.UNKNOWN -> R.drawable.ic_weather_unknown
     }
+

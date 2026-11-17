@@ -1,25 +1,13 @@
 package com.personalproject.mydiary.ui.feature.folder_view.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,7 +32,6 @@ fun DiaryTab(
     entries: List<DiaryEntry>,
     theme: TimelineCardPreference,
     onEntryClick: (DiaryEntry) -> Unit,
-    onNewEntryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -53,8 +40,7 @@ fun DiaryTab(
         if (entries.isEmpty()) {
             Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -76,8 +62,7 @@ fun DiaryTab(
 
             LazyColumn(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 2.dp)
             ) {
                 groupedEntries.forEach { (yearMonth, monthEntries) ->
@@ -106,61 +91,6 @@ fun DiaryTab(
                         )
                     }
                 }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(theme.primaryTextColor)
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /* Menu */ }) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Menu",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Spacer(Modifier.padding(horizontal = 24.dp))
-
-            IconButton(onClick = onNewEntryClick) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "New Entry",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Spacer(Modifier.padding(horizontal = 24.dp))
-
-            IconButton(onClick = { /* Camera */ }) {
-                Icon(
-                    imageVector = Icons.Default.CameraAlt,
-                    contentDescription = "Camera",
-                    tint = Color.White,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val countText = if (entries.size == 1) "1  entry" else "${entries.size}  entry"
-                Text(
-                    text = countText,
-                    color = Color.White,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = displayLargeFontFamily
-                )
             }
         }
     }

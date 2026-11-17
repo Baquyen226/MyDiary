@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ fun ProfileHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(Color(0xFF4A5D74))
+            .statusBarsPadding()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

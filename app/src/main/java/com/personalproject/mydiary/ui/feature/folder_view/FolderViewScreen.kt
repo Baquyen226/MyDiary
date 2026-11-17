@@ -25,6 +25,7 @@ import com.personalproject.mydiary.ui.feature.diary_entry.components.DiaryEntryW
 import com.personalproject.mydiary.ui.feature.folder_view.components.CalendarTab
 import com.personalproject.mydiary.ui.feature.folder_view.components.DiaryTab
 import com.personalproject.mydiary.ui.feature.folder_view.components.EditorTab
+import com.personalproject.mydiary.ui.feature.folder_view.components.FolderViewBottomBar
 import com.personalproject.mydiary.ui.feature.folder_view.components.HeaderSection
 import com.personalproject.mydiary.ui.feature.folder_view.components.clearFocusOnTapOutside
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
@@ -39,6 +40,8 @@ fun FolderViewScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val cardTheme = colorHexToCardPreference(uiState.folder?.color)
     var selectedEntry by remember { mutableStateOf<DiaryEntry?>(null) }
+    var editorTitle by remember { mutableStateOf("") }
+    var editorContent by remember { mutableStateOf("") }
 
     val pagerState = rememberPagerState(initialPage = FolderTab.ENTRIES.ordinal) {
         FolderTab.entries.size
@@ -47,7 +50,6 @@ fun FolderViewScreen(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    // For now, this will do.
     // Unfocus and dismiss keyboard when navigating to other tabs
     LaunchedEffect(pagerState.targetPage) {
         if (pagerState.targetPage != FolderTab.EDITOR.ordinal) {
@@ -82,8 +84,45 @@ fun FolderViewScreen(
                         pagerState.animateScrollToPage(tab.ordinal)
                     }
                 },
-                onBackClick = onBackClick,
+                onBackClick = {
+                    if (pagerState.currentPage != FolderTab.ENTRIES.ordinal) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+                        }
+                    } else {
+                        onBackClick()
+                    }
+                },
                 tintColor = cardTheme.primaryTextColor
+            )
+        },
+        bottomBar = {
+            FolderViewBottomBar(
+                currentTab = FolderTab.entries[pagerState.currentPage],
+                theme = cardTheme,
+                entriesCount = uiState.entries.size,
+                onNewEntryClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(FolderTab.EDITOR.ordinal)
+                    }
+                },
+                onDiscardEditorClick = {
+                    editorTitle = ""
+                    editorContent = ""
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+                    }
+                },
+                onSaveEditorClick = {
+                    if (editorTitle.isNotBlank() || editorContent.isNotBlank()) {
+                        viewModel.addEntry(editorTitle, editorContent)
+                        editorTitle = ""
+                        editorContent = ""
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -108,12 +147,7 @@ fun FolderViewScreen(
                         DiaryTab(
                             entries = uiState.entries,
                             theme = cardTheme,
-                            onEntryClick = { selectedEntry = it },
-                            onNewEntryClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(FolderTab.EDITOR.ordinal)
-                                }
-                            }
+                            onEntryClick = { selectedEntry = it }
                         )
                     }
                     FolderTab.CALENDAR -> {
@@ -123,18 +157,11 @@ fun FolderViewScreen(
                     }
                     FolderTab.EDITOR -> {
                         EditorTab(
-                            theme = cardTheme,
-                            onSave = { title, content ->
-                                viewModel.addEntry(title, content)
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
-                                }
-                            },
-                            onDiscard = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
-                                }
-                            }
+                            title = editorTitle,
+                            onTitleChange = { editorTitle = it },
+                            content = editorContent,
+                            onContentChange = { editorContent = it },
+                            theme = cardTheme
                         )
                     }
                 }

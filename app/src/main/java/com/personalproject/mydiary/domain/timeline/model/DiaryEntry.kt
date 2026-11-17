@@ -32,7 +32,7 @@ data class DiaryEntry(
     val description: String? = null,
     val content: String? = null,
     val colorHex: String? = null,
-    val moodScore: Int = 3,
+    val moodScore: Int = 0,
     val isBookmarked: Boolean = false,
     val isFavorite: Boolean = false,
     val weather: Weather = Weather.UNKNOWN,

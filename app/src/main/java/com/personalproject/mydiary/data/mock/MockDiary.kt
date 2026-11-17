@@ -53,7 +53,7 @@ object MockDiary {
                 "\n" +
                 "WORK: Because you blew so much cash on this, DO NOT MESS UP THE SHIFTS COMING UP!! I can't afford to lose this job or get our pay docked. If that happens, I'll make sure you pay for it.",
         isBookmarked = false,
-        moodScore = 3,
+        moodScore = 5,
         weather = Weather.STORM,
         temperatureHigh = 28,
         temperatureLow = 22
@@ -78,7 +78,7 @@ object MockDiary {
                 "\n" +
                 "I'm so sorry!! I'll make it up to you!! \uD83D\uDCAA\uD83D\uDC96",
         isBookmarked = false,
-        moodScore = 3,
+        moodScore = 2,
         weather = Weather.CLOUDY,
         temperatureHigh = 24,
         temperatureLow = 19
@@ -110,7 +110,7 @@ object MockDiary {
                 "\n" +
                 "ほんとごめんな！！絶対に埋め合わせするでな！！💪💖",
         isBookmarked = false,
-        moodScore = 3,
+        moodScore = 2,
         weather = Weather.CLOUDY,
         temperatureHigh = 21,
         temperatureLow = 16
@@ -131,7 +131,7 @@ object MockDiary {
                 + "自分の目で本物の海を見るのは今日が人生初…！\uD83E\uDD79\uD83C\uDF0A\n\n"
                 + "リフレッシュ完了！💪💕\n\n",
         isBookmarked = false,
-        moodScore = 3,
+        moodScore = 4,
         weather = Weather.SUNNY,
         temperatureHigh = 24,
         temperatureLow = 21
@@ -153,7 +153,7 @@ object MockDiary {
                 "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including " +
                 "versions of Lorem Ipsum.",
         isBookmarked = false,
-        moodScore = 3,
+        moodScore = 0,
         weather = Weather.SUNNY,
         temperatureHigh = 23,
         temperatureLow = 14
@@ -175,7 +175,7 @@ object MockDiary {
                 "Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including " +
                 "versions of Lorem Ipsum.",
         isBookmarked = false,
-        moodScore = 3,
+        moodScore = 0,
         weather = Weather.SUNNY,
         temperatureHigh = 27,
         temperatureLow = 19

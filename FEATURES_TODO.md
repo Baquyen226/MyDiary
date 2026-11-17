@@ -65,11 +65,11 @@ classDiagram
 > **Goal**: Enable reading, writing, and browsing personal diary entries inside DIARY-type folders.
 
 - [ ] **2.1 Diary Database Schema**
-  - [ ] Create `EntryEntity.kt` with `folder_id` foreign key (`id`, `folder_id`, `title`, `body`, `entry_date`, `mood_score`, `mood_label`, `weather_summary`, `temperature_high`, `temperature_low`, `is_favorite`, `created_at`, `updated_at`).
+  - [X] Create `EntryEntity.kt` with `folder_id` foreign key (`id`, `folder_id`, `title`, `body`, `entry_date`, `mood_score`, `mood_label`, `weather_summary`, `temperature_high`, `temperature_low`, `is_favorite`, `created_at`, `updated_at`).
   - [ ] Create `EntryDao.kt` (query entries by `folder_id`, get single entry, insert, update, soft delete).
   - [ ] Create `TagEntity.kt` and `EntryTagCrossRef.kt` for many-to-many tag relationships.
 - [ ] **2.2 Diary Repository**
-  - [ ] Define `DiaryRepository` interface in `domain/timeline/` (or `domain/diary/`).
+  - [X] Define `DiaryRepository` interface in `domain/timeline/` (or `domain/diary/`).
   - [ ] Implement `DiaryRepositoryImpl` in `data/repository/`.
 - [ ] **2.3 Diary Entry List Screen**
   - [ ] Create `DiaryListScreen` displaying entries in chronological order.
