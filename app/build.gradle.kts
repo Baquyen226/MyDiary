@@ -62,4 +62,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // other library
+    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.2.1")
 }

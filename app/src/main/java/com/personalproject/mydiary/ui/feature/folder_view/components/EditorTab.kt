@@ -68,3 +68,10 @@ fun EditorTab(
         )
     }
 }
+
+@Composable
+fun RichTextEditor(
+
+) {
+
+}

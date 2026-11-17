@@ -142,12 +142,10 @@ fun DiaryEntryCard(
 
             // Icons Section: Weather -> Mood -> Bookmark
             Row(
-                verticalAlignment = Alignment.Top,
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(15.dp),
                 modifier = Modifier.padding(top = 2.dp)
             ) {
-                Spacer(modifier = Modifier.size(4.dp))
-
                 // Weather Icon
                 Icon(
                     painter = painterResource(id = entry.weather.iconRes),

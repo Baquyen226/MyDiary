@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.personalproject.mydiary.ui.feature.common_component.BottomBarModifier
 import com.personalproject.mydiary.ui.feature.folder_view.FolderTab
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
@@ -52,11 +51,7 @@ fun FolderViewBottomBar(
         modifier = modifier.fillMaxWidth()
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .imePadding()
-                .height(60.dp)
+            modifier = BottomBarModifier
         ) {
             AnimatedContent(
                 targetState = currentTab,
@@ -67,7 +62,7 @@ fun FolderViewBottomBar(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(60.dp)
+                                .height(48.dp)
                                 .padding(horizontal = 12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
