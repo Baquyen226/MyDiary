@@ -27,8 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
+import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 
 //TODO: supports rich text(eventually)
 @Composable
@@ -44,6 +46,7 @@ fun EditorTab(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .clearFocusOnTapOutside()
             .imePadding()
     ) {
         Column(
@@ -57,6 +60,9 @@ fun EditorTab(
                 onValueChange = { title = it },
                 label = { Text("Title") },
                 singleLine = true,
+                textStyle = TextStyle(
+                    fontFamily = displayLargeFontFamily
+                ),
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = theme.primaryTextColor,
@@ -70,6 +76,9 @@ fun EditorTab(
                 value = content,
                 onValueChange = { content = it },
                 label = { Text("What happened today?") },
+                textStyle = TextStyle(
+                    fontFamily = displayLargeFontFamily
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),

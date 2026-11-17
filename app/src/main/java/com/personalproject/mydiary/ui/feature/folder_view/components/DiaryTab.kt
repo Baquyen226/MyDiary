@@ -93,7 +93,7 @@ fun DiaryTab(
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 2.dp)
+                                    .padding(vertical = 12.dp)
                             )
                         }
                     }

@@ -1,5 +1,6 @@
 package com.personalproject.mydiary.data.mock
 
+import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.domain.timeline.EntryRepository
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import kotlinx.coroutines.flow.Flow
@@ -44,9 +45,14 @@ class MockEntryRepository : EntryRepository {
     }
 
     override fun addEntry(entry: DiaryEntry) {
-        _entries.value = _entries.value.filterNot { it.id == entry.id } + entry
-    }
+        val resolvedEntry = if (entry.title.isBlank()) {
+            entry.copy(title = "No Title")
+        } else {
+            entry.copy(title = entry.title.trim())
+        }
 
+        _entries.value = _entries.value.filterNot { it.id == resolvedEntry.id } + resolvedEntry
+    }
     override fun deleteEntry(id: String) {
         _entries.value = _entries.value.filterNot { it.id == id }
     }

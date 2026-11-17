@@ -82,6 +82,13 @@ class DateUtil {
             }
         }
 
+        fun formatDateMonth(instant: Instant?): String {
+            val formatter = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
+                .withZone(ZoneId.systemDefault())
+
+            return formatter.format(instant) // e.g., "17 Nov"
+        }
+
         fun daysAgo(instant: Instant, day: Long) : Instant {
             return try {
                 instant.minusSeconds(((day - random()) * 86400).toLong())
