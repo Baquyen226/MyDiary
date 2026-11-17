@@ -99,7 +99,7 @@ fun DiaryEntryCard(
             Spacer(modifier = Modifier.width(6.dp))
 
             // Content Section
-            Column(modifier = Modifier.padding(2.dp).width(196.dp)) {
+            Column(modifier = Modifier.padding(2.dp).fillMaxWidth(0.6f)) {
                 Text(
                     text = DateUtil.getTime(entry.timestamp),
                     style = MaterialTheme.typography.labelSmall,
