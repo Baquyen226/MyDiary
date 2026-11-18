@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +52,7 @@ import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import java.time.format.TextStyle as JavaTextStyle
+import androidx.core.net.toUri
 
 /**
  * A modal dialog window that displays a full diary entry.
@@ -128,7 +130,7 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
             color = theme.surfaceColor,
             fontFamily = displayLargeFontFamily,
             fontWeight = FontWeight.ExtraLight,
-            fontSize = 72.sp
+            fontSize = 64.sp
          )
 
          Text(
@@ -266,7 +268,7 @@ fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
       modifier = Modifier
          .background(color = theme.surfaceColor)
          .fillMaxWidth()
-         .height(500.dp)
+         .fillMaxSize(0.8f)
    ) {
       val scrollState = rememberScrollState()
       Column(
@@ -282,13 +284,13 @@ fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
          Text(
             text = entry.title,
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
             modifier = Modifier
                .fillMaxWidth()
                .align(Alignment.CenterHorizontally),
             color = theme.primaryTextColor,
             fontFamily = displayLargeFontFamily,
-            lineHeight = 32.sp
+            lineHeight = 42.sp
          )
 
          Spacer(modifier = Modifier.height(12.dp))
@@ -310,7 +312,7 @@ fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
                      color = theme.secondaryTextColor,
                      style = MaterialTheme.typography.bodyLarge,
                      fontFamily = displayLargeFontFamily,
-                     modifier = Modifier.padding(bottom = 12.dp).padding(horizontal = 3.dp)
+                     modifier = Modifier.padding(bottom = 12.dp).padding(horizontal = 9.dp)
                   )
                }
                is ContentSegment.Image -> {
@@ -319,7 +321,7 @@ fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
                      modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 12.dp)
-                        .padding(horizontal = 3.dp)
+                        .padding(horizontal = 9.dp)
                   )
                }
             }
@@ -339,7 +341,7 @@ private fun ReadOnlyWebImage(
    val context = LocalContext.current
    val bitmap = remember(uriString) {
       runCatching {
-         val uri = Uri.parse(uriString)
+         val uri = uriString.toUri()
          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val source = android.graphics.ImageDecoder.createSource(context.contentResolver, uri)
             android.graphics.ImageDecoder.decodeBitmap(source)
@@ -363,9 +365,73 @@ private fun ReadOnlyWebImage(
    }
 }
 
+
 @Composable
-fun DiaryFooter(entry: DiaryEntry, theme: TimelineCardPreference) {
-   Column {
-      Spacer(Modifier.padding(24.dp))
+fun DiaryFooter(
+   entry: DiaryEntry = MockDiary.mockDiaryEntry_1,
+   theme: TimelineCardPreference = BlueSky.timelineCardPreference,
+   onMoreOptionsClick: () -> Unit = {},
+   onLocationClick: () -> Unit = {},
+   onCameraClick: () -> Unit = {},
+   onMusicClick: () -> Unit = {},
+   onDeleteClick: () -> Unit = {}
+) {
+   Column(
+      modifier = Modifier
+         .fillMaxWidth()
+         .background(theme.primaryTextColor)
+   ) {
+      Row(
+         modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+         horizontalArrangement = Arrangement.SpaceBetween,
+         verticalAlignment = Alignment.CenterVertically
+      ) {
+         // More Options
+         IconButton(onClick = onMoreOptionsClick) {
+            Icon(
+               painter = painterResource(R.drawable.ic_ui_more_horizontal_24dp),
+               contentDescription = "More Options",
+               tint = Color.White
+            )
+         }
+
+         // Location
+         IconButton(onClick = onLocationClick) {
+            Icon(
+               painter = painterResource(R.drawable.ic_ui_location_24dp),
+               contentDescription = "Location",
+               tint = Color.White
+            )
+         }
+
+         // Camera
+         IconButton(onClick = onCameraClick) {
+            Icon(
+               painter = painterResource(R.drawable.ic_ui_photo_camera_24dp),
+               contentDescription = "Camera",
+               tint = Color.White
+            )
+         }
+
+         // Music
+         IconButton(onClick = onMusicClick) {
+            Icon(
+               painter = painterResource(R.drawable.ic_ui_music_note_24dp),
+               contentDescription = "Music",
+               tint = Color.White
+            )
+         }
+
+         // Delete
+         IconButton(onClick = onDeleteClick) {
+            Icon(
+               painter = painterResource(R.drawable.ic_ui_delete),
+               contentDescription = "Delete",
+               tint = Color.White
+            )
+         }
+      }
    }
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.personalproject.mydiary.R
+import androidx.core.net.toUri
 
 /**
  * Displays an image full-width directly in the diary entry like a Word document or website article.
@@ -39,7 +40,7 @@ fun ArticleImageItem(
     val context = LocalContext.current
     val bitmap = remember(uriString) {
         runCatching {
-            val uri = Uri.parse(uriString)
+            val uri = uriString.toUri()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val source = android.graphics.ImageDecoder.createSource(context.contentResolver, uri)
                 android.graphics.ImageDecoder.decodeBitmap(source)
