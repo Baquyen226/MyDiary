@@ -2,7 +2,10 @@ package com.personalproject.mydiary.ui.feature.folder_view
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,8 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.ui.feature.common_component.editor.rememberDiaryEditorState
 import com.personalproject.mydiary.ui.feature.diary_entry.components.DiaryEntryWindow
 import com.personalproject.mydiary.ui.feature.folder_view.components.CalendarTab
 import com.personalproject.mydiary.ui.feature.folder_view.components.DiaryTab
@@ -31,6 +36,7 @@ import com.personalproject.mydiary.ui.feature.folder_view.components.clearFocusO
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FolderViewScreen(
     viewModel: FolderViewViewModel,
@@ -40,8 +46,6 @@ fun FolderViewScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val cardTheme = colorHexToCardPreference(uiState.folder?.color)
     var selectedEntry by remember { mutableStateOf<DiaryEntry?>(null) }
-    var editorTitle by remember { mutableStateOf("") }
-    var editorContent by remember { mutableStateOf("") }
 
     val pagerState = rememberPagerState(initialPage = FolderTab.ENTRIES.ordinal) {
         FolderTab.entries.size
@@ -49,6 +53,24 @@ fun FolderViewScreen(
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val editorState = rememberDiaryEditorState(
+        onSave = { title, contentHtml, imageUris ->
+            viewModel.addEntry(
+                title = title,
+                content = contentHtml,
+                imageUris = imageUris
+            )
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+            }
+        },
+        onDiscard = {
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+            }
+        }
+    )
 
     // Unfocus and dismiss keyboard when navigating to other tabs
     LaunchedEffect(pagerState.targetPage) {
@@ -97,40 +119,38 @@ fun FolderViewScreen(
             )
         },
         bottomBar = {
-            FolderViewBottomBar(
-                currentTab = FolderTab.entries[pagerState.currentPage],
-                theme = cardTheme,
-                entriesCount = uiState.entries.size,
-                onNewEntryClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(FolderTab.EDITOR.ordinal)
-                    }
-                },
-                onDiscardEditorClick = {
-                    editorTitle = ""
-                    editorContent = ""
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
-                    }
-                },
-                onSaveEditorClick = {
-                    if (editorTitle.isNotBlank() || editorContent.isNotBlank()) {
-                        viewModel.addEntry(editorTitle, editorContent)
-                        editorTitle = ""
-                        editorContent = ""
+            // Automatically hides the bottom bar whenever the software keyboard is visible
+            if (!WindowInsets.isImeVisible) {
+                FolderViewBottomBar(
+                    currentTab = FolderTab.entries[pagerState.currentPage],
+                    theme = cardTheme,
+                    entriesCount = uiState.entries.size,
+                    onNewEntryClick = {
                         coroutineScope.launch {
-                            pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+                            pagerState.animateScrollToPage(FolderTab.EDITOR.ordinal)
                         }
+                    },
+                    onDiscardEditorClick = {
+                        editorState.discard()
+                    },
+                    onSaveEditorClick = {
+                        editorState.save()
                     }
-                }
-            )
+                )
+            }
         }
     ) { innerPadding ->
+        // When keyboard is open, remove bottom padding so the editor rests directly against the keyboard with zero gap
+        val contentBottomPadding = if (WindowInsets.isImeVisible) 0.dp else innerPadding.calculateBottomPadding()
+
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = contentBottomPadding
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = cardTheme.primaryTextColor)
@@ -140,7 +160,10 @@ fun FolderViewScreen(
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = contentBottomPadding
+                    )
             ) { page ->
                 when (FolderTab.entries[page]) {
                     FolderTab.ENTRIES -> {
@@ -157,11 +180,8 @@ fun FolderViewScreen(
                     }
                     FolderTab.EDITOR -> {
                         EditorTab(
-                            title = editorTitle,
-                            onTitleChange = { editorTitle = it },
-                            content = editorContent,
-                            onContentChange = { editorContent = it },
-                            theme = cardTheme
+                            theme = cardTheme,
+                            editorState = editorState
                         )
                     }
                 }

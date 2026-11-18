@@ -41,13 +41,20 @@ class FolderViewViewModel(
         initialValue = FolderViewUiState(isLoading = true)
     )
 
-    fun addEntry(title: String, content: String) {
+    fun addEntry(
+        title: String,
+        content: String,
+        imageUris: List<String> = emptyList(),
+        voiceNoteUri: String? = null
+    ) {
         val entry = DiaryEntry(
             id = UUID.randomUUID().toString(),
             folderId = folderId,
             timestamp = Instant.now(),
             title = title,
-            content = content
+            content = content,
+            imageUris = imageUris,
+            voiceNoteUri = voiceNoteUri
         )
         viewModelScope.launch {
             entryRepository.addEntry(entry)

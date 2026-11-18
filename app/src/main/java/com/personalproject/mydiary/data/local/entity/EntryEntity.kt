@@ -46,8 +46,8 @@ data class EntryEntity(
 
     //Depending on what I'll do this can support multiple formats like HTML n
     //stuff. Might be a pain in the ass tho
-    @ColumnInfo(name = "body_format", defaultValue = "markdown")
-    val bodyFormat: String = "markdown",
+    @ColumnInfo(name = "body_format", defaultValue = "HTML")
+    val bodyFormat: String = "HTML",
 
     @ColumnInfo(name = "body_plain", defaultValue = "")
     val bodyPlain: String = "",

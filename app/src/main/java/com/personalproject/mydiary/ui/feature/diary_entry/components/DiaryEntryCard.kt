@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.core.util.DateUtil
+import com.personalproject.mydiary.core.util.toPlainText
+import com.personalproject.mydiary.core.util.toPreviewText
 import com.personalproject.mydiary.data.mock.MockDiary
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import com.personalproject.mydiary.domain.timeline.model.Weather
@@ -44,6 +46,7 @@ import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import java.time.ZoneId
 import java.time.ZonedDateTime
+
 /**
  * A card displaying a summary of a diary entry in timeline view.
  *
@@ -94,7 +97,8 @@ fun DiaryEntryCard(
             // Date Section: Day number on top, Day of week below
             Column(
                 modifier = Modifier.width(54.dp),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = DateUtil.getDayOfMonth(entry.timestamp),
                     style = MaterialTheme.typography.headlineLarge,
@@ -129,8 +133,12 @@ fun DiaryEntryCard(
                     fontFamily = displayLargeFontFamily,
                     color = theme.primaryTextColor
                 )
+
+                // Attempts to find the first line of text. If not found (only images/recordings), leave it blank.
+                val previewText = (entry.bodyPlain.ifEmpty { entry.body }).toPreviewText()
+
                 Text(
-                    text = "${entry.content}",
+                    text = previewText,
                     modifier = Modifier.offset(y = (-1).dp),
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = displayLargeFontFamily,

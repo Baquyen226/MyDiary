@@ -149,7 +149,7 @@ fun FolderViewBottomBar(
                             }
 
                             Text(
-                                text = "New Entry",
+                                text = " ",
                                 style = MaterialTheme.typography.titleSmall,
                                 color = Color.White
                             )

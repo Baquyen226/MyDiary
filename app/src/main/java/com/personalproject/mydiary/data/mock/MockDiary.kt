@@ -68,8 +68,8 @@ object MockDiary {
         colorHex = "#E57373",
         description = "This is a test!",
         content = "I messed up at work again...\n\n" +
-                "Someone ordered the Insalata di Mare and the Saltimbocca, and I think I got them mixed up? And then the manager started glaring at me with those scary eyes. I got so nervous that I tripped over my own feet near Table 4\uD83D\uDE23\n" +
-                "\n" +
+                "Someone ordered the Insalata di Mare and the Saltimbocca, and I think I got them mixed up?\n" +
+                "And then the manager started glaring at me with those scary eyes. I got so nervous that I tripped over my own feet near Table 4\uD83D\uDE23\n" +
                 "I didn't break anything though!\n" +
                 "\n" +
                 "Okudera-senpai had to come over and help me clean up. She was so nice about it✨ but she asked if \"Taki-kun was feeling a little dizzy today.\" I think I (you?) turned as red as the tomato sauce.\n" +

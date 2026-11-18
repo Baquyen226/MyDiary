@@ -1,7 +1,11 @@
 package com.personalproject.mydiary.ui.feature.diary_entry.components
 
-import androidx.compose.foundation.ScrollState
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,30 +27,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.personalproject.mydiary.R
+import com.personalproject.mydiary.core.util.DateUtil
+import com.personalproject.mydiary.core.util.toPlainText
 import com.personalproject.mydiary.data.mock.MockDiary
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
-import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
-import com.personalproject.mydiary.core.util.DateUtil
-import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
+import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
-import java.time.format.TextStyle
+import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
+import java.time.format.TextStyle as JavaTextStyle
 
 /**
  * A modal dialog window that displays a full diary entry.
@@ -57,7 +62,6 @@ import java.time.format.TextStyle
  * @param theme The color and style preferences to apply to the window components.
  * @param onDismiss Callback lambda to be invoked when the user attempts to close the dialog.
  */
-@Preview(showBackground = true, backgroundColor = -14330178)
 @Composable
 fun DiaryEntryWindow(
    entry : DiaryEntry = MockDiary.mockDiaryEntry_1,
@@ -80,7 +84,7 @@ fun DiaryEntryWindow(
       ) {
          Column(
             modifier = Modifier
-               .background(color = theme.primaryTextColor) // I am sorry.
+               .background(color = theme.primaryTextColor)
                .fillMaxWidth()
                .padding(top = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -99,22 +103,22 @@ fun DiaryEntryWindow(
 fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () -> Unit) {
    val month = DateUtil.getMonthString(entry.timestamp)
    val date = DateUtil.getDayOfMonth(entry.timestamp)
-   val specificTime = DateUtil.dayOfWeek(entry.timestamp, style = TextStyle.FULL)
+   val specificTime = DateUtil.dayOfWeek(entry.timestamp, style = JavaTextStyle.FULL)
       .dropLast(1)
-      .plus( ", ")
+      .plus(", ")
       .plus(DateUtil.getTime(entry.timestamp))
 
    Box(modifier = Modifier.fillMaxWidth().offset()) {
       Column(
          modifier = Modifier
-            .background(color = theme.primaryTextColor) // I am sorry.
+            .background(color = theme.primaryTextColor)
             .fillMaxWidth()
             .padding(top = 4.dp),
          horizontalAlignment = Alignment.CenterHorizontally
       ) {
          Text(
             text = month,
-            color = theme.surfaceColor // I am sorry.
+            color = theme.surfaceColor
          )
 
          Spacer(Modifier.padding(1.dp))
@@ -124,7 +128,7 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
             color = theme.surfaceColor,
             fontFamily = displayLargeFontFamily,
             fontWeight = FontWeight.ExtraLight,
-            fontSize = 60.sp
+            fontSize = 72.sp
          )
 
          Text(
@@ -137,7 +141,7 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
          val weather = entry.weather.label
          val temperatureDisplay = "${entry.temperatureHigh}°/  ${entry.temperatureLow}°"
 
-         Row() {
+         Row {
             Icon(
                painter = painterResource(id = entry.weather.iconRes),
                contentDescription = weather,
@@ -156,7 +160,6 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
             )
 
             Spacer(Modifier.padding(4.dp))
-
 
             Text(
                text = temperatureDisplay,
@@ -207,6 +210,56 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
    }
 }
 
+private sealed interface ContentSegment {
+   data class Text(val text: String) : ContentSegment
+   data class Image(val uriString: String) : ContentSegment
+}
+
+private fun parseContentToSegments(rawContent: String, fallbackImageUris: List<String>): List<ContentSegment> {
+   if (rawContent.isBlank()) {
+      return fallbackImageUris.map { ContentSegment.Image(it) }
+   }
+
+   val imgRegex = Regex("""<img[^>]+src=["']([^"']+)["'][^>]*>""", RegexOption.IGNORE_CASE)
+   val matches = imgRegex.findAll(rawContent).toList()
+
+   if (matches.isEmpty()) {
+      val segments = mutableListOf<ContentSegment>()
+      val plain = rawContent.toPlainText()
+      if (plain.isNotBlank()) {
+         segments.add(ContentSegment.Text(plain))
+      }
+      fallbackImageUris.forEach {
+         segments.add(ContentSegment.Image(it))
+      }
+      return segments
+   }
+
+   val segments = mutableListOf<ContentSegment>()
+   var lastIndex = 0
+
+   for (match in matches) {
+      val textBefore = rawContent.substring(lastIndex, match.range.first).toPlainText()
+      if (textBefore.isNotBlank()) {
+         segments.add(ContentSegment.Text(textBefore))
+      }
+      val src = match.groupValues[1]
+      if (src.isNotBlank()) {
+         segments.add(ContentSegment.Image(src))
+      }
+      lastIndex = match.range.last + 1
+   }
+
+   if (lastIndex < rawContent.length) {
+      val textAfter = rawContent.substring(lastIndex).toPlainText()
+      if (textAfter.isNotBlank()) {
+         segments.add(ContentSegment.Text(textAfter))
+      }
+   }
+
+   return segments
+}
+
 @Composable
 fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
    Box(
@@ -222,39 +275,97 @@ fun DiaryBody(entry: DiaryEntry, theme: TimelineCardPreference) {
             .background(theme.surfaceColor)
             .verticalScroll(scrollState)
             .diaryScrollbar(scrollState, theme.primaryTextColor)
-            .padding(6.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
       ) {
-         Spacer(modifier = Modifier.padding(2.dp))
+         Spacer(modifier = Modifier.height(4.dp))
 
          Text(
             text = entry.title,
             textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+               .fillMaxWidth()
+               .align(Alignment.CenterHorizontally),
             color = theme.primaryTextColor,
             fontFamily = displayLargeFontFamily,
-            lineHeight = 28.sp
+            lineHeight = 32.sp
          )
 
-         Spacer(modifier = Modifier.padding(4.dp))
+         Spacer(modifier = Modifier.height(12.dp))
 
-          entry.content?.let {
-              Text(
-                  text = it,
-                  fontSize = 18.sp,
-                  lineHeight = 24.sp,
-                  modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-                  color = theme.secondaryTextColor,
-                  style = MaterialTheme.typography.bodyLarge,
-                  fontFamily = displayLargeFontFamily
-              )
-          }
+         val rawBody = entry.body.ifEmpty { entry.bodyPlain }
+         val segments = remember(rawBody, entry.imageUris) {
+            parseContentToSegments(rawBody, entry.imageUris)
+         }
+
+         // Render content and images in natural order
+         // TODO: Depending on the locality, different font size is needed
+         segments.forEach { segment ->
+            when (segment) {
+               is ContentSegment.Text -> {
+                  Text(
+                     text = segment.text,
+                     fontSize = 18.sp,
+                     lineHeight = 24.sp,
+                     color = theme.secondaryTextColor,
+                     style = MaterialTheme.typography.bodyLarge,
+                     fontFamily = displayLargeFontFamily,
+                     modifier = Modifier.padding(bottom = 12.dp).padding(horizontal = 3.dp)
+                  )
+               }
+               is ContentSegment.Image -> {
+                  ReadOnlyWebImage(
+                     uriString = segment.uriString,
+                     modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp)
+                        .padding(horizontal = 3.dp)
+                  )
+               }
+            }
+         }
+
+         // look at some point you gotta stop slapping magic constants everywhere
+         Spacer(modifier = Modifier.height(164.dp))
       }
    }
 }
 
 @Composable
+private fun ReadOnlyWebImage(
+   uriString: String,
+   modifier: Modifier = Modifier
+) {
+   val context = LocalContext.current
+   val bitmap = remember(uriString) {
+      runCatching {
+         val uri = Uri.parse(uriString)
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val source = android.graphics.ImageDecoder.createSource(context.contentResolver, uri)
+            android.graphics.ImageDecoder.decodeBitmap(source)
+         } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+         }
+      }.getOrNull()
+   }
+
+   bitmap?.let {
+      Image(
+         bitmap = it.asImageBitmap(),
+         contentDescription = "Entry image",
+         contentScale = ContentScale.FillWidth,
+         modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 280.dp)
+            .clip(RoundedCornerShape(12.dp))
+      )
+   }
+}
+
+@Composable
 fun DiaryFooter(entry: DiaryEntry, theme: TimelineCardPreference) {
-   Column() {
+   Column {
       Spacer(Modifier.padding(24.dp))
    }
 }
