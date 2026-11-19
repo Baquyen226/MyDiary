@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,23 +49,23 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
         ) {
             Text(
                 text = month,
-                color = theme.surfaceColor
+                color = Color.White
             )
 
             Spacer(Modifier.padding(1.dp))
 
             Text(
                 text = date,
-                color = theme.surfaceColor,
+                color = Color.White,
                 fontFamily = displayLargeFontFamily,
                 fontWeight = FontWeight.ExtraLight,
-                fontSize = 64.sp
+                fontSize = 72.sp
             )
 
             Text(
                 text = specificTime,
                 fontSize = 9.sp,
-                color = theme.surfaceColor
+                color = Color.White
             )
             Spacer(Modifier.padding(4.dp))
 
@@ -80,14 +81,14 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
                     painter = painterResource(id = entry.weather.iconRes),
                     contentDescription = weather,
                     modifier = Modifier.size(14.dp),
-                    tint = theme.surfaceColor
+                    tint = Color.White
                 )
 
                 Spacer(Modifier.padding(2.dp))
 
                 Text(
                     text = weather,
-                    color = theme.surfaceColor,
+                    color = Color.White,
                     fontFamily = displayLargeFontFamily,
                     fontSize = 8.sp,
                     modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
@@ -97,7 +98,7 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
 
                 Text(
                     text = temperatureDisplay,
-                    color = theme.surfaceColor,
+                    color = Color.White,
                     fontFamily = displayLargeFontFamily,
                     fontSize = 8.sp,
                     modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
@@ -117,14 +118,14 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
                     painter = painterResource(id = iconId),
                     contentDescription = location,
                     modifier = Modifier.size(12.dp),
-                    tint = theme.surfaceColor
+                    tint = Color.White
                 )
 
                 Spacer(Modifier.padding(2.dp))
 
                 Text(
                     text = location,
-                    color = theme.surfaceColor,
+                    color = Color.White,
                     fontFamily = displayLargeFontFamily,
                     fontSize = 8.sp,
                     modifier = Modifier.align(Alignment.CenterVertically).offset(y = (-5).dp)
@@ -140,7 +141,7 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
                 painter = painterResource(id = R.drawable.ic_ui_close),
                 modifier = Modifier.size(36.dp),
                 contentDescription = "exit",
-                tint = theme.surfaceColor
+                tint = Color.White
             )
         }
     }

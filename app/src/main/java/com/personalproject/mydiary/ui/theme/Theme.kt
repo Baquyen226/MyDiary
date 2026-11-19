@@ -13,40 +13,49 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = Color(0xFF64B5F6),
+    onPrimary = Color(0xFF003258),
+    primaryContainer = Color(0xFF00497D),
+    onPrimaryContainer = Color(0xFFD1E4FF),
+    secondary = Color(0xFF81D4FA),
+    onSecondary = Color(0xFF003549),
+    tertiary = Pink80,
+    background = Color(0xFF121212),
+    onBackground = Color(0xFFE6E6E6),
+    surface = Color(0xFF1E1E1E),
+    onSurface = Color(0xFFE6E6E6),
+    surfaceVariant = Color(0xFF2D2D2D),
+    onSurfaceVariant = Color(0xFFAAAAAA),
+    surfaceContainer = Color(0xFF242424),
+    surfaceContainerHigh = Color(0xFF2D2D2D),
+    outline = Color(0xFF555555),
+    outlineVariant = Color(0xFF383838)
 )
 
 private val DefaultColorScheme = lightColorScheme(
     primary = LightBlue,
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFD1E4FF),
+    onPrimaryContainer = Color(0xFF001D36),
     secondary = LighterBlue,
-    surface = SurfaceWhite,
-    onSurface = LightBlue,
-    onSurfaceVariant = Color.DarkGray
+    onSecondary = Color.White,
+    tertiary = Pink40,
+    background = SurfaceWhite,
+    onBackground = Color(0xFF1C1B1F),
+    surface = Color.White,
+    onSurface = Color(0xFF1C1B1F),
+    surfaceVariant = Color(0xFFF0F0F0),
+    onSurfaceVariant = Color.DarkGray,
+    surfaceContainer = Color(0xFFF5F5F5),
+    surfaceContainerHigh = Color(0xFFEEEEEE),
+    outline = Color(0xFFCCCCCC),
+    outlineVariant = Color(0xFFE0E0E0)
 )
 
 @Composable
 fun MyDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

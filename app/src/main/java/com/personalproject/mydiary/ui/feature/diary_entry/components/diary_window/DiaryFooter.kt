@@ -19,6 +19,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -95,9 +96,9 @@ fun DiaryFooter(
                     expanded = showMoreMenu,
                     onDismissRequest = { showMoreMenu = false },
                     shape = RoundedCornerShape(14.dp),
-                    containerColor = Color.White,
+                    containerColor = theme.surfaceColor,
                     shadowElevation = 6.dp,
-                    border = BorderStroke(1.dp, Color(0xFFE5E7EB)),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                     modifier = Modifier.width(195.dp)
                 ) {
                     val itemModifier = Modifier
@@ -155,7 +156,7 @@ fun DiaryFooter(
                                     .size(18.dp)
                                     .clip(CircleShape)
                                     .background(currentColor)
-                                    .border(1.dp, Color.Black.copy(alpha = 0.12f), CircleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                             )
                         },
                         contentPadding = itemPadding,
@@ -178,7 +179,7 @@ fun DiaryFooter(
                         },
                         leadingIcon = {
                             Icon(
-                                painter = painterResource(R.drawable.ic_diary_mood_happy1),
+                                painter = painterResource(R.drawable.ic_diary_mood),
                                 contentDescription = stringResource(R.string.ui_folder_window_edit_mood),
                                 modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
@@ -190,7 +191,7 @@ fun DiaryFooter(
                                 painter = painterResource(id = moodRes),
                                 contentDescription = "Current Mood",
                                 modifier = Modifier.size(19.dp),
-                                tint = if (entry.moodScore == 0) Color(0xFF9CA3AF) else theme.primaryTextColor
+                                tint = if (entry.moodScore == 0) MaterialTheme.colorScheme.onSurfaceVariant else theme.primaryTextColor
                             )
                         },
                         contentPadding = itemPadding,

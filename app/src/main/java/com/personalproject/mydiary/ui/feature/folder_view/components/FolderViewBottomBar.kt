@@ -1,6 +1,7 @@
 package com.personalproject.mydiary.ui.feature.folder_view.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -48,8 +49,12 @@ fun FolderViewBottomBar(
     onSaveEditorClick: () -> Unit,
     onTodayClick: () -> Unit = {}
 ) {
+    val isDark = isSystemInDarkTheme()
+    val barColor = if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh else theme.primaryTextColor
+    val contentColor = if (isDark) theme.primaryTextColor else Color.White
+
     Surface(
-        color = theme.primaryTextColor,
+        color = barColor,
         modifier = modifier.fillMaxWidth()
     ) {
         Box(
@@ -72,7 +77,7 @@ fun FolderViewBottomBar(
                                 Icon(
                                     imageVector = Icons.Default.Menu,
                                     contentDescription = "Menu",
-                                    tint = Color.White,
+                                    tint = contentColor,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -83,7 +88,7 @@ fun FolderViewBottomBar(
                                 Icon(
                                     imageVector = Icons.Default.Edit,
                                     contentDescription = "New Entry",
-                                    tint = Color.White,
+                                    tint = contentColor,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -94,7 +99,7 @@ fun FolderViewBottomBar(
                                 Icon(
                                     imageVector = Icons.Default.CameraAlt,
                                     contentDescription = "Camera",
-                                    tint = Color.White,
+                                    tint = contentColor,
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
@@ -107,7 +112,7 @@ fun FolderViewBottomBar(
                                 val countText = "$entriesCount  ${stringResource(R.string.ui_folder_view_entry_count)}"
                                 Text(
                                     text = countText,
-                                    color = Color.White,
+                                    color = contentColor,
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.Medium,
                                     fontFamily = displayLargeFontFamily
@@ -126,7 +131,7 @@ fun FolderViewBottomBar(
                         ) {
                             TextButton(
                                 onClick = onTodayClick,
-                                colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                                colors = ButtonDefaults.textButtonColors(contentColor = contentColor)
                             ) {
                                 Text(stringResource(R.string.ui_folder_view_today))
                             }
@@ -146,21 +151,21 @@ fun FolderViewBottomBar(
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Discard",
-                                    tint = Color.White
+                                    tint = contentColor
                                 )
                             }
 
                             Text(
                                 text = " ",
                                 style = MaterialTheme.typography.titleSmall,
-                                color = Color.White
+                                color = contentColor
                             )
 
                             IconButton(onClick = onSaveEditorClick) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "Save",
-                                    tint = Color.White
+                                    tint = contentColor
                                 )
                             }
                         }

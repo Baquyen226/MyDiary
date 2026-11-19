@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -215,7 +216,7 @@ fun EditorFormattingBar(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_ui_close),
                                 contentDescription = "Close Formatting Bar",
-                                tint = Color.Gray,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -239,7 +240,7 @@ fun FormatToggleButton(
         onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = if (isSelected) tintColor.copy(alpha = 0.2f) else Color.Transparent,
-            contentColor = if (isSelected) tintColor else Color.Gray
+            contentColor = if (isSelected) tintColor else MaterialTheme.colorScheme.onSurfaceVariant
         ),
         modifier = modifier.size(40.dp)
     ) {

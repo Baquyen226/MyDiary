@@ -29,7 +29,7 @@ fun CalendarTab(
             Text(
                 text = "not implemented yet lol",
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

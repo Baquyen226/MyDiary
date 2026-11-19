@@ -8,10 +8,11 @@ import com.personalproject.mydiary.data.dao.FolderDao
 import com.personalproject.mydiary.data.dao.ProfileDao
 import com.personalproject.mydiary.data.local.entity.EntryEntity
 import com.personalproject.mydiary.data.local.entity.FolderEntity
+import com.personalproject.mydiary.data.local.entity.MediaAttachmentEntity
 import com.personalproject.mydiary.data.local.entity.ProfileEntity
 
 @Database(
-    entities = [FolderEntity::class, ProfileEntity::class, EntryEntity::class],
+    entities = [FolderEntity::class, ProfileEntity::class, EntryEntity::class, MediaAttachmentEntity::class],
     version = 1,
     exportSchema = false
 )

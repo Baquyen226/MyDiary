@@ -53,7 +53,7 @@ fun MoodPickerDialog(
     ) {
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier.fillMaxWidth(0.95f),
             shadowElevation = 8.dp
         ) {
@@ -67,7 +67,7 @@ fun MoodPickerDialog(
                     text = stringResource(R.string.ui_diary_choose_mood_prompt),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF212121)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(18.dp))
@@ -110,9 +110,7 @@ fun MoodPickerDialog(
                                             )
                                             .border(
                                                 width = if (isSelected) 2.dp else 1.dp,
-                                                color = if (isSelected) theme.primaryTextColor else Color.LightGray.copy(
-                                                    alpha = 0.4f
-                                                ),
+                                                color = if (isSelected) theme.primaryTextColor else MaterialTheme.colorScheme.outlineVariant,
                                                 shape = CircleShape
                                             ),
                                         contentAlignment = Alignment.Center
@@ -121,7 +119,7 @@ fun MoodPickerDialog(
                                             painter = painterResource(id = moodRes),
                                             contentDescription = stringResource(moodLabel),
                                             modifier = Modifier.size(26.dp),
-                                            tint = if (isSelected || score != 0) theme.primaryTextColor else Color.Gray
+                                            tint = if (isSelected || score != 0) theme.primaryTextColor else MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
 
@@ -131,7 +129,7 @@ fun MoodPickerDialog(
                                         text = stringResource(moodLabel),
                                         fontSize = 12.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (isSelected) theme.primaryTextColor else Color.DarkGray,
+                                        color = if (isSelected) theme.primaryTextColor else MaterialTheme.colorScheme.onSurfaceVariant,
                                         textAlign = TextAlign.Center
                                     )
                                 }

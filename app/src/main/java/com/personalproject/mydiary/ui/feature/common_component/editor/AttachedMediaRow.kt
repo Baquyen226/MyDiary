@@ -212,13 +212,13 @@ fun ArticleImageItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 140.dp)
-                    .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
                     strokeWidth = 2.dp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }

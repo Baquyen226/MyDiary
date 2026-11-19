@@ -37,6 +37,7 @@ import com.personalproject.mydiary.ui.feature.folder_view.components.FolderViewB
 import com.personalproject.mydiary.ui.feature.folder_view.components.HeaderSection
 import com.personalproject.mydiary.ui.feature.folder_view.components.clearFocusOnTapOutside
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
+import com.personalproject.mydiary.ui.theme.rememberTimelineCardPreference
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -47,7 +48,7 @@ fun FolderViewScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val cardTheme = colorHexToCardPreference(uiState.folder?.color)
+    val cardTheme = rememberTimelineCardPreference(uiState.folder?.color)
     var selectedEntry by remember { mutableStateOf<DiaryEntry?>(null) }
     var editingEntry by remember { mutableStateOf<DiaryEntry?>(null) }
     var moodDialogEntry by remember { mutableStateOf<DiaryEntry?>(null) }
@@ -207,7 +208,9 @@ fun FolderViewScreen(
                         )
                     }
                     FolderTab.EDITOR -> {
-                        val editorTheme = editingEntry?.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it) } ?: cardTheme
+                        val editorTheme = rememberTimelineCardPreference(
+                            editingEntry?.colorHex?.takeIf { it.isNotBlank() } ?: uiState.folder?.color
+                        )
                         EditorTab(
                             theme = editorTheme,
                             editorState = editorState
@@ -219,7 +222,7 @@ fun FolderViewScreen(
 
         selectedEntry?.let { entry ->
             val latestEntry = uiState.entries.find { it.id == entry.id } ?: entry
-            val entryTheme = colorHexToCardPreference(latestEntry.colorHex ?: uiState.folder?.color)
+            val entryTheme = rememberTimelineCardPreference(latestEntry.colorHex ?: uiState.folder?.color)
             DiaryEntryWindow(
                 entry = latestEntry,
                 theme = entryTheme,
@@ -246,7 +249,7 @@ fun FolderViewScreen(
         }
 
         moodDialogEntry?.let { entry ->
-            val entryTheme = colorHexToCardPreference(entry.colorHex ?: uiState.folder?.color)
+            val entryTheme = rememberTimelineCardPreference(entry.colorHex ?: uiState.folder?.color)
             MoodPickerDialog(
                 currentMood = entry.moodScore,
                 theme = entryTheme,

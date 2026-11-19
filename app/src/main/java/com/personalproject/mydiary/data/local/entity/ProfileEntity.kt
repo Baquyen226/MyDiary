@@ -17,5 +17,8 @@ data class ProfileEntity (
     val location : String?,
 
     @ColumnInfo(name = "note")
-    val note : String?
+    val note : String?,
+
+    @ColumnInfo(name = "profile_pic")
+    val profilePicUri : String
 )

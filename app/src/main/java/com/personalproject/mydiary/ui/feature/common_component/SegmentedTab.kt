@@ -3,6 +3,7 @@ package com.personalproject.mydiary.ui.feature.common_component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +33,8 @@ fun SegmentedTabs(
     tintColor: Color = Color(0xFFE57373)
 ) {
     val shape = RoundedCornerShape(6.dp)
+    val isDark = isSystemInDarkTheme()
+    val selectedTextColor = if (isDark) MaterialTheme.colorScheme.surface else Color.White
 
     Row(
         modifier = modifier
@@ -65,7 +69,7 @@ fun SegmentedTabs(
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = if (isSelected) Color.White else tintColor,
+                    color = if (isSelected) selectedTextColor else tintColor,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }

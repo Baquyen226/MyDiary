@@ -100,7 +100,7 @@ fun DiaryColorPickerDialog(
     ) {
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier.fillMaxWidth(0.95f),
             shadowElevation = 8.dp
         ) {
@@ -114,7 +114,7 @@ fun DiaryColorPickerDialog(
                     text = "Change Diary Color",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF212121)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -129,21 +129,21 @@ fun DiaryColorPickerDialog(
                 ) {
                     // Current Color Display
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Current", fontSize = 12.sp, color = Color.Gray)
+                        Text("Current", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(6.dp))
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
                                 .clip(CircleShape)
                                 .background(currentColor)
-                                .border(2.dp, Color.LightGray.copy(alpha = 0.6f), CircleShape)
+                                .border(2.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = initialDisplayHex,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = Color.DarkGray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -151,12 +151,12 @@ fun DiaryColorPickerDialog(
                         painter = painterResource(R.drawable.ic_ui_arrow),
                         contentDescription = "Arrow",
                         modifier = Modifier.size(24.dp),
-                        tint = Color.Gray
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     // Preview Color Display
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Preview", fontSize = 12.sp, color = Color.Gray)
+                        Text("Preview", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.height(6.dp))
                         Box(
                             modifier = Modifier
@@ -165,7 +165,7 @@ fun DiaryColorPickerDialog(
                                 .background(previewColor ?: currentColor)
                                 .border(
                                     width = 2.dp,
-                                    color = if (previewColor != null) previewColor else Color.Red,
+                                    color = if (previewColor != null) previewColor else MaterialTheme.colorScheme.error,
                                     shape = CircleShape
                                 )
                         )
@@ -174,7 +174,7 @@ fun DiaryColorPickerDialog(
                             text = if (previewColor != null) formatHexColor(hexInput) else "Invalid",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
-                            color = if (previewColor != null) Color.DarkGray else Color.Red
+                            color = if (previewColor != null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -203,7 +203,7 @@ fun DiaryColorPickerDialog(
                                 .size(18.dp)
                                 .clip(CircleShape)
                                 .background(previewColor ?: Color.Transparent)
-                                .border(1.dp, Color.Gray, CircleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
                         )
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -215,7 +215,7 @@ fun DiaryColorPickerDialog(
                 Text(
                     text = "Presets",
                     fontSize = 12.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(bottom = 6.dp)
@@ -238,7 +238,7 @@ fun DiaryColorPickerDialog(
                                 .clickable { hexInput = hex }
                                 .border(
                                     width = if (isSelected) 3.dp else 1.dp,
-                                    color = if (isSelected) Color.Black else Color.LightGray.copy(alpha = 0.5f),
+                                    color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant,
                                     shape = CircleShape
                                 )
                         )

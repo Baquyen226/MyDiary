@@ -1,6 +1,7 @@
 package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_card
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -56,15 +58,16 @@ import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 @Preview(showBackground = true, backgroundColor = -14330178)
 @Composable
 fun DiaryEntryCard(
-    entry: DiaryEntry = MockDiary.mockDiaryEntry_3_JP,
+    modifier: Modifier = Modifier,
+    entry: DiaryEntry = MockDiary.mockDiaryEntry_1,
     theme: TimelineCardPreference = BlueSky.timelineCardPreference,
     onClick: () -> Unit = {},
     onBookmarkClick: (() -> Unit)? = null,
-    onMoodClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    onMoodClick: (() -> Unit)? = null
 ) {
-    val effectiveTheme = remember(entry.colorHex, theme) {
-        entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it) } ?: theme
+    val isDark = isSystemInDarkTheme()
+    val effectiveTheme = remember(entry.colorHex, theme, isDark) {
+        entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it, isDark) } ?: theme
     }
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -78,6 +81,7 @@ fun DiaryEntryCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 2.dp)
+            .heightIn(min = 74.dp)
             .graphicsLayer(
                 scaleX = scale,
                 scaleY = scale
@@ -94,7 +98,8 @@ fun DiaryEntryCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(vertical = 12.dp)
+                .padding(start = 16.dp, end = 12.dp),
             verticalAlignment = Alignment.Top
         ) {
             // Date Section: Day number on top, Day of week below
@@ -122,16 +127,18 @@ fun DiaryEntryCard(
             Spacer(modifier = Modifier.width(10.dp))
 
             // Content Section
-            Column(modifier = Modifier.padding(2.dp).fillMaxWidth(0.7f)) {
+            Column(modifier = Modifier.weight(1f).padding(2.dp)) {
                 Text(
                     text = DateUtil.getTime(entry.timestamp),
                     style = MaterialTheme.typography.labelSmall,
                     color = effectiveTheme.primaryTextColor
                 )
+
                 Text(
                     text = entry.title,
                     modifier = Modifier.offset(y = (-2).dp),
                     fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
                     maxLines = 1,
                     fontFamily = displayLargeFontFamily,
                     color = effectiveTheme.primaryTextColor
@@ -156,8 +163,8 @@ fun DiaryEntryCard(
             // Icons Section: Weather -> Mood -> Bookmark
             Row(
                 verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
-                modifier = Modifier.padding(top = 2.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
             ) {
                 // Weather Icon
                 Icon(
@@ -224,7 +231,7 @@ fun DiaryEntryCard(
                             painter = painterResource(id = R.drawable.ic_diary_attach),
                             contentDescription = "Has Attachment",
                             tint = effectiveTheme.primaryTextColor,
-                            modifier = Modifier.size(24.dp).rotate(20f)
+                            modifier = Modifier.size(24.dp).rotate(30f)
                         )
                     }
                 }

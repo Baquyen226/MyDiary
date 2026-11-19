@@ -2,6 +2,7 @@ package com.personalproject.mydiary.ui.feature.folder_list.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,10 +31,14 @@ fun ProfileHeader(
     profile: Profile?,
     modifier: Modifier = Modifier
 ) {
+    val isDark = isSystemInDarkTheme()
+    val headerBg = if (isDark) Color(0xFF2C394B) else Color(0xFF4A5D74)
+    val avatarBg = if (isDark) Color(0xFF3B4D63) else Color.White
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color(0xFF4A5D74))
+            .background(headerBg)
             .statusBarsPadding()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -44,7 +49,7 @@ fun ProfileHeader(
             modifier = Modifier
                 .size(64.dp)
                 .clip(CircleShape)
-                .background(Color.White)
+                .background(avatarBg)
         )
         
         Spacer(modifier = Modifier.width(16.dp))

@@ -47,7 +47,7 @@ fun DiaryTab(
                 Text(
                     text = "No entries yet",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {

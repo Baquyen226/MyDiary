@@ -1,5 +1,6 @@
 package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,8 +60,9 @@ fun DiaryEntryWindow(
    onColorChange: (String) -> Unit = {},
    onMoodChange: (Int) -> Unit = {}
 ) {
-   val effectiveTheme = remember(entry.colorHex, theme) {
-      entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it) } ?: theme
+   val isDark = isSystemInDarkTheme()
+   val effectiveTheme = remember(entry.colorHex, theme, isDark) {
+      entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it, isDark) } ?: theme
    }
 
    Dialog(

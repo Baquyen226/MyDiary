@@ -1,6 +1,9 @@
 package com.personalproject.mydiary.ui.feature.folder_list.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +42,23 @@ fun FolderListItem(
         FolderType.NOTES -> R.drawable.ic_folderview_type_notes
     }
     
-    val textColor = folder.color?.let { Color(it.toColorInt()) } ?: Color.DarkGray
+    val isDark = isSystemInDarkTheme()
+    val defaultColor = if (isDark) MaterialTheme.colorScheme.onSurface else Color.DarkGray
+    val textColor = remember(folder.color, isDark) {
+        folder.color?.let { hex ->
+            runCatching {
+                val base = Color(hex.toColorInt())
+                if (isDark) {
+                    val hsv = FloatArray(3)
+                    android.graphics.Color.colorToHSV(base.toArgb(), hsv)
+                    hsv[2] = hsv[2].coerceAtLeast(0.78f)
+                    Color(android.graphics.Color.HSVToColor(hsv))
+                } else {
+                    base
+                }
+            }.getOrNull()
+        } ?: defaultColor
+    }
 
     Column (
         modifier = Modifier.padding(start = 24.dp)
@@ -89,7 +108,7 @@ fun FolderListItem(
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 0.5.dp,
-            color = Color.LightGray.copy(alpha = 0.5f)
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
         )
     }
 }
