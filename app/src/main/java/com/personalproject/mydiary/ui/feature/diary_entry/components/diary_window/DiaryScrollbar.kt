@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components
+package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
@@ -36,7 +36,7 @@ fun Modifier.diaryScrollbar(
     drawRoundRect(
         color = color,
         topLeft = Offset(x = size.width - 40.0f, y = thumbOffset),
-        size = Size(width = 16f, height = thumbHeight),
+        size = Size(width = 18f, height = thumbHeight),
         cornerRadius = CornerRadius(10f, 10f)
     )
 }

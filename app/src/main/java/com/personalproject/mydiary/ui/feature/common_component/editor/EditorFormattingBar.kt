@@ -41,7 +41,8 @@ fun EditorFormattingBar(
     state: RichTextState,
     theme: TimelineCardPreference,
     visible: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClose: (() -> Unit)? = null
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -135,7 +136,8 @@ fun EditorFormattingBar(
                     FormatToggleButton(
                         iconRes = R.drawable.ic_editor_format_align_left,
                         contentDescription = "Align Left",
-                        isSelected = state.currentParagraphStyle.textAlign == TextAlign.Start,
+                        isSelected = state.currentParagraphStyle.textAlign == TextAlign.Start ||
+                                state.currentParagraphStyle.textAlign == TextAlign.Unspecified,
                         tintColor = theme.primaryTextColor,
                         onClick = {
                             state.addParagraphStyle(ParagraphStyle(textAlign = TextAlign.Start))
@@ -202,6 +204,23 @@ fun EditorFormattingBar(
                         tintColor = theme.primaryTextColor,
                         onClick = { state.toggleOrderedList() }
                     )
+                }
+
+                // Optional Close Button
+                if (onClose != null) {
+                    item {
+                        IconButton(
+                            onClick = onClose,
+                            modifier = Modifier.size(40.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_ui_close),
+                                contentDescription = "Close Formatting Bar",
+                                tint = Color.Gray,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

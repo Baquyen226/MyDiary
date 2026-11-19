@@ -41,12 +41,15 @@ fun FolderListItem(
     
     val textColor = folder.color?.let { Color(it.toColorInt()) } ?: Color.DarkGray
 
-    Column {
+    Column (
+        modifier = Modifier.padding(start = 24.dp)
+    ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
                 .clickable { onClick() }
-                .padding(vertical = 24.dp, horizontal = 24.dp),
+                .padding(vertical = 28.dp)
+                .padding(start = 4.dp, end = 32.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -56,21 +59,21 @@ fun FolderListItem(
                 modifier = Modifier.size(28.dp)
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(18.dp))
 
             Text(
                 text = folder.name,
                 style = MaterialTheme.typography.titleMedium,
                 color = textColor,
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 modifier = Modifier.weight(1f)
             )
 
             Text(
                 text = summary.itemCount.toString(),
                 color = textColor,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(end = 8.dp)
+                fontSize = 12.sp,
+                modifier = Modifier.padding(end = 4.dp)
             )
 
             Icon(
@@ -78,7 +81,7 @@ fun FolderListItem(
                 contentDescription = null,
                 tint = textColor,
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(12.dp)
                     .rotate(180f)
             )
         }

@@ -61,6 +61,12 @@ class FolderViewViewModel(
         }
     }
 
+    fun updateEntry(entry: DiaryEntry) {
+        viewModelScope.launch {
+            entryRepository.update(entry)
+        }
+    }
+
     companion object {
         fun provideFactory(folderId: String): ViewModelProvider.Factory = viewModelFactory {
             initializer {

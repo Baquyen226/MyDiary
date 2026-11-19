@@ -14,3 +14,14 @@ fun Int.getMoodRes(): Int {
         else -> R.drawable.ic_diary_mood_not_set
     }
 }
+
+fun Int.getMoodLabel(): String {
+    return when (this) {
+        1 -> "Very Sad"
+        2 -> "Sad"
+        3 -> "Neutral"
+        4 -> "Happy"
+        5 -> "Very Happy"
+        else -> "Not Set"
+    }
+}

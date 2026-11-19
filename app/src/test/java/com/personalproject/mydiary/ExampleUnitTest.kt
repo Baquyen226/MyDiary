@@ -1,17 +1,14 @@
 package com.personalproject.mydiary
 
+import com.personalproject.mydiary.core.util.normalizeContentForHtml
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-import org.junit.Assert.*
-
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun testNewlinePreservation() {
+        val input = "Line 1\n\nLine 2\nLine 3"
+        val html = normalizeContentForHtml(input)
+        assertTrue(html.contains("<br>"))
     }
 }

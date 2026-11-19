@@ -39,6 +39,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

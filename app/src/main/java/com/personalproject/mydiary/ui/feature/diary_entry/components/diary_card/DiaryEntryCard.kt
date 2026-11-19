@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components
+package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_card
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,18 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.core.util.DateUtil
-import com.personalproject.mydiary.core.util.toPlainText
 import com.personalproject.mydiary.core.util.toPreviewText
 import com.personalproject.mydiary.data.mock.MockDiary
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
-import com.personalproject.mydiary.domain.timeline.model.Weather
 import com.personalproject.mydiary.ui.feature.diary_entry.getMoodRes
 import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
+import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
-import java.time.ZoneId
-import java.time.ZonedDateTime
 
 /**
  * A card displaying a summary of a diary entry in timeline view.
@@ -54,6 +51,7 @@ import java.time.ZonedDateTime
  * @param theme The color and style preferences to apply to the card components.
  * @param onClick Triggered when the card is clicked.
  * @param onBookmarkClick Optional callback when the bookmark icon is clicked.
+ * @param onMoodClick Optional callback when the mood icon is clicked to change mood.
  */
 @Preview(showBackground = true, backgroundColor = -14330178)
 @Composable
@@ -62,8 +60,13 @@ fun DiaryEntryCard(
     theme: TimelineCardPreference = BlueSky.timelineCardPreference,
     onClick: () -> Unit = {},
     onBookmarkClick: (() -> Unit)? = null,
+    onMoodClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
+    val effectiveTheme = remember(entry.colorHex, theme) {
+        entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it) } ?: theme
+    }
+
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
@@ -85,7 +88,7 @@ fun DiaryEntryCard(
                 indication = null
             ),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = theme.surfaceColor),
+        colors = CardDefaults.cardColors(containerColor = effectiveTheme.surfaceColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
@@ -104,14 +107,14 @@ fun DiaryEntryCard(
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Light,
                     fontFamily = displayLargeFontFamily,
-                    color = theme.primaryTextColor,
+                    color = effectiveTheme.primaryTextColor,
                     lineHeight = 46.sp,
                     fontSize = 36.sp
                 )
                 Text(
                     text = DateUtil.dayOfWeek(entry.timestamp),
                     style = MaterialTheme.typography.bodySmall,
-                    color = theme.primaryTextColor,
+                    color = effectiveTheme.primaryTextColor,
                     modifier = Modifier.offset(y = (-1).dp)
                 )
             }
@@ -123,7 +126,7 @@ fun DiaryEntryCard(
                 Text(
                     text = DateUtil.getTime(entry.timestamp),
                     style = MaterialTheme.typography.labelSmall,
-                    color = theme.primaryTextColor
+                    color = effectiveTheme.primaryTextColor
                 )
                 Text(
                     text = entry.title,
@@ -131,7 +134,7 @@ fun DiaryEntryCard(
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     fontFamily = displayLargeFontFamily,
-                    color = theme.primaryTextColor
+                    color = effectiveTheme.primaryTextColor
                 )
 
                 // Attempts to find the first line of text. If not found (only images/recordings), leave it blank.
@@ -143,14 +146,14 @@ fun DiaryEntryCard(
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = displayLargeFontFamily,
                     maxLines = 1,
-                    color = theme.subtitleTextColor,
+                    color = effectiveTheme.subtitleTextColor,
                     fontSize = 12.sp
                 )
             }
 
             // Icons Section: Weather -> Mood -> Bookmark
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(15.dp),
                 modifier = Modifier.padding(top = 2.dp)
             ) {
@@ -158,41 +161,70 @@ fun DiaryEntryCard(
                 Icon(
                     painter = painterResource(id = entry.weather.iconRes),
                     contentDescription = entry.weather.label,
-                    tint = theme.primaryTextColor,
+                    tint = effectiveTheme.primaryTextColor,
                     modifier = Modifier.size(18.dp)
                 )
 
-                // Mood Icon
+                // Mood Icon (clickable to change mood)
                 val moodRes = entry.moodScore.getMoodRes()
                 val moodTint = if (moodRes == 0.getMoodRes())
-                    theme.subtitleTextColor else theme.primaryTextColor
-                Icon(
-                    painter = painterResource(id = moodRes),
-                    contentDescription = "Mood",
-                    tint = moodTint,
-                    modifier = Modifier.size(18.dp)
-                )
+                    effectiveTheme.subtitleTextColor else effectiveTheme.primaryTextColor
 
-                // Bookmark Icon
-                if (onBookmarkClick != null) {
+                if (onMoodClick != null) {
                     IconButton(
-                        onClick = onBookmarkClick,
+                        onClick = onMoodClick,
                         modifier = Modifier.size(20.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_diary_bookmark),
-                            contentDescription = "Bookmark",
-                            tint = theme.primaryTextColor,
+                            painter = painterResource(id = moodRes),
+                            contentDescription = "Mood",
+                            tint = moodTint,
                             modifier = Modifier.size(18.dp)
                         )
                     }
                 } else {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_diary_bookmark),
-                        contentDescription = "Bookmark",
-                        tint = theme.primaryTextColor,
+                        painter = painterResource(id = moodRes),
+                        contentDescription = "Mood",
+                        tint = moodTint,
                         modifier = Modifier.size(18.dp)
                     )
+                }
+
+                val hasAttachment = entry.imageUris.isNotEmpty() || !entry.voiceNoteUri.isNullOrEmpty()
+                Column() {
+                    // Bookmark Icon
+                    if (onBookmarkClick != null) {
+                        IconButton(
+                            onClick = onBookmarkClick,
+                            modifier = Modifier.size(20.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_diary_bookmark),
+                                contentDescription = "Bookmark",
+                                tint = effectiveTheme.primaryTextColor,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    } else {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_diary_bookmark),
+                            contentDescription = "Bookmark",
+                            tint = effectiveTheme.primaryTextColor,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    if (hasAttachment) {
+                        Spacer(Modifier.size(12.dp))
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_diary_attach),
+                            contentDescription = "Has Attachment",
+                            tint = effectiveTheme.primaryTextColor,
+                            modifier = Modifier.size(24.dp).rotate(20f)
+                        )
+                    }
                 }
             }
         }
