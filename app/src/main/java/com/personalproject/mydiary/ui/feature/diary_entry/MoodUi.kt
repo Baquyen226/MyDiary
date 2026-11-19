@@ -1,6 +1,7 @@
 package com.personalproject.mydiary.ui.feature.diary_entry
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.personalproject.mydiary.R
 
 @DrawableRes
@@ -15,13 +16,14 @@ fun Int.getMoodRes(): Int {
     }
 }
 
-fun Int.getMoodLabel(): String {
+@StringRes
+fun Int.getMoodLabel(): Int {
     return when (this) {
-        1 -> "Very Sad"
-        2 -> "Sad"
-        3 -> "Neutral"
-        4 -> "Happy"
-        5 -> "Very Happy"
-        else -> "Not Set"
+        1 -> R.string.ui_diary_choose_mood1
+        2 -> R.string.ui_diary_choose_mood2
+        3 -> R.string.ui_diary_choose_mood3
+        4 -> R.string.ui_diary_choose_mood4
+        5 -> R.string.ui_diary_choose_mood5
+        else -> R.string.ui_diary_choose_mood0
     }
 }

@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.domain.timeline.model.Weather
 import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
@@ -66,7 +68,11 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
             )
             Spacer(Modifier.padding(4.dp))
 
-            val weather = entry.weather.label
+            val weather = if (entry.weather == Weather.UNKNOWN) {
+                stringResource(R.string.ui_folder_window_weather_unknown)
+            } else {
+                entry.weather.label
+            }
             val temperatureDisplay = "${entry.temperatureHigh}°/  ${entry.temperatureLow}°"
 
             Row {
@@ -99,8 +105,10 @@ fun DiaryHeader(entry: DiaryEntry, theme: TimelineCardPreference, onDismiss: () 
 
                 Spacer(Modifier.padding(8.dp))
 
-                val location = entry.location ?: "UNKNOWN"
-                val iconId = if (location == "UNKNOWN") {
+                val unknownLocation = stringResource(R.string.ui_folder_window_location_unknown)
+                val isUnknownLocation = entry.location.isNullOrBlank() || entry.location == "UNKNOWN"
+                val location = if (isUnknownLocation) unknownLocation else entry.location
+                val iconId = if (isUnknownLocation) {
                     R.drawable.ic_ui_wrong_location_24dp
                 } else {
                     R.drawable.ic_ui_location_24dp

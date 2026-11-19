@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_folder_view_diary">日記</string>
+    <string name="ui_folder_window_location_unknown">不明</string>
+    <string name="ui_folder_window_weather_unknown">不明</string>
+    <string name="ui_folder_view_entries">エントリー</string>
+    <string name="ui_folder_view_calendar">カレンダー</string>
+    <string name="ui_folder_window_edit_diary">編集</string>
+    <string name="ui_folder_window_edit_color">色</string>
+    <string name="ui_folder_window_edit_mood">気分</string>
+    <string name="ui_folder_view_entry_count">件</string>
+    <string name="ui_folder_view_today">今日</string>
+    <string name="ui_folder_view_diary_title_prompt">タイトル</string>
+    <string name="ui_folder_view_diary_body_prompt">今日あったこと...</string>
+    <string name="ui_diary_choose_mood0">未設定</string>
+    <string name="ui_diary_choose_mood1">最悪</string>
+    <string name="ui_diary_choose_mood2">わるい</string>
+    <string name="ui_diary_choose_mood3">まあまあ</string>
+    <string name="ui_diary_choose_mood4">良い</string>
+    <string name="ui_diary_choose_mood5">最高</string>
+    <string name="ui_close">閉じる</string>
+    <string name="ui_diary_choose_mood_prompt">気分を選択</string>
+</resources>

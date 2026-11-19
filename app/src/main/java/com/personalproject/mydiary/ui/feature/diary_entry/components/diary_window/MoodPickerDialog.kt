@@ -25,12 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.personalproject.mydiary.R
 import com.personalproject.mydiary.ui.feature.diary_entry.getMoodLabel
 import com.personalproject.mydiary.ui.feature.diary_entry.getMoodRes
 import com.personalproject.mydiary.ui.theme.BlueSky
@@ -62,7 +64,7 @@ fun MoodPickerDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Select Mood",
+                    text = stringResource(R.string.ui_diary_choose_mood_prompt),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF212121)
@@ -71,7 +73,7 @@ fun MoodPickerDialog(
                 Spacer(modifier = Modifier.height(18.dp))
 
 
-                val chunkSize = (moods.size + 1) / 2
+                val chunkSize = 3
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -84,7 +86,7 @@ fun MoodPickerDialog(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             rowMoods.forEach { score ->
-                                val isSelected = currentMood == score
+                                val isSelected = (currentMood == score && currentMood != 0)
                                 val moodRes = score.getMoodRes()
                                 val moodLabel = score.getMoodLabel()
 
@@ -117,7 +119,7 @@ fun MoodPickerDialog(
                                     ) {
                                         Icon(
                                             painter = painterResource(id = moodRes),
-                                            contentDescription = moodLabel,
+                                            contentDescription = stringResource(moodLabel),
                                             modifier = Modifier.size(26.dp),
                                             tint = if (isSelected || score != 0) theme.primaryTextColor else Color.Gray
                                         )
@@ -126,8 +128,8 @@ fun MoodPickerDialog(
                                     Spacer(modifier = Modifier.height(4.dp))
 
                                     Text(
-                                        text = moodLabel,
-                                        fontSize = 9.sp,
+                                        text = stringResource(moodLabel),
+                                        fontSize = 12.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                         color = if (isSelected) theme.primaryTextColor else Color.DarkGray,
                                         textAlign = TextAlign.Center
@@ -145,7 +147,7 @@ fun MoodPickerDialog(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Close")
+                    Text(stringResource(R.string.ui_close))
                 }
             }
         }

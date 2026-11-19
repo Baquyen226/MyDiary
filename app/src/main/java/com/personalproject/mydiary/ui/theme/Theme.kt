@@ -61,7 +61,7 @@ fun MyDiaryTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = getAppTypography(),
         content = content
     )
 }

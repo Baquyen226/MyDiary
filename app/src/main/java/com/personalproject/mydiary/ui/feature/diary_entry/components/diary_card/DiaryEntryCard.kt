@@ -137,6 +137,8 @@ fun DiaryEntryCard(
                     color = effectiveTheme.primaryTextColor
                 )
 
+                Spacer(modifier.size(4.dp))
+
                 // Attempts to find the first line of text. If not found (only images/recordings), leave it blank.
                 val previewText = (entry.bodyPlain.ifEmpty { entry.body }).toPreviewText()
 
@@ -147,7 +149,7 @@ fun DiaryEntryCard(
                     fontFamily = displayLargeFontFamily,
                     maxLines = 1,
                     color = effectiveTheme.subtitleTextColor,
-                    fontSize = 12.sp
+                    fontSize = 14.sp
                 )
             }
 

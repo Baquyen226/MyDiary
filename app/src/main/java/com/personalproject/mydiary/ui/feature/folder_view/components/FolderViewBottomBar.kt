@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.personalproject.mydiary.R
 import com.personalproject.mydiary.ui.feature.common_component.BottomBarModifier
 import com.personalproject.mydiary.ui.feature.folder_view.FolderTab
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
@@ -37,14 +39,14 @@ import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 
 @Composable
 fun FolderViewBottomBar(
+    modifier: Modifier = Modifier,
     currentTab: FolderTab,
     theme: TimelineCardPreference,
     entriesCount: Int,
     onNewEntryClick: () -> Unit,
     onDiscardEditorClick: () -> Unit,
     onSaveEditorClick: () -> Unit,
-    onTodayClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onTodayClick: () -> Unit = {}
 ) {
     Surface(
         color = theme.primaryTextColor,
@@ -102,7 +104,7 @@ fun FolderViewBottomBar(
                                 horizontalArrangement = Arrangement.End,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                val countText = if (entriesCount == 1) "1  entry" else "$entriesCount  entry"
+                                val countText = "$entriesCount  ${stringResource(R.string.ui_folder_view_entry_count)}"
                                 Text(
                                     text = countText,
                                     color = Color.White,
@@ -126,7 +128,7 @@ fun FolderViewBottomBar(
                                 onClick = onTodayClick,
                                 colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
                             ) {
-                                Text("Today")
+                                Text(stringResource(R.string.ui_folder_view_today))
                             }
                         }
                     }

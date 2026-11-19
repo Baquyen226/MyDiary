@@ -1,16 +1,20 @@
 package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -26,14 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.data.mock.MockDiary
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.ui.feature.common_component.DropdownFontSize
 import com.personalproject.mydiary.ui.feature.diary_entry.getMoodRes
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
+import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 
 
 @Composable
@@ -86,84 +94,93 @@ fun DiaryFooter(
                 DropdownMenu(
                     expanded = showMoreMenu,
                     onDismissRequest = { showMoreMenu = false },
-                    modifier = Modifier
-                        .background(Color.White)
-                        .widthIn(min = 230.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    containerColor = Color.White,
+                    shadowElevation = 6.dp,
+                    border = BorderStroke(1.dp, Color(0xFFE5E7EB)),
+                    modifier = Modifier.width(195.dp)
                 ) {
-                    // 1. Edit Diary - enters DiaryEditor with it
+                    val itemModifier = Modifier
+                        .padding(horizontal = 6.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                    val itemPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp)
+
+                    // Edit Diary
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "Edit Diary",
-                                color = Color(0xFF212121),
-                                fontSize = 14.sp
+                                text = stringResource(R.string.ui_folder_window_edit_diary),
+                                color = theme.secondaryTextColor,
+                                fontSize = DropdownFontSize,
+                                fontWeight = FontWeight.Medium
                             )
                         },
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_folderview_type_diary),
-                                contentDescription = "Edit Diary",
-                                modifier = Modifier.size(20.dp),
+                                contentDescription = stringResource(R.string.ui_folder_window_edit_diary),
+                                modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
                             )
                         },
+                        contentPadding = itemPadding,
+                        modifier = itemModifier,
                         onClick = {
                             showMoreMenu = false
                             onEditClick()
                         }
                     )
 
-                    // 2. Change Color Hex - displays current color on the right, displays its preview color
+                    // Change Color Hex
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "Color",
-                                color = Color(0xFF212121),
-                                fontSize = 14.sp
+                                text = stringResource(R.string.ui_folder_window_edit_color),
+                                color = theme.secondaryTextColor,
+                                fontSize = DropdownFontSize,
+                                fontWeight = FontWeight.Medium
                             )
                         },
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_diary_color),
-                                contentDescription = "Color",
-                                modifier = Modifier.size(20.dp),
+                                contentDescription = stringResource(R.string.ui_folder_window_edit_color),
+                                modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
                             )
                         },
                         trailingIcon = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(18.dp)
-                                        .clip(CircleShape)
-                                        .background(currentColor)
-                                        .border(1.dp, Color.LightGray.copy(alpha = 0.5f), CircleShape)
-                                )
-                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clip(CircleShape)
+                                    .background(currentColor)
+                                    .border(1.dp, Color.Black.copy(alpha = 0.12f), CircleShape)
+                            )
                         },
+                        contentPadding = itemPadding,
+                        modifier = itemModifier,
                         onClick = {
                             showMoreMenu = false
                             showColorDialog = true
                         }
                     )
 
-                    // 3. Change Mood
+                    // Change Mood
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = "Mood",
-                                color = Color(0xFF212121),
-                                fontSize = 14.sp
+                                text = stringResource(R.string.ui_folder_window_edit_mood),
+                                color = theme.secondaryTextColor,
+                                fontSize = DropdownFontSize,
+                                fontWeight = FontWeight.Medium
                             )
                         },
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_diary_mood_happy1),
-                                contentDescription = "Mood",
-                                modifier = Modifier.size(20.dp),
+                                contentDescription = stringResource(R.string.ui_folder_window_edit_mood),
+                                modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
                             )
                         },
@@ -172,10 +189,12 @@ fun DiaryFooter(
                             Icon(
                                 painter = painterResource(id = moodRes),
                                 contentDescription = "Current Mood",
-                                modifier = Modifier.size(20.dp),
-                                tint = if (entry.moodScore == 0) Color.Gray else theme.primaryTextColor
+                                modifier = Modifier.size(19.dp),
+                                tint = if (entry.moodScore == 0) Color(0xFF9CA3AF) else theme.primaryTextColor
                             )
                         },
+                        contentPadding = itemPadding,
+                        modifier = itemModifier,
                         onClick = {
                             showMoreMenu = false
                             showMoodDialog = true

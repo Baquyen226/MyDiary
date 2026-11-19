@@ -1,7 +1,10 @@
 package com.personalproject.mydiary.ui.feature.folder_view
 
-enum class FolderTab(val label: String) {
-    ENTRIES("Entries"),
-    CALENDAR("Calendar"),
-    EDITOR("Diary")
+import androidx.annotation.StringRes
+import com.personalproject.mydiary.R
+
+enum class FolderTab(@StringRes val titleRes: Int) {
+    ENTRIES(R.string.ui_folder_view_entries),
+    CALENDAR(R.string.ui_folder_view_calendar),
+    EDITOR(R.string.ui_folder_view_diary)
 }
