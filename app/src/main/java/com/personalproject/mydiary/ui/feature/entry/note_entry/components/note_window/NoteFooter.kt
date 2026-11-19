@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.entry.note_entry.components.note_window
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -12,9 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -31,41 +35,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
-import com.personalproject.mydiary.data.mock.MockDiary
-import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.data.mock.MockEntry
+import com.personalproject.mydiary.domain.timeline.model.NoteEntry
 import com.personalproject.mydiary.ui.feature.common_component.DropdownFontSize
-import com.personalproject.mydiary.ui.feature.diary_entry.getMoodRes
+import com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window.DiaryColorPickerDialog
+import com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window.parseHexColor
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
-import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 
-
+/**
+ * Footer for [NoteWindow] displaying three actions: More_horizontal, add_alarm, and delete.
+ *
+ * @param noteEntry The note entry.
+ * @param theme The styling preferences to apply.
+ * @param onMoreOptionsClick Callback when more options button is clicked.
+ * @param onEditClick Callback to edit note.
+ * @param onColorChange Callback when a color hex is selected.
+ * @param onAddAlarmClick Callback when add_alarm is clicked.
+ * @param onDeleteClick Callback when delete is clicked.
+ * @param onPinToggle Callback to toggle pinned status.
+ * @param onBookmarkToggle Callback to toggle bookmark status.
+ */
 @Composable
-fun DiaryFooter(
-    entry: DiaryEntry = MockDiary.mockDiaryEntry_1,
+@Preview
+fun NoteFooter(
+    noteEntry: NoteEntry = MockEntry.mockNoteEntry_1,
     theme: TimelineCardPreference = BlueSky.timelineCardPreference,
     onMoreOptionsClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
     onColorChange: (String) -> Unit = {},
-    onMoodChange: (Int) -> Unit = {},
-    onLocationClick: () -> Unit = {},
-    onCameraClick: () -> Unit = {},
-    onMusicClick: () -> Unit = {},
-    onDeleteClick: () -> Unit = {}
+    onAddAlarmClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onPinToggle: () -> Unit = {},
+    onBookmarkToggle: () -> Unit = {}
 ) {
     var showMoreMenu by remember { mutableStateOf(false) }
     var showColorDialog by remember { mutableStateOf(false) }
-    var showMoodDialog by remember { mutableStateOf(false) }
 
-    val currentColor = remember(entry.colorHex, theme.primaryTextColor) {
-        parseHexColor(entry.colorHex) ?: theme.primaryTextColor
+    val currentColor = remember(noteEntry.colorHex, theme.primaryTextColor) {
+        parseHexColor(noteEntry.colorHex) ?: theme.primaryTextColor
     }
-    val displayHex = entry.colorHex ?: "#1E81B0"
 
     Column(
         modifier = Modifier
@@ -75,11 +88,11 @@ fun DiaryFooter(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(horizontal = 24.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // More Options
+            // 1. More_horizontal Button
             Box {
                 IconButton(onClick = {
                     onMoreOptionsClick()
@@ -106,11 +119,11 @@ fun DiaryFooter(
                         .clip(RoundedCornerShape(8.dp))
                     val itemPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp)
 
-                    // Edit Diary
+                    // Edit Note
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(R.string.ui_folder_window_edit_diary),
+                                text = "Edit Note",
                                 color = theme.secondaryTextColor,
                                 fontSize = DropdownFontSize,
                                 fontWeight = FontWeight.Medium
@@ -118,8 +131,8 @@ fun DiaryFooter(
                         },
                         leadingIcon = {
                             Icon(
-                                painter = painterResource(R.drawable.ic_folderview_type_diary),
-                                contentDescription = stringResource(R.string.ui_folder_window_edit_diary),
+                                painter = painterResource(R.drawable.ic_folderview_type_notes),
+                                contentDescription = "Edit Note",
                                 modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
                             )
@@ -132,11 +145,11 @@ fun DiaryFooter(
                         }
                     )
 
-                    // Change Color Hex
+                    // Change Color
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(R.string.ui_folder_window_edit_color),
+                                text = "Color",
                                 color = theme.secondaryTextColor,
                                 fontSize = DropdownFontSize,
                                 fontWeight = FontWeight.Medium
@@ -145,7 +158,7 @@ fun DiaryFooter(
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_diary_color),
-                                contentDescription = stringResource(R.string.ui_folder_window_edit_color),
+                                contentDescription = "Change Color",
                                 modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
                             )
@@ -167,11 +180,11 @@ fun DiaryFooter(
                         }
                     )
 
-                    // Change Mood
+                    // Pin / Unpin Note
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = stringResource(R.string.ui_folder_window_edit_mood),
+                                text = if (noteEntry.isPinned) "Unpin Note" else "Pin Note",
                                 color = theme.secondaryTextColor,
                                 fontSize = DropdownFontSize,
                                 fontWeight = FontWeight.Medium
@@ -179,59 +192,58 @@ fun DiaryFooter(
                         },
                         leadingIcon = {
                             Icon(
-                                painter = painterResource(R.drawable.ic_diary_mood),
-                                contentDescription = stringResource(R.string.ui_folder_window_edit_mood),
+                                imageVector = if (noteEntry.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                                contentDescription = "Pin Note",
                                 modifier = Modifier.size(19.dp),
                                 tint = theme.primaryTextColor
-                            )
-                        },
-                        trailingIcon = {
-                            val moodRes = entry.moodScore.getMoodRes()
-                            Icon(
-                                painter = painterResource(id = moodRes),
-                                contentDescription = "Current Mood",
-                                modifier = Modifier.size(19.dp),
-                                tint = if (entry.moodScore == 0) MaterialTheme.colorScheme.onSurfaceVariant else theme.primaryTextColor
                             )
                         },
                         contentPadding = itemPadding,
                         modifier = itemModifier,
                         onClick = {
                             showMoreMenu = false
-                            showMoodDialog = true
+                            onPinToggle()
+                        }
+                    )
+
+                    // Bookmark / Remove Bookmark
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = if (noteEntry.isBookmarked) "Remove Bookmark" else "Bookmark",
+                                color = theme.secondaryTextColor,
+                                fontSize = DropdownFontSize,
+                                fontWeight = FontWeight.Medium
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = if (noteEntry.isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                                contentDescription = "Bookmark",
+                                modifier = Modifier.size(19.dp),
+                                tint = theme.primaryTextColor
+                            )
+                        },
+                        contentPadding = itemPadding,
+                        modifier = itemModifier,
+                        onClick = {
+                            showMoreMenu = false
+                            onBookmarkToggle()
                         }
                     )
                 }
             }
 
-            // Location
-            IconButton(onClick = onLocationClick) {
+            // 2. add_alarm Button
+            IconButton(onClick = onAddAlarmClick) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_ui_location_24dp),
-                    contentDescription = "Location",
+                    painter = painterResource(id = R.drawable.ic_ui_add_alarm),
+                    contentDescription = "Add Alarm",
                     tint = Color.White
                 )
             }
 
-            // Camera
-            IconButton(onClick = onCameraClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_ui_photo_camera_24dp),
-                    contentDescription = "Camera",
-                    tint = Color.White
-                )
-            }
-
-            // Music
-            IconButton(onClick = onMusicClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_ui_music_note_24dp),
-                    contentDescription = "Music",
-                    tint = Color.White
-                )
-            }
-
-            // Delete
+            // 3. delete Button
             IconButton(onClick = onDeleteClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_ui_delete),
@@ -244,24 +256,12 @@ fun DiaryFooter(
 
     if (showColorDialog) {
         DiaryColorPickerDialog(
-            initialColorHex = entry.colorHex,
+            initialColorHex = noteEntry.colorHex,
             fallbackColor = theme.primaryTextColor,
             onDismiss = { showColorDialog = false },
             onColorSelected = { newHex ->
                 showColorDialog = false
                 onColorChange(newHex)
-            }
-        )
-    }
-
-    if (showMoodDialog) {
-        MoodPickerDialog(
-            currentMood = entry.moodScore,
-            theme = theme,
-            onDismiss = { showMoodDialog = false },
-            onMoodSelected = { newMood ->
-                showMoodDialog = false
-                onMoodChange(newMood)
             }
         )
     }

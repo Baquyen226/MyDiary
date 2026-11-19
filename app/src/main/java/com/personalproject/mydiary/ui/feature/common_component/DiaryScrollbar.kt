@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.common_component
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable

@@ -1,10 +1,10 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_card
+package com.personalproject.mydiary.ui.feature.entry.note_entry.components.note_card
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -36,46 +40,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.core.util.DateUtil
-import com.personalproject.mydiary.core.util.toPreviewText
-import com.personalproject.mydiary.data.mock.MockDiary
-import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
-import com.personalproject.mydiary.ui.feature.diary_entry.getMoodRes
-import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
+import com.personalproject.mydiary.data.mock.MockEntry
+import com.personalproject.mydiary.domain.timeline.model.NoteEntry
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 
 /**
- * A card displaying a summary of a diary entry in timeline view.
+ * A card displaying a summary of a note entry in timeline or folder view.
  *
- * @param entry The [DiaryEntry] containing timestamp, title, weather, mood, and bookmark status.
+ * @param modifier Modifier for styling and layout.
+ * @param noteEntry The [NoteEntry] containing timestamp, title, body content, and bookmark status.
  * @param theme The color and style preferences to apply to the card components.
  * @param onClick Triggered when the card is clicked.
  * @param onBookmarkClick Optional callback when the bookmark icon is clicked.
- * @param onMoodClick Optional callback when the mood icon is clicked to change mood.
+ * @param onPinClick Optional callback when the pin icon is clicked.
  */
-@Preview(showBackground = true, backgroundColor = -14330178)
 @Composable
-fun DiaryEntryCard(
+@Preview
+fun NoteCard(
     modifier: Modifier = Modifier,
-    entry: DiaryEntry = MockDiary.mockDiaryEntry_1,
+    noteEntry: NoteEntry = MockEntry.mockNoteEntry_1,
     theme: TimelineCardPreference = BlueSky.timelineCardPreference,
     onClick: () -> Unit = {},
     onBookmarkClick: (() -> Unit)? = null,
-    onMoodClick: (() -> Unit)? = null
+    onPinClick: (() -> Unit)? = null
 ) {
     val isDark = isSystemInDarkTheme()
-    val effectiveTheme = remember(entry.colorHex, theme, isDark) {
-        entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it, isDark) } ?: theme
+    val effectiveTheme = remember(noteEntry.colorHex, theme, isDark) {
+        noteEntry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it, isDark) } ?: theme
     }
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.97f else 1f,
-        label = "cardPressedScaleAnimation"
+        label = "noteCardPressedScaleAnimation"
     )
+
+    val targetTimestamp = noteEntry.timestamp ?: noteEntry.createdAt
 
     Card(
         modifier = modifier
@@ -108,7 +112,7 @@ fun DiaryEntryCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = DateUtil.getDayOfMonth(entry.timestamp),
+                    text = DateUtil.getDayOfMonth(targetTimestamp),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Light,
                     fontFamily = displayLargeFontFamily,
@@ -117,7 +121,7 @@ fun DiaryEntryCard(
                     fontSize = 36.sp
                 )
                 Text(
-                    text = DateUtil.dayOfWeek(entry.timestamp),
+                    text = DateUtil.dayOfWeek(targetTimestamp),
                     style = MaterialTheme.typography.bodySmall,
                     color = effectiveTheme.primaryTextColor,
                     modifier = Modifier.offset(y = (-1).dp)
@@ -127,15 +131,15 @@ fun DiaryEntryCard(
             Spacer(modifier = Modifier.width(10.dp))
 
             // Content Section
-            Column(modifier = Modifier.weight(1f).padding(2.dp)) {
-                Text(
-                    text = DateUtil.getTime(entry.timestamp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = effectiveTheme.primaryTextColor
-                )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(alignment = Alignment.CenterVertically)
+                    .padding(2.dp),
 
+            ) {
                 Text(
-                    text = entry.title,
+                    text = noteEntry.title,
                     modifier = Modifier.offset(y = (-2).dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp,
@@ -143,99 +147,107 @@ fun DiaryEntryCard(
                     fontFamily = displayLargeFontFamily,
                     color = effectiveTheme.primaryTextColor
                 )
-
-                Spacer(modifier.size(4.dp))
-
-                // Attempts to find the first line of text. If not found (only images/recordings), leave it blank.
-                val previewText = (entry.bodyPlain.ifEmpty { entry.body }).toPreviewText()
-
-                Text(
-                    text = previewText,
-                    modifier = Modifier.offset(y = (-1).dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = displayLargeFontFamily,
-                    maxLines = 1,
-                    color = effectiveTheme.subtitleTextColor,
-                    fontSize = 14.sp
-                )
             }
 
-            // Icons Section: Weather -> Mood -> Bookmark
+            // Right Section: Bookmark & Optional Pin/Attachment status
             Row(
                 verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
             ) {
-                // Weather Icon
-                Icon(
-                    painter = painterResource(id = entry.weather.iconRes),
-                    contentDescription = entry.weather.label,
-                    tint = effectiveTheme.primaryTextColor,
-                    modifier = Modifier.size(18.dp)
-                )
-
-                // Mood Icon (clickable to change mood)
-                val moodRes = entry.moodScore.getMoodRes()
-                val moodTint = if (moodRes == 0.getMoodRes())
-                    effectiveTheme.subtitleTextColor else effectiveTheme.primaryTextColor
-
-                if (onMoodClick != null) {
-                    IconButton(
-                        onClick = onMoodClick,
-                        modifier = Modifier.size(20.dp)
-                    ) {
+                // Pin Indicator
+                if (noteEntry.isPinned) {
+                    if (onPinClick != null) {
+                        IconButton(
+                            onClick = onPinClick,
+                            modifier = Modifier.size(20.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.PushPin,
+                                contentDescription = "Pinned Note",
+                                tint = effectiveTheme.primaryTextColor,
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .rotate(30f)
+                            )
+                        }
+                    } else {
                         Icon(
-                            painter = painterResource(id = moodRes),
-                            contentDescription = "Mood",
-                            tint = moodTint,
-                            modifier = Modifier.size(18.dp)
+                            imageVector = Icons.Filled.PushPin,
+                            contentDescription = "Pinned Note",
+                            tint = effectiveTheme.primaryTextColor,
+                            modifier = Modifier
+                                .size(18.dp)
+                                .rotate(30f)
                         )
                     }
-                } else {
-                    Icon(
-                        painter = painterResource(id = moodRes),
-                        contentDescription = "Mood",
-                        tint = moodTint,
-                        modifier = Modifier.size(18.dp)
-                    )
                 }
 
-                val hasAttachment = entry.imageUris.isNotEmpty() || !entry.voiceNoteUri.isNullOrEmpty()
-                Column() {
-                    // Bookmark Icon
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Bookmark Icon (filled if bookmarked, outline if not)
+                    val bookmarkIcon = if (noteEntry.isBookmarked) {
+                        Icons.Filled.Bookmark
+                    } else {
+                        Icons.Outlined.BookmarkBorder
+                    }
+                    val bookmarkTint = if (noteEntry.isBookmarked) {
+                        effectiveTheme.primaryTextColor
+                    } else {
+                        effectiveTheme.primaryTextColor.copy(alpha = 0.5f)
+                    }
+
                     if (onBookmarkClick != null) {
                         IconButton(
                             onClick = onBookmarkClick,
                             modifier = Modifier.size(20.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_diary_bookmark),
-                                contentDescription = "Bookmark",
-                                tint = effectiveTheme.primaryTextColor,
+                                imageVector = bookmarkIcon,
+                                contentDescription = if (noteEntry.isBookmarked) "Bookmarked" else "Not Bookmarked",
+                                tint = bookmarkTint,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_diary_bookmark),
-                            contentDescription = "Bookmark",
-                            tint = effectiveTheme.primaryTextColor,
+                            imageVector = bookmarkIcon,
+                            contentDescription = if (noteEntry.isBookmarked) "Bookmarked" else "Not Bookmarked",
+                            tint = bookmarkTint,
                             modifier = Modifier.size(18.dp)
                         )
                     }
 
-                    if (hasAttachment) {
-                        Spacer(Modifier.size(12.dp))
-
+                    if (noteEntry.imageUris.isNotEmpty()) {
+                        Spacer(Modifier.size(10.dp))
                         Icon(
                             painter = painterResource(id = R.drawable.ic_diary_attach),
                             contentDescription = "Has Attachment",
                             tint = effectiveTheme.primaryTextColor,
-                            modifier = Modifier.size(24.dp).rotate(30f)
+                            modifier = Modifier
+                                .size(22.dp)
+                                .rotate(30f)
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = -14330178)
+@Composable
+private fun NoteCardPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        NoteCard(
+            noteEntry = MockEntry.mockNoteEntry_1
+        )
+        NoteCard(
+            noteEntry = MockEntry.mockNoteEntry_2.copy(isBookmarked = true)
+        )
     }
 }

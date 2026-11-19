@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,7 +25,7 @@ import com.personalproject.mydiary.R
 import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import com.personalproject.mydiary.domain.timeline.model.Weather
-import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
+import com.personalproject.mydiary.ui.feature.entry.diary_entry.iconRes
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import java.time.format.TextStyle

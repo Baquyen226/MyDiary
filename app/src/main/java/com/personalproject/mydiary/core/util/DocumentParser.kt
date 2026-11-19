@@ -15,6 +15,9 @@ private val SRC_REGEX = Regex("""src=["']([^"']+)["']""", RegexOption.IGNORE_CAS
  * Serves as the single source of truth for both:
  * - DiaryBody (read-only view in DiaryEntryWindow)
  * - DiaryEditorState (editable multi-block document in DiaryEditor)
+ *
+ * Ensures list tags (`<ul>`, `<ol>`) split by dividers or images remain properly balanced
+ * so that list items on both sides of a divider retain their bullets or numbering.
  */
 fun parseDiaryDocument(
     rawContent: String,
@@ -28,8 +31,47 @@ fun parseDiaryDocument(
     val blocks = mutableListOf<EditorBlock>()
     val addedImages = mutableSetOf<String>()
 
+    var openUl = false
+    var openOl = false
+
+    fun balanceChunk(chunk: String): String {
+        var result = chunk.trim()
+        if (result.isEmpty()) return ""
+
+        val hasUlOpen = result.contains("<ul", ignoreCase = true)
+        val hasOlOpen = result.contains("<ol", ignoreCase = true)
+
+        if (openUl && !hasUlOpen) {
+            result = "<ul>$result"
+        } else if (openOl && !hasOlOpen) {
+            result = "<ol>$result"
+        }
+
+        val totalUlOpens = Regex("<ul\\b", RegexOption.IGNORE_CASE).findAll(result).count()
+        val totalUlCloses = Regex("</ul>", RegexOption.IGNORE_CASE).findAll(result).count()
+        val totalOlOpens = Regex("<ol\\b", RegexOption.IGNORE_CASE).findAll(result).count()
+        val totalOlCloses = Regex("</ol>", RegexOption.IGNORE_CASE).findAll(result).count()
+
+        if (totalUlOpens > totalUlCloses) {
+            result = "$result</ul>"
+            openUl = true
+        } else {
+            openUl = false
+        }
+
+        if (totalOlOpens > totalOlCloses) {
+            result = "$result</ol>"
+            openOl = true
+        } else {
+            openOl = false
+        }
+
+        return result
+    }
+
     if (matches.isEmpty()) {
-        val html = normalizeContentForHtml(rawContent)
+        val balanced = balanceChunk(rawContent)
+        val html = normalizeContentForHtml(balanced)
         if (html.isNotBlank()) {
             val textState = RichTextState().setHtml(html)
             blocks.add(EditorBlock.Text(textState))
@@ -38,7 +80,8 @@ fun parseDiaryDocument(
         var lastIndex = 0
         for (match in matches) {
             val rawBefore = rawContent.substring(lastIndex, match.range.first)
-            val htmlBefore = normalizeContentForHtml(rawBefore)
+            val balancedBefore = balanceChunk(rawBefore)
+            val htmlBefore = normalizeContentForHtml(balancedBefore)
             if (htmlBefore.isNotBlank()) {
                 val textState = RichTextState().setHtml(htmlBefore)
                 blocks.add(EditorBlock.Text(textState))
@@ -59,7 +102,8 @@ fun parseDiaryDocument(
 
         if (lastIndex < rawContent.length) {
             val rawAfter = rawContent.substring(lastIndex)
-            val htmlAfter = normalizeContentForHtml(rawAfter)
+            val balancedAfter = balanceChunk(rawAfter)
+            val htmlAfter = normalizeContentForHtml(balancedAfter)
             if (htmlAfter.isNotBlank()) {
                 val textState = RichTextState().setHtml(htmlAfter)
                 blocks.add(EditorBlock.Text(textState))

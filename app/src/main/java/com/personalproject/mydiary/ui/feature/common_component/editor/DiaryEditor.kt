@@ -540,13 +540,18 @@ private fun ProvideEditorTextToolbar(
                 onCutRequested: (() -> Unit)?,
                 onSelectAllRequested: (() -> Unit)?
             ) {
-                val wrappedSelectAll: (() -> Unit)? = onSelectAllRequested?.let { native ->
+                val wrappedSelectAll: (() -> Unit)? = if (onSelectAllRequested != null) {
                     {
                         if (editorState.isCurrentBlockFullySelected()) {
                             editorState.selectAllBlocks()
                         } else {
-                            native()
+                            onSelectAllRequested()
                         }
+                    }
+                } else {
+                    // Fallback when native onSelectAllRequested is null (e.g. OEM toolbars or full single-block selection)
+                    {
+                        editorState.selectAllBlocks()
                     }
                 }
 

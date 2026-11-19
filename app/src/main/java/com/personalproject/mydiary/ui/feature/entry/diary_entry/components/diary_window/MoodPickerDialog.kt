@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.personalproject.mydiary.R
-import com.personalproject.mydiary.ui.feature.diary_entry.getMoodLabel
-import com.personalproject.mydiary.ui.feature.diary_entry.getMoodRes
+import com.personalproject.mydiary.ui.feature.entry.diary_entry.getMoodLabel
+import com.personalproject.mydiary.ui.feature.entry.diary_entry.getMoodRes
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 

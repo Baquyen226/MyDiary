@@ -1,41 +1,26 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.personalproject.mydiary.R
-import com.personalproject.mydiary.core.util.DateUtil
-import com.personalproject.mydiary.data.mock.MockDiary
+import com.personalproject.mydiary.data.mock.MockEntry
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
-import com.personalproject.mydiary.ui.feature.diary_entry.iconRes
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
-import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
-import java.time.format.TextStyle
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
 
 /**
@@ -53,7 +38,7 @@ import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
  */
 @Composable
 fun DiaryEntryWindow(
-   entry : DiaryEntry = MockDiary.mockDiaryEntry_1,
+   entry : DiaryEntry = MockEntry.mockDiaryEntry_1,
    theme : TimelineCardPreference = BlueSky.timelineCardPreference,
    onDismiss: () -> Unit = {},
    onEditClick: () -> Unit = {},

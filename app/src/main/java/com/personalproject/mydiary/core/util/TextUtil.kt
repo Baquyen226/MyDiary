@@ -68,8 +68,9 @@ fun isHtmlContent(content: String): Boolean {
 
 /**
  * Normalizes content for rich text rendering and editor loading.
- * Preserves all formatting tags and converts newlines into explicit line breaks (<br>)
- * so that single and multiple consecutive empty lines are faithfully preserved.
+ * Preserves all formatting tags and converts intentional text newlines into explicit line breaks (<br>)
+ * while properly stripping indentation/source newlines around structural HTML tags (<ul>, <ol>, <li>, <p>)
+ * so that no unwanted empty lines appear before or after lists and blocks.
  */
 fun normalizeContentForHtml(raw: String): String {
     val trimmed = raw.trim()
@@ -85,26 +86,37 @@ fun normalizeContentForHtml(raw: String): String {
     // Replace empty paragraph tags with <br> so empty lines don't collapse
     val withoutEmptyP = trimmed.replace(Regex("""<p>\s*(<br\s*/?>)?\s*</p>""", RegexOption.IGNORE_CASE), "<br>")
 
-    // Convert newlines in HTML to <br> to preserve explicit line breaks
+    // Normalize Windows CRLF to LF
     val normalized = withoutEmptyP.replace("\r\n", "\n").replace("\r", "\n")
     if (!normalized.contains("\n")) return normalized
 
-    // Handle extra newlines between block tags (e.g. </p>\n\n<p> has 1 extra blank line -> </p><br><p>)
-    val blockBetweenRegex = Regex("""(</(?:p|h[1-6]|ul|ol|li)>)\s*\n(\s*\n)+(\s*<(?:p|h[1-6]|ul|ol|li)[^>]*>)""", RegexOption.IGNORE_CASE)
+    // Handle intentional extra blank lines between block tags (e.g. </p>\n\n<p> has 1 extra blank line -> </p><br><p>)
+    val blockBetweenRegex = Regex("""(</?(?:p|h[1-6]|ul|ol|li)[^>]*>)\s*\n(\s*\n)+(\s*</?(?:p|h[1-6]|ul|ol|li)[^>]*>)""", RegexOption.IGNORE_CASE)
     val withBlockBreaks = blockBetweenRegex.replace(normalized) { match ->
-        val closeTag = match.groups[1]?.value ?: ""
-        val openTag = match.groups[3]?.value ?: ""
+        val firstTag = match.groups[1]?.value ?: ""
+        val secondTag = match.groups[3]?.value ?: ""
         val newlineCount = match.value.count { it == '\n' }
         val extraBreaks = "<br>".repeat((newlineCount - 1).coerceAtLeast(1))
-        "$closeTag$extraBreaks$openTag"
+        "$firstTag$extraBreaks$secondTag"
     }
 
-    // Clean up single newlines between block tags
-    val singleBlockNewlineRegex = Regex("""(</(?:p|h[1-6]|ul|ol|li)>)\s*\n\s*(<(?:p|h[1-6]|ul|ol|li)[^>]*>)""", RegexOption.IGNORE_CASE)
-    val cleanedBlocks = singleBlockNewlineRegex.replace(withBlockBreaks) { match ->
+    // Clean up single formatting newlines between structural block and list tags:
+    // e.g. <ul>\n<li>, </li>\n<li>, </li>\n</ul>, </ol>\n<p>, </p>\n<p>
+    val tagNewlineRegex = Regex("""(</?(?:p|h[1-6]|ul|ol|li)[^>]*>)\s*\n\s*(</?(?:p|h[1-6]|ul|ol|li)[^>]*>)""", RegexOption.IGNORE_CASE)
+    val cleanedBlocks = tagNewlineRegex.replace(withBlockBreaks) { match ->
         "${match.groups[1]?.value ?: ""}${match.groups[2]?.value ?: ""}"
     }
 
-    // Remaining newlines inside text are intentional line breaks
-    return cleanedBlocks.replace("\n", "<br>")
+    // Clean up any remaining formatting newlines immediately after opening block/list tags
+    val cleanAfterOpen = cleanedBlocks.replace(Regex("""(<(?:ul|ol|li|p|h[1-6])[^>]*>)\s*\n\s*""", RegexOption.IGNORE_CASE)) { match ->
+        match.groups[1]?.value ?: ""
+    }
+
+    // Clean up any remaining formatting newlines immediately before closing block/list tags
+    val cleanBeforeClose = cleanAfterOpen.replace(Regex("""\s*\n\s*(</(?:ul|ol|li|p|h[1-6])>)""", RegexOption.IGNORE_CASE)) { match ->
+        match.groups[1]?.value ?: ""
+    }
+
+    // Remaining newlines inside body text are intentional user line breaks
+    return cleanBeforeClose.replace("\n", "<br>")
 }

@@ -24,25 +24,25 @@ class MockFolderRepository : FolderRepository {
                 name = "みつはのにっき",
                 type = FolderType.DIARY,
                 color = "#E57373"
+            ),
+            Folder(
+                id = "3",
+                name = "禁止事項",
+                type = FolderType.NOTES,
+                color = "#E57373"
+            ),
+            Folder(
+                id = "4",
+                name = "緊急時以外かけちゃダメ",
+                type = FolderType.CONTACTS,
+                color = "#4CAF50"
+            ),
+            Folder(
+                id = "5",
+                name = "アラーム・予定",
+                type = FolderType.EVENT,
+                color = "#2196F3"
             )
-//            Folder(
-//                id = "3",
-//                name = "禁止事項",
-//                type = FolderType.NOTES,
-//                color = null
-//            ),
-//            Folder(
-//                id = "4",
-//                name = "行きたいおみせメモ",
-//                type = FolderType.NOTES,
-//                color = "#E57373"
-//            ),
-//            Folder(
-//                id = "5",
-//                name = "緊急時以外かけちゃダメ",
-//                type = FolderType.CONTACTS,
-//                color = null
-//            )
         )
     )
 

@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.core.util.parseDiaryDocument
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.ui.feature.common_component.diaryScrollbar
 import com.personalproject.mydiary.ui.feature.common_component.editor.DiaryDocumentView
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily

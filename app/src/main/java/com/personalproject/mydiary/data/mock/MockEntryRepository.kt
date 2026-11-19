@@ -1,6 +1,5 @@
 package com.personalproject.mydiary.data.mock
 
-import com.personalproject.mydiary.core.util.DateUtil
 import com.personalproject.mydiary.domain.timeline.EntryRepository
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
 import kotlinx.coroutines.flow.Flow
@@ -11,14 +10,14 @@ import kotlinx.coroutines.flow.map
 class MockEntryRepository : EntryRepository {
     private val _entries = MutableStateFlow(
         listOf(
-            MockDiary.mockDiaryEntry_1,
-            MockDiary.mockDiaryEntry_2,
-            MockDiary.mockDiaryEntry_3,
-            MockDiary.mockDiaryEntry_3_JP,
-            MockDiary.mockDiaryEntry_5,
-            MockDiary.mockDiaryEntry_6,
-            MockDiary.mockDiaryEntry_7,
-            MockDiary.mockDiaryEntry_8
+            MockEntry.mockDiaryEntry_1,
+            MockEntry.mockDiaryEntry_2,
+            MockEntry.mockDiaryEntry_3,
+            MockEntry.mockDiaryEntry_3_JP,
+            MockEntry.mockDiaryEntry_5,
+            MockEntry.mockDiaryEntry_6,
+            MockEntry.mockDiaryEntry_7,
+            MockEntry.mockDiaryEntry_8
         )
     )
 

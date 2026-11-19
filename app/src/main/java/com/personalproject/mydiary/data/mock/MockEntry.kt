@@ -2,10 +2,11 @@ package com.personalproject.mydiary.data.mock
 
 import com.personalproject.mydiary.core.util.DateUtil.Companion.daysAgo
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.domain.timeline.model.NoteEntry
 import com.personalproject.mydiary.domain.timeline.model.Weather
 import java.time.Instant
 
-object MockDiary {
+object MockEntry {
     val now: Instant = Instant.now()
     val yesterday: Instant = now.minusSeconds(86400)
     val eightDaysAgo: Instant = now.minusSeconds(86400 * 26 / 3)
@@ -201,5 +202,44 @@ object MockDiary {
         weather = Weather.SUNNY,
         temperatureHigh = 27,
         temperatureLow = 19
+    )
+
+    val mockNoteEntry_1 = NoteEntry(
+        id = "N_000001",
+        folderId = "3",
+        timestamp = now,
+        title = "ゼッタイ禁止！",
+        description = "その2",
+        content = """
+            <ul>
+                <li><b>お風呂ぜっっったい禁止！！！！！！！</b></li><hr>
+                <li><b>体は見ない！/ 触らない！！</b></li><hr>
+                <li><b>脚をひらくな！</b></li><hr>
+                <li>男子に触るな！</li><hr>
+                <li>女子にも触るな！</li><hr>
+                <li>テッシーと仲良くするな！</li><hr>
+                <li>サヤとテッシーをくっつけるようにして。</li>
+            </ul>
+        """.trimIndent(),
+        isPinned = true
+    )
+
+    val mockNoteEntry_2 = NoteEntry(
+        id = "N_000002",
+        folderId = "3",
+        timestamp = yesterday,
+        title = "禁止事項　Ver.5",
+        description = null,
+        content = """
+            <ul>
+                <li>無駄づかい禁止！</li><hr>
+                <li>訛り禁止！</li><hr>
+                <li>遅刻するな！</li><hr>
+                <li>女言葉NG！</li><hr>
+                <li>奥寺先輩と馴れ馴れしくするな！</li><hr>
+                <li>司とベタベタするな！</li>
+            </ul>
+        """.trimIndent(),
+        isPinned = true
     )
 }

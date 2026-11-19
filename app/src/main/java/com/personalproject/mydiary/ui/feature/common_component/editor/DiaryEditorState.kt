@@ -79,6 +79,9 @@ class DiaryEditorState(
         return selectedRange?.contains(index) == true
     }
 
+    // Tracks images originally loaded from existing entry for cleanup on save if removed
+    private val initialLoadedImages = mutableSetOf<String>()
+
     // Tracks images copied to internal storage in this editing session for cleanup if uncommitted
     private val sessionCopiedImages = mutableSetOf<String>()
 
@@ -97,7 +100,7 @@ class DiaryEditorState(
     fun isEmpty(): Boolean {
         return title.isBlank() && blocks.all {
             when (it) {
-                is EditorBlock.Text -> it.state.toText().isBlank()
+                is EditorBlock.Text -> it.state.annotatedString.text.isBlank()
                 is EditorBlock.Image -> false
                 is EditorBlock.Divider -> false
             }
@@ -109,7 +112,7 @@ class DiaryEditorState(
      */
     fun isCurrentBlockFullySelected(): Boolean {
         val textBlock = activeTextBlock ?: return false
-        val textLength = textBlock.state.toText().length
+        val textLength = textBlock.state.annotatedString.text.length
         val selection = textBlock.state.selection
         if (textLength == 0) return true
         return selection.min == 0 && selection.max >= textLength
@@ -162,7 +165,7 @@ class DiaryEditorState(
         if (blocks.isNotEmpty()) {
             selectedRange = 0 until blocks.size
             blocks.filterIsInstance<EditorBlock.Text>().forEach { block ->
-                val len = block.state.toText().length
+                val len = block.state.annotatedString.text.length
                 block.state.selection = TextRange(0, len)
             }
         }
@@ -176,15 +179,16 @@ class DiaryEditorState(
         selectedRange = null
         val active = activeTextBlock
         blocks.filterIsInstance<EditorBlock.Text>().forEach { block ->
-            val len = block.state.toText().length
+            val len = block.state.annotatedString.text.length
             block.state.selection = if (block.id == active?.id) TextRange(len) else TextRange.Zero
         }
+        mergeAdjacentTextBlocks()
     }
 
     private fun highlightTextBlockContent(index: Int) {
         val block = blocks.getOrNull(index)
         if (block is EditorBlock.Text) {
-            block.state.selection = TextRange(0, block.state.toText().length)
+            block.state.selection = TextRange(0, block.state.annotatedString.text.length)
         }
     }
 
@@ -194,7 +198,7 @@ class DiaryEditorState(
             blocks.filterIndexed { index, _ -> index in range }
                 .filterIsInstance<EditorBlock.Text>()
                 .forEach { block ->
-                    val len = block.state.toText().length
+                    val len = block.state.annotatedString.text.length
                     block.state.selection = TextRange(0, len)
                     action(block.state)
                 }
@@ -271,6 +275,7 @@ class DiaryEditorState(
                 val nextActive = blocks.getOrNull(range.first) ?: blocks.last()
                 activeBlockId = nextActive.id
                 focusTargetId = nextActive.id
+                mergeAdjacentTextBlocks()
             }
             selectedRange = null
         }
@@ -313,7 +318,7 @@ class DiaryEditorState(
 
         val lastBlock = blocks.lastOrNull()
         if (lastBlock is EditorBlock.Text) {
-            val length = lastBlock.state.toText().length
+            val length = lastBlock.state.annotatedString.text.length
             lastBlock.state.selection = TextRange(length)
             activeBlockId = lastBlock.id
             focusTargetId = lastBlock.id
@@ -352,11 +357,11 @@ class DiaryEditorState(
         }
 
         val activeIndex = blocks.indexOf(textBlock).coerceAtLeast(0)
-        val fullText = textBlock.state.toText()
+        val fullText = textBlock.state.annotatedString.text
         // Read cursor before clearing selection
         val cursor = if (hasBlockSelection) fullText.length
                      else textBlock.state.selection.max.coerceIn(0, fullText.length)
-        selectedRange = null
+        clearBlockSelection()
 
         var insertIndex = activeIndex + 1
         val nextTextBlock: EditorBlock.Text
@@ -379,11 +384,11 @@ class DiaryEditorState(
             nextState.removeTextRange(TextRange(0, cursor))
 
             // Clean split boundary newlines if any
-            if (nextState.toText().startsWith('\n')) {
+            if (nextState.annotatedString.text.startsWith('\n')) {
                 nextState.removeTextRange(TextRange(0, 1))
             }
-            val textLen = textBlock.state.toText().length
-            if (textLen > 0 && textBlock.state.toText().endsWith('\n')) {
+            val textLen = textBlock.state.annotatedString.text.length
+            if (textLen > 0 && textBlock.state.annotatedString.text.endsWith('\n')) {
                 textBlock.state.removeTextRange(TextRange(textLen - 1, textLen))
             }
 
@@ -409,6 +414,60 @@ class DiaryEditorState(
     }
 
     /**
+     * Helper to concatenate two HTML fragments.
+     * Only strips closing </p> and opening <p> when BOTH fragments are actual paragraphs.
+     * Otherwise falls back to clean concatenation (preserving lists and other tags).
+     */
+    private fun mergeHtmlContent(firstHtml: String, secondHtml: String): String {
+        val endsWithP = Regex("</p>\\s*$", RegexOption.IGNORE_CASE).containsMatchIn(firstHtml)
+        val startsWithP = Regex("^\\s*<p[^>]*>", RegexOption.IGNORE_CASE).containsMatchIn(secondHtml)
+
+        return if (endsWithP && startsWithP) {
+            val cleanFirst = firstHtml.replace(Regex("</p>\\s*$", RegexOption.IGNORE_CASE), "")
+            val cleanSecond = secondHtml.replace(Regex("^\\s*<p[^>]*>", RegexOption.IGNORE_CASE), "")
+            cleanFirst + cleanSecond
+        } else {
+            firstHtml + secondHtml
+        }
+    }
+
+    /**
+     * Merges any adjacent [EditorBlock.Text] blocks into a single block.
+     * Preserves cursor position if the currently focused block is merged away.
+     */
+    fun mergeAdjacentTextBlocks() {
+        var i = 0
+        while (i < blocks.size - 1) {
+            val first = blocks[i]
+            val second = blocks[i + 1]
+            if (first is EditorBlock.Text && second is EditorBlock.Text) {
+                val firstLength = first.state.annotatedString.text.length
+                val firstHtml = first.state.toHtml()
+                val secondHtml = second.state.toHtml()
+                val isSecondActive = activeBlockId == second.id
+                val secondCursor = if (isSecondActive) {
+                    second.state.selection.max.coerceAtLeast(0)
+                } else {
+                    0
+                }
+
+                val mergedHtml = mergeHtmlContent(firstHtml, secondHtml)
+                first.state.setHtml(mergedHtml)
+
+                if (isSecondActive) {
+                    first.state.selection = TextRange(firstLength + secondCursor)
+                    activeBlockId = first.id
+                    focusTargetId = first.id
+                }
+
+                blocks.removeAt(i + 1)
+            } else {
+                i++
+            }
+        }
+    }
+
+    /**
      * Handles Backspace when cursor is at index 0 of a text block.
      * Deletes the preceding non-text block (Divider/Image), or merges with preceding text block.
      */
@@ -420,34 +479,37 @@ class DiaryEditorState(
         when (prevBlock) {
             is EditorBlock.Divider -> {
                 blocks.removeAt(currentIndex - 1)
-                activeBlockId = currentBlock.id
-                focusTargetId = currentBlock.id
+                mergeAdjacentTextBlocks()
+                if (blocks.none { it.id == activeBlockId }) {
+                    activeBlockId = currentBlock.id
+                    focusTargetId = currentBlock.id
+                }
             }
             is EditorBlock.Image -> {
                 removeBlock(prevBlock)
-                activeBlockId = currentBlock.id
-                focusTargetId = currentBlock.id
+                if (blocks.none { it.id == activeBlockId }) {
+                    activeBlockId = currentBlock.id
+                    focusTargetId = currentBlock.id
+                }
             }
             is EditorBlock.Text -> {
-                val currentText = currentBlock.state.toText()
+                val currentText = currentBlock.state.annotatedString.text
                 if (currentText.isEmpty()) {
                     // Current block is blank: simply remove it and focus end of previous block
-                    val prevLength = prevBlock.state.toText().length
+                    val prevLength = prevBlock.state.annotatedString.text.length
                     blocks.removeAt(currentIndex)
                     prevBlock.state.selection = TextRange(prevLength)
                     activeBlockId = prevBlock.id
                     focusTargetId = prevBlock.id
                 } else {
-                    // Merge current block into previous block within the same paragraph
-                    val prevLength = prevBlock.state.toText().length
+                    // Merge current block into previous block
+                    val prevLength = prevBlock.state.annotatedString.text.length
                     val prevHtml = prevBlock.state.toHtml()
                     val currentHtml = currentBlock.state.toHtml()
                     blocks.removeAt(currentIndex)
 
-                    // Strip closing </p> from prev and opening <p...> from current to merge within the same paragraph
-                    val cleanPrev = prevHtml.replace(Regex("</p>\\s*$", RegexOption.IGNORE_CASE), "")
-                    val cleanCurrent = currentHtml.replace(Regex("^\\s*<p[^>]*>", RegexOption.IGNORE_CASE), "")
-                    prevBlock.state.setHtml(cleanPrev + cleanCurrent)
+                    val mergedHtml = mergeHtmlContent(prevHtml, currentHtml)
+                    prevBlock.state.setHtml(mergedHtml)
                     prevBlock.state.selection = TextRange(prevLength)
                     activeBlockId = prevBlock.id
                     focusTargetId = prevBlock.id
@@ -468,6 +530,8 @@ class DiaryEditorState(
             blocks.add(fallback)
             activeBlockId = fallback.id
             focusTargetId = fallback.id
+        } else {
+            mergeAdjacentTextBlocks()
         }
     }
 
@@ -484,7 +548,7 @@ class DiaryEditorState(
         for (block in blocks) {
             when (block) {
                 is EditorBlock.Text -> {
-                    val plain = block.state.toText().trim()
+                    val plain = block.state.annotatedString.text.trim()
                     if (plain.isNotEmpty()) {
                         hasValidContent = true
                         htmlBuilder.append(block.state.toHtml())
@@ -506,7 +570,16 @@ class DiaryEditorState(
         if (title.isNotBlank() || hasValidContent) {
             val savedTitle = title
             val savedImages = allImages
-            // Committed: clear session set so saved files are preserved on disk
+
+            // Delete any originally loaded images that were removed during this editing session
+            val remainingImageUris = allImages.toSet()
+            val removedOriginalImages = initialLoadedImages.filter { it !in remainingImageUris }
+            removedOriginalImages.forEach { uriStr ->
+                deleteInternalMediaFile(uriStr)
+            }
+            initialLoadedImages.clear()
+
+            // Committed: clear session set so newly added files are preserved on disk
             sessionCopiedImages.clear()
             reset()
             onSave?.invoke(savedTitle, contentHtml, savedImages)
@@ -514,6 +587,7 @@ class DiaryEditorState(
     }
 
     fun discard() {
+        initialLoadedImages.clear()
         cleanupSessionImages()
         reset()
         onDiscard?.invoke()
@@ -530,16 +604,30 @@ class DiaryEditorState(
         )
     }
 
+    fun loadNote(note: com.personalproject.mydiary.domain.timeline.model.NoteEntry) {
+        loadContent(
+            newTitle = note.title,
+            rawContent = note.body.ifEmpty { note.bodyPlain },
+            imageUris = note.imageUris
+        )
+    }
+
     /**
      * Populates the editor with specific title, raw content (HTML or plain text), and media URIs.
      */
     fun loadContent(newTitle: String, rawContent: String, imageUris: List<String>) {
         cleanupSessionImages()
+        initialLoadedImages.clear()
+        initialLoadedImages.addAll(imageUris)
         blocks.clear()
         fallbackRichTextState.clear()
         title = newTitle
 
         val parsedBlocks = parseDiaryDocument(rawContent, imageUris)
+        parsedBlocks.filterIsInstance<EditorBlock.Image>().forEach {
+            initialLoadedImages.add(it.uriString)
+        }
+
         if (parsedBlocks.isEmpty()) {
             val initialBlock = EditorBlock.Text(fallbackRichTextState)
             blocks.add(initialBlock)
@@ -555,6 +643,7 @@ class DiaryEditorState(
 
     fun reset() {
         title = ""
+        initialLoadedImages.clear()
         cleanupSessionImages()
         blocks.clear()
         fallbackRichTextState.clear()

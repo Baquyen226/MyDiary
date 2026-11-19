@@ -113,7 +113,7 @@ class DiaryEditorStateTest {
     }
 
     @Test
-    fun testBackspaceRemovesPrecedingDivider() {
+    fun testBackspaceRemovesPrecedingDividerAndMergesAdjacentText() {
         val state = createEditorState("Top")
         state.blocks.add(EditorBlock.Divider())
         val bottomBlock = EditorBlock.Text(RichTextState().apply { setText("Bottom") })
@@ -124,9 +124,111 @@ class DiaryEditorStateTest {
 
         state.handleBackspaceAtStart(bottomBlock)
 
-        assertEquals(2, state.blocks.size)
+        // Divider is removed and adjacent text blocks (Top + Bottom) merge into 1
+        assertEquals(1, state.blocks.size)
         assertTrue(state.blocks[0] is EditorBlock.Text)
-        assertTrue(state.blocks[1] is EditorBlock.Text)
+        assertEquals("TopBottom", (state.blocks[0] as EditorBlock.Text).state.toText())
         assertFalse(state.blocks.any { it is EditorBlock.Divider })
+    }
+
+    @Test
+    fun testRemoveBlockMergesAdjacentTextBlocks() {
+        val state = createEditorState("Header")
+        val imageBlock = EditorBlock.Image("test://image.png")
+        val bodyBlock = EditorBlock.Text(RichTextState().apply { setText("Body") })
+        state.blocks.add(imageBlock)
+        state.blocks.add(bodyBlock)
+
+        assertEquals(3, state.blocks.size)
+
+        state.removeBlock(imageBlock)
+
+        // Removing the middle image merges "Header" and "Body" into 1 text block
+        assertEquals(1, state.blocks.size)
+        assertEquals("HeaderBody", (state.blocks[0] as EditorBlock.Text).state.toText())
+    }
+
+    @Test
+    fun testInsertBlocksAtCursorClearsBlockSelection() {
+        val state = createEditorState("Line 1")
+        val line2 = EditorBlock.Text(RichTextState().apply { setText("Line 2") })
+        state.blocks.add(line2)
+
+        // Select all blocks
+        state.selectAllBlocks()
+        assertTrue(state.hasBlockSelection)
+
+        // Insert divider
+        state.insertDividerAfterCursor()
+
+        // Block selection must be fully cleared (leak prevented)
+        assertFalse(state.hasBlockSelection)
+        assertEquals(null, state.selectedRange)
+    }
+
+    @Test
+    fun testBackspaceMergeWithListsPreservesListStructure() {
+        val state = createEditorState("")
+        val listBlock = EditorBlock.Text(RichTextState().apply {
+            setHtml("<ul><li>Item 1</li><li>Item 2</li></ul>")
+        })
+        val textBlock = EditorBlock.Text(RichTextState().apply {
+            setHtml("<p>Paragraph</p>")
+        })
+        state.blocks.clear()
+        state.blocks.add(listBlock)
+        state.blocks.add(textBlock)
+
+        textBlock.state.selection = TextRange.Zero
+        state.handleBackspaceAtStart(textBlock)
+
+        assertEquals(1, state.blocks.size)
+        val mergedHtml = (state.blocks[0] as EditorBlock.Text).state.toHtml()
+        assertTrue(mergedHtml.contains("<ul>"))
+        assertTrue(mergedHtml.contains("<li>Item 1</li>"))
+        assertTrue(mergedHtml.contains("Paragraph"))
+    }
+
+    @Test
+    fun testParseDiaryDocumentPreservesListTagsAcrossDividers() {
+        val html = """
+            <ul>
+                <li>Item 1</li><hr>
+                <li>Item 2</li><hr>
+                <li>Item 3</li>
+            </ul>
+        """.trimIndent()
+
+        val blocks = com.personalproject.mydiary.core.util.parseDiaryDocument(html)
+        assertEquals(5, blocks.size)
+        assertTrue(blocks[0] is EditorBlock.Text)
+        assertTrue(blocks[1] is EditorBlock.Divider)
+        assertTrue(blocks[2] is EditorBlock.Text)
+        assertTrue(blocks[3] is EditorBlock.Divider)
+        assertTrue(blocks[4] is EditorBlock.Text)
+
+        val html0 = (blocks[0] as EditorBlock.Text).state.toHtml()
+        val html2 = (blocks[2] as EditorBlock.Text).state.toHtml()
+        val html4 = (blocks[4] as EditorBlock.Text).state.toHtml()
+
+        assertTrue("Block 0 must contain <ul>: $html0", html0.contains("<ul>") || html0.contains("<ul "))
+        assertTrue("Block 2 must contain <ul>: $html2", html2.contains("<ul>") || html2.contains("<ul "))
+        assertTrue("Block 4 must contain <ul>: $html4", html4.contains("<ul>") || html4.contains("<ul "))
+    }
+
+    @Test
+    fun testNormalizeContentForHtmlDoesNotAddExtraNewlinesAroundLists() {
+        val input = """
+            <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+        """.trimIndent()
+
+        val normalized = com.personalproject.mydiary.core.util.normalizeContentForHtml(input)
+        assertFalse("Must not have <br> after <ul>: $normalized", normalized.contains("<ul><br>") || normalized.contains("<ul>\n"))
+        assertFalse("Must not have <br> before </ul>: $normalized", normalized.contains("<br></ul>") || normalized.contains("\n</ul>"))
+        assertEquals("<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>", normalized)
     }
 }

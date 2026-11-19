@@ -9,10 +9,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.personalproject.mydiary.MyDiaryApplication
 import com.personalproject.mydiary.data.mock.MockEntryRepository
 import com.personalproject.mydiary.data.mock.MockFolderRepository
+import com.personalproject.mydiary.data.mock.MockNoteRepository
 import com.personalproject.mydiary.data.mock.MockProfileRepository
 import com.personalproject.mydiary.domain.folder.FolderRepository
+import com.personalproject.mydiary.domain.folder.model.FolderType
 import com.personalproject.mydiary.domain.profile.ProfileRepository
 import com.personalproject.mydiary.domain.timeline.EntryRepository
+import com.personalproject.mydiary.domain.timeline.NoteRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -21,18 +24,25 @@ import kotlinx.coroutines.flow.stateIn
 class FolderListViewModel(
     private val folderRepository: FolderRepository,
     private val profileRepository: ProfileRepository,
-    private val entryRepository: EntryRepository
+    private val entryRepository: EntryRepository,
+    private val noteRepository: NoteRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<FolderListUiState> = combine(
         profileRepository.getProfile(),
         folderRepository.getFolders(),
-        entryRepository.getEntries()
-    ) { profile, folders, entries ->
+        entryRepository.getEntries(),
+        noteRepository.getEntries()
+    ) { profile, folders, entries, notes ->
         FolderListUiState(
             profile = profile,
             folders = folders.map { folder ->
-                val count = entries.count { it.folderId == folder.id }
+                val count = when (folder.type) {
+                    FolderType.NOTES -> notes.count { it.folderId == folder.id }
+                    FolderType.DIARY -> entries.count { it.folderId == folder.id }
+                    FolderType.CONTACTS -> 0
+                    FolderType.EVENT -> 0
+                }
                 FolderSummary(folder = folder, itemCount = count)
             },
             isLoading = false
@@ -51,7 +61,8 @@ class FolderListViewModel(
                 FolderListViewModel(
                     folderRepository = container?.folderRepository ?: MockFolderRepository(),
                     profileRepository = container?.profileRepository ?: MockProfileRepository(),
-                    entryRepository = container?.entryRepository ?: MockEntryRepository()
+                    entryRepository = container?.entryRepository ?: MockEntryRepository(),
+                    noteRepository = container?.noteRepository ?: MockNoteRepository()
                 )
             }
         }

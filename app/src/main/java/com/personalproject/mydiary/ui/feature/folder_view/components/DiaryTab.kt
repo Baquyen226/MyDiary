@@ -14,13 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
-import com.personalproject.mydiary.ui.feature.diary_entry.components.diary_card.DiaryEntryCard
+import com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_card.DiaryEntryCard
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
 import java.time.Instant

@@ -1,4 +1,4 @@
-package com.personalproject.mydiary.ui.feature.diary_entry.components.diary_window
+package com.personalproject.mydiary.ui.feature.entry.diary_entry.components.diary_window
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
