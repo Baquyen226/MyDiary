@@ -10,6 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
@@ -64,20 +66,33 @@ class DiaryEditorState(
     var activeBlockId by mutableStateOf<String?>(blocks.firstOrNull()?.id)
     var focusTargetId by mutableStateOf<String?>(null)
 
-    // Tracks whole-document selection mode (when "Select All" escalates across all blocks)
-    var isDocumentSelected by mutableStateOf(false)
+    // Tracks contiguous range of selected blocks by index (e.g. 0..2)
+    var selectedRange by mutableStateOf<IntRange?>(null)
+
+    val isDocumentSelected: Boolean
+        get() = selectedRange != null && selectedRange!!.first == 0 && selectedRange!!.last == blocks.size - 1
+
+    val hasBlockSelection: Boolean
+        get() = selectedRange != null
+
+    fun isBlockSelected(index: Int): Boolean {
+        return selectedRange?.contains(index) == true
+    }
 
     // Tracks images copied to internal storage in this editing session for cleanup if uncommitted
     private val sessionCopiedImages = mutableSetOf<String>()
 
-    val activeRichTextState: RichTextState
-        get() {
-            val activeBlock = blocks.filterIsInstance<EditorBlock.Text>().find { it.id == activeBlockId }
-            return activeBlock?.state ?: blocks.filterIsInstance<EditorBlock.Text>().lastOrNull()?.state ?: fallbackRichTextState
-        }
+    val activeTextBlock: EditorBlock.Text?
+        get() = blocks.filterIsInstance<EditorBlock.Text>().find { it.id == activeBlockId }
+            ?: blocks.filterIsInstance<EditorBlock.Text>().lastOrNull()
 
-    val selectedImageUris: List<String>
-        get() = blocks.filterIsInstance<EditorBlock.Image>().map { it.uriString }
+    val currentBlockIndex: Int
+        get() = blocks.indexOfFirst { it.id == activeBlockId }.takeIf { it != -1 } ?: 0
+
+    val activeRichTextState: RichTextState
+        get() = activeTextBlock?.state ?: fallbackRichTextState
+
+
 
     fun isEmpty(): Boolean {
         return title.isBlank() && blocks.all {
@@ -93,32 +108,115 @@ class DiaryEditorState(
      * Checks if the active text block has all of its text highlighted.
      */
     fun isCurrentBlockFullySelected(): Boolean {
-        val activeTextBlock = blocks.filterIsInstance<EditorBlock.Text>().find { it.id == activeBlockId }
-            ?: return false
-        val textLength = activeTextBlock.state.toText().length
-        val selection = activeTextBlock.state.selection
+        val textBlock = activeTextBlock ?: return false
+        val textLength = textBlock.state.toText().length
+        val selection = textBlock.state.selection
         if (textLength == 0) return true
         return selection.min == 0 && selection.max >= textLength
+    }
+
+    /**
+     * Selects a specific block by its index in the blocks list.
+     */
+    fun selectBlock(index: Int) {
+        if (index in blocks.indices) {
+            activeBlockId = blocks[index].id
+            selectedRange = index..index
+            highlightTextBlockContent(index)
+        }
+    }
+
+    /**
+     * Selects only the active (focused) block.
+     */
+    fun selectCurrentBlock() {
+        selectBlock(currentBlockIndex)
+    }
+
+    /**
+     * Extends block selection upward by one block.
+     */
+    fun extendSelectionUp() = extendSelection(delta = -1)
+
+    /**
+     * Extends block selection downward by one block.
+     */
+    fun extendSelectionDown() = extendSelection(delta = 1)
+
+    private fun extendSelection(delta: Int) {
+        val current = selectedRange ?: (currentBlockIndex..currentBlockIndex)
+        val newRange = if (delta < 0) {
+            (current.first + delta).coerceAtLeast(0)..current.last
+        } else {
+            current.first..(current.last + delta).coerceAtMost(blocks.size - 1)
+        }
+        selectedRange = newRange
+        val targetIndex = if (delta < 0) newRange.first else newRange.last
+        highlightTextBlockContent(targetIndex)
     }
 
     /**
      * Escalates selection to the entire document across all blocks.
      */
     fun selectAllBlocks() {
-        isDocumentSelected = true
+        if (blocks.isNotEmpty()) {
+            selectedRange = 0 until blocks.size
+            blocks.filterIsInstance<EditorBlock.Text>().forEach { block ->
+                val len = block.state.toText().length
+                block.state.selection = TextRange(0, len)
+            }
+        }
     }
 
     fun clearDocumentSelection() {
-        isDocumentSelected = false
+        clearBlockSelection()
     }
 
+    fun clearBlockSelection() {
+        selectedRange = null
+        val active = activeTextBlock
+        blocks.filterIsInstance<EditorBlock.Text>().forEach { block ->
+            val len = block.state.toText().length
+            block.state.selection = if (block.id == active?.id) TextRange(len) else TextRange.Zero
+        }
+    }
+
+    private fun highlightTextBlockContent(index: Int) {
+        val block = blocks.getOrNull(index)
+        if (block is EditorBlock.Text) {
+            block.state.selection = TextRange(0, block.state.toText().length)
+        }
+    }
+
+    private inline fun applyToSelectedTextBlocks(action: (RichTextState) -> Unit) {
+        val range = selectedRange
+        if (range != null) {
+            blocks.filterIndexed { index, _ -> index in range }
+                .filterIsInstance<EditorBlock.Text>()
+                .forEach { block ->
+                    val len = block.state.toText().length
+                    block.state.selection = TextRange(0, len)
+                    action(block.state)
+                }
+        } else {
+            action(activeRichTextState)
+        }
+    }
+
+    fun toggleSpanStyle(spanStyle: SpanStyle) = applyToSelectedTextBlocks { it.toggleSpanStyle(spanStyle) }
+    fun addParagraphStyle(paragraphStyle: ParagraphStyle) = applyToSelectedTextBlocks { it.addParagraphStyle(paragraphStyle) }
+    fun toggleUnorderedList() = applyToSelectedTextBlocks { it.toggleUnorderedList() }
+    fun toggleOrderedList() = applyToSelectedTextBlocks { it.toggleOrderedList() }
+
     /**
-     * Copies all document text and media references to the system clipboard.
+     * Copies selected document text and media references to the system clipboard.
      */
-    fun copyAllToClipboard(context: Context) {
+    fun copySelectedToClipboard(context: Context) {
+        val range = selectedRange ?: (0 until blocks.size)
+        val selectedBlocks = blocks.filterIndexed { index, _ -> index in range }
         val plainText = buildString {
-            if (title.isNotBlank()) appendLine(title)
-            blocks.forEach { block ->
+            if (range.first == 0 && title.isNotBlank()) appendLine(title)
+            selectedBlocks.forEach { block ->
                 when (block) {
                     is EditorBlock.Text -> {
                         val text = block.state.toText().trim()
@@ -134,24 +232,73 @@ class DiaryEditorState(
     }
 
     /**
-     * Cuts all content to clipboard and resets the editor to a blank state.
+     * Cuts selected content to clipboard and deletes them.
      */
     fun cutAllToClipboard(context: Context) {
-        copyAllToClipboard(context)
+        copySelectedToClipboard(context)
         deleteSelectedBlocks()
     }
 
     /**
-     * Deletes all blocks and resets document to a single empty text block.
+     * Deletes selected blocks and resets editor if all were deleted.
      */
     fun deleteSelectedBlocks() {
-        cleanupSessionImages()
-        blocks.clear()
-        val freshBlock = EditorBlock.Text(RichTextState())
-        blocks.add(freshBlock)
-        activeBlockId = freshBlock.id
-        focusTargetId = freshBlock.id
-        isDocumentSelected = false
+        val range = selectedRange
+        if (range == null || (range.first == 0 && range.last == blocks.size - 1)) {
+            cleanupSessionImages()
+            blocks.clear()
+            val freshBlock = EditorBlock.Text(RichTextState())
+            blocks.add(freshBlock)
+            activeBlockId = freshBlock.id
+            focusTargetId = freshBlock.id
+            selectedRange = null
+        } else {
+            val blocksToDelete = blocks.filterIndexed { index, _ -> index in range }
+            blocksToDelete.forEach { block ->
+                if (block is EditorBlock.Image) {
+                    if (sessionCopiedImages.remove(block.uriString)) {
+                        deleteInternalMediaFile(block.uriString)
+                    }
+                }
+            }
+            blocks.removeAll(blocksToDelete)
+            if (blocks.isEmpty() || blocks.none { it is EditorBlock.Text }) {
+                val freshBlock = EditorBlock.Text(RichTextState())
+                blocks.add(freshBlock)
+                activeBlockId = freshBlock.id
+                focusTargetId = freshBlock.id
+            } else {
+                val nextActive = blocks.getOrNull(range.first) ?: blocks.last()
+                activeBlockId = nextActive.id
+                focusTargetId = nextActive.id
+            }
+            selectedRange = null
+        }
+    }
+
+
+
+    /**
+     * Moves the currently selected block range upward by one position.
+     */
+    fun moveSelectedBlocksUp() = shiftSelectedBlocks(offset = -1)
+
+    /**
+     * Moves the currently selected block range downward by one position.
+     */
+    fun moveSelectedBlocksDown() = shiftSelectedBlocks(offset = 1)
+
+    private fun shiftSelectedBlocks(offset: Int) {
+        val range = selectedRange ?: return
+        val newFirst = range.first + offset
+        val newLast = range.last + offset
+        if (newFirst < 0 || newLast >= blocks.size) return
+
+        val count = range.count()
+        val itemsToMove = blocks.slice(range).toList()
+        blocks.removeAll(itemsToMove)
+        blocks.addAll(newFirst, itemsToMove)
+        selectedRange = newFirst until (newFirst + count)
     }
 
     /**
@@ -159,8 +306,8 @@ class DiaryEditorState(
      * Does NOT inject fake newline characters into user text!
      */
     fun onBlankAreaClicked() {
-        if (isDocumentSelected) {
-            clearDocumentSelection()
+        if (hasBlockSelection) {
+            clearBlockSelection()
             return
         }
 
@@ -184,62 +331,7 @@ class DiaryEditorState(
      * immediately placing a new text block below it for continued typing.
      */
     fun insertDividerAfterCursor() {
-        clearDocumentSelection()
-        val activeTextBlock = blocks.filterIsInstance<EditorBlock.Text>().find { it.id == activeBlockId }
-            ?: blocks.filterIsInstance<EditorBlock.Text>().lastOrNull()
-            ?: run {
-                val newBlock = EditorBlock.Text(RichTextState())
-                blocks.add(newBlock)
-                newBlock
-            }
-
-        val activeIndex = blocks.indexOf(activeTextBlock).coerceAtLeast(0)
-        val fullText = activeTextBlock.state.toText()
-        val cursor = activeTextBlock.state.selection.max.coerceIn(0, fullText.length)
-
-        var insertIndex = activeIndex + 1
-
-        val nextTextBlock: EditorBlock.Text
-        if (fullText.isEmpty()) {
-            blocks.removeAt(activeIndex)
-            insertIndex = activeIndex
-            blocks.add(insertIndex++, EditorBlock.Divider())
-            nextTextBlock = EditorBlock.Text(
-                state = RichTextState().apply {
-                    selection = TextRange(0)
-                }
-            )
-            blocks.add(insertIndex, nextTextBlock)
-        } else if (cursor in 1 until fullText.length) {
-            val textBefore = fullText.substring(0, cursor).trimEnd('\n')
-            val textAfter = fullText.substring(cursor).trimStart('\n')
-            activeTextBlock.state.setText(textBefore)
-
-            blocks.add(insertIndex++, EditorBlock.Divider())
-
-            nextTextBlock = EditorBlock.Text(
-                state = RichTextState().apply {
-                    setText(textAfter)
-                    selection = TextRange(0)
-                }
-            )
-            blocks.add(insertIndex, nextTextBlock)
-        } else {
-            val trimmed = fullText.trimEnd('\n')
-            if (trimmed != fullText) {
-                activeTextBlock.state.setText(trimmed)
-            }
-            blocks.add(insertIndex++, EditorBlock.Divider())
-            nextTextBlock = EditorBlock.Text(
-                state = RichTextState().apply {
-                    selection = TextRange(0)
-                }
-            )
-            blocks.add(insertIndex, nextTextBlock)
-        }
-
-        activeBlockId = nextTextBlock.id
-        focusTargetId = nextTextBlock.id
+        insertBlocksAtCursor(listOf(EditorBlock.Divider()))
     }
 
     /**
@@ -248,67 +340,67 @@ class DiaryEditorState(
      */
     fun insertImagesAfterCursor(uris: List<String>) {
         if (uris.isEmpty()) return
-        clearDocumentSelection()
-
         uris.forEach { sessionCopiedImages.add(it) }
+        insertBlocksAtCursor(uris.map { EditorBlock.Image(it) })
+    }
 
-        val activeTextBlock = blocks.filterIsInstance<EditorBlock.Text>().find { it.id == activeBlockId }
-            ?: blocks.filterIsInstance<EditorBlock.Text>().lastOrNull()
-            ?: run {
-                val newBlock = EditorBlock.Text(RichTextState())
-                blocks.add(newBlock)
-                newBlock
-            }
+    private fun insertBlocksAtCursor(newBlocks: List<EditorBlock>) {
+        val textBlock = activeTextBlock ?: run {
+            val fresh = EditorBlock.Text(RichTextState())
+            blocks.add(fresh)
+            fresh
+        }
 
-        val activeIndex = blocks.indexOf(activeTextBlock).coerceAtLeast(0)
-        val fullText = activeTextBlock.state.toText()
-        val cursor = activeTextBlock.state.selection.max.coerceIn(0, fullText.length)
+        val activeIndex = blocks.indexOf(textBlock).coerceAtLeast(0)
+        val fullText = textBlock.state.toText()
+        // Read cursor before clearing selection
+        val cursor = if (hasBlockSelection) fullText.length
+                     else textBlock.state.selection.max.coerceIn(0, fullText.length)
+        selectedRange = null
 
         var insertIndex = activeIndex + 1
-
         val nextTextBlock: EditorBlock.Text
+
         if (fullText.isEmpty()) {
             blocks.removeAt(activeIndex)
             insertIndex = activeIndex
-            for (uri in uris) {
-                blocks.add(insertIndex++, EditorBlock.Image(uri))
-            }
-            nextTextBlock = EditorBlock.Text(
-                state = RichTextState().apply {
-                    selection = TextRange(0)
-                }
-            )
+            blocks.addAll(insertIndex, newBlocks)
+            insertIndex += newBlocks.size
+            nextTextBlock = EditorBlock.Text(RichTextState().apply { selection = TextRange.Zero })
             blocks.add(insertIndex, nextTextBlock)
         } else if (cursor in 1 until fullText.length) {
-            val textBefore = fullText.substring(0, cursor).trimEnd('\n')
-            val textAfter = fullText.substring(cursor).trimStart('\n')
-            activeTextBlock.state.setText(textBefore)
+            val originalHtml = textBlock.state.toHtml()
+            val nextState = RichTextState().apply { setHtml(originalHtml) }
 
-            for (uri in uris) {
-                blocks.add(insertIndex++, EditorBlock.Image(uri))
+            // First half keeps [0, cursor), removes [cursor, fullText.length)
+            textBlock.state.removeTextRange(TextRange(cursor, fullText.length))
+
+            // Second half keeps [cursor, fullText.length), removes [0, cursor)
+            nextState.removeTextRange(TextRange(0, cursor))
+
+            // Clean split boundary newlines if any
+            if (nextState.toText().startsWith('\n')) {
+                nextState.removeTextRange(TextRange(0, 1))
+            }
+            val textLen = textBlock.state.toText().length
+            if (textLen > 0 && textBlock.state.toText().endsWith('\n')) {
+                textBlock.state.removeTextRange(TextRange(textLen - 1, textLen))
             }
 
-            nextTextBlock = EditorBlock.Text(
-                state = RichTextState().apply {
-                    setText(textAfter)
-                    selection = TextRange(0)
-                }
-            )
+            blocks.addAll(insertIndex, newBlocks)
+            insertIndex += newBlocks.size
+
+            nextTextBlock = EditorBlock.Text(nextState.apply { selection = TextRange.Zero })
             blocks.add(insertIndex, nextTextBlock)
         } else {
-            val trimmed = fullText.trimEnd('\n')
-            if (trimmed != fullText) {
-                activeTextBlock.state.setText(trimmed)
+            val trimmedLen = fullText.trimEnd('\n').length
+            if (trimmedLen < fullText.length) {
+                textBlock.state.removeTextRange(TextRange(trimmedLen, fullText.length))
             }
-            for (uri in uris) {
-                blocks.add(insertIndex++, EditorBlock.Image(uri))
-            }
+            blocks.addAll(insertIndex, newBlocks)
+            insertIndex += newBlocks.size
 
-            nextTextBlock = EditorBlock.Text(
-                state = RichTextState().apply {
-                    selection = TextRange(0)
-                }
-            )
+            nextTextBlock = EditorBlock.Text(RichTextState().apply { selection = TextRange.Zero })
             blocks.add(insertIndex, nextTextBlock)
         }
 
@@ -346,12 +438,16 @@ class DiaryEditorState(
                     activeBlockId = prevBlock.id
                     focusTargetId = prevBlock.id
                 } else {
-                    // Merge current block into previous block
+                    // Merge current block into previous block within the same paragraph
                     val prevLength = prevBlock.state.toText().length
                     val prevHtml = prevBlock.state.toHtml()
                     val currentHtml = currentBlock.state.toHtml()
                     blocks.removeAt(currentIndex)
-                    prevBlock.state.setHtml(prevHtml + currentHtml)
+
+                    // Strip closing </p> from prev and opening <p...> from current to merge within the same paragraph
+                    val cleanPrev = prevHtml.replace(Regex("</p>\\s*$", RegexOption.IGNORE_CASE), "")
+                    val cleanCurrent = currentHtml.replace(Regex("^\\s*<p[^>]*>", RegexOption.IGNORE_CASE), "")
+                    prevBlock.state.setHtml(cleanPrev + cleanCurrent)
                     prevBlock.state.selection = TextRange(prevLength)
                     activeBlockId = prevBlock.id
                     focusTargetId = prevBlock.id
@@ -454,7 +550,7 @@ class DiaryEditorState(
         activeBlockId = blocks.firstOrNull()?.id
         focusTargetId = blocks.filterIsInstance<EditorBlock.Text>().firstOrNull()?.id
         showFormattingBar = true
-        isDocumentSelected = false
+        selectedRange = null
     }
 
     fun reset() {
@@ -467,7 +563,7 @@ class DiaryEditorState(
         activeBlockId = initialBlock.id
         focusTargetId = null
         showFormattingBar = true
-        isDocumentSelected = false
+        selectedRange = null
     }
 
     private fun cleanupSessionImages() {

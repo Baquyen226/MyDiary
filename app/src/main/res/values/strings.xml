@@ -20,4 +20,15 @@
     <string name="ui_diary_choose_mood5">Excellent</string>
     <string name="ui_close">Close</string>
     <string name="ui_diary_choose_mood_prompt">Select Mood</string>
+    <string name="ui_editor_copy">Copy</string>
+    <string name="ui_editor_delete">Delete</string>
+    <string name="ui_editor_block_selection">Block Selection</string>
+    <string name="ui_editor_select_this_block">Select This Block</string>
+    <string name="ui_editor_extend_up">Extend Up</string>
+    <string name="ui_editor_extend_down">Extend Down</string>
+    <string name="ui_editor_select_all_blocks">Select All Blocks</string>
+    <string name="ui_editor_all_blocks_selected">All blocks selected</string>
+    <string name="ui_editor_blocks_selected">%1$d blocks selected</string>
+    <string name="ui_editor_move_up">Move Up</string>
+    <string name="ui_editor_move_down">Move Down</string>
 </resources>

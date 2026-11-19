@@ -4,19 +4,18 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,10 +48,24 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.TextToolbar
 import androidx.compose.ui.platform.TextToolbarStatus
+import androidx.compose.ui.res.stringResource
+import com.personalproject.mydiary.R
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -147,7 +160,7 @@ fun DiaryEditor(
                         true
                     } else if (event.type == KeyEventType.KeyDown &&
                         (event.key == Key.Backspace || event.key == Key.Delete) &&
-                        editorState.isDocumentSelected
+                        editorState.hasBlockSelection
                     ) {
                         editorState.deleteSelectedBlocks()
                         true
@@ -183,6 +196,12 @@ fun DiaryEditor(
                         cameraLauncher.launch(contentUri)
                     }
                 },
+                onSelectCurrentBlock = { editorState.selectCurrentBlock() },
+                onExtendSelectionUp = { editorState.extendSelectionUp() },
+                onExtendSelectionDown = { editorState.extendSelectionDown() },
+                onSelectAllBlocks = { editorState.selectAllBlocks() },
+                hasSelection = editorState.hasBlockSelection,
+                isAllBlocksSelected = editorState.isDocumentSelected,
                 theme = theme
             )
 
@@ -194,6 +213,21 @@ fun DiaryEditor(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
+                val density = LocalDensity.current
+                val thresholdPx = remember(density) { with(density) { 48.dp.toPx() } }
+                val editorTextStyle = remember(theme.secondaryTextColor) {
+                    TextStyle(
+                        fontFamily = displayLargeFontFamily,
+                        fontSize = 18.sp,
+                        lineHeight = 32.sp,
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.None
+                        ),
+                        color = theme.secondaryTextColor
+                    )
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -202,17 +236,36 @@ fun DiaryEditor(
                 ) {
                     editorState.blocks.forEachIndexed { index, block ->
                         key(block.id) {
-                            val isSelected = editorState.isDocumentSelected
+                            val isSelected = editorState.isBlockSelected(index)
+                            var dragAccumulator by remember { mutableFloatStateOf(0f) }
 
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .then(
                                         if (isSelected) {
-                                            Modifier.background(
-                                                theme.primaryTextColor.copy(alpha = 0.15f),
-                                                shape = RoundedCornerShape(6.dp)
-                                            )
+                                            Modifier
+                                                .background(
+                                                    theme.primaryTextColor.copy(alpha = 0.15f),
+                                                    shape = RoundedCornerShape(6.dp)
+                                                )
+                                                .pointerInput(block.id, thresholdPx) {
+                                                    detectDragGesturesAfterLongPress(
+                                                        onDragStart = { dragAccumulator = 0f },
+                                                        onDrag = { change, dragAmount ->
+                                                            change.consume()
+                                                            dragAccumulator = processBlockDrag(
+                                                                dragY = dragAmount.y,
+                                                                accumulator = dragAccumulator,
+                                                                thresholdPx = thresholdPx,
+                                                                onMoveUp = { editorState.moveSelectedBlocksUp() },
+                                                                onMoveDown = { editorState.moveSelectedBlocksDown() }
+                                                            )
+                                                        },
+                                                        onDragEnd = { dragAccumulator = 0f },
+                                                        onDragCancel = { dragAccumulator = 0f }
+                                                    )
+                                                }
                                         } else Modifier
                                     )
                             ) {
@@ -220,16 +273,7 @@ fun DiaryEditor(
                                     is EditorBlock.Text -> {
                                         BasicRichTextEditor(
                                             state = block.state,
-                                            textStyle = TextStyle(
-                                                fontFamily = displayLargeFontFamily,
-                                                fontSize = 18.sp,
-                                                lineHeight = 32.sp,
-                                                lineHeightStyle = LineHeightStyle(
-                                                    alignment = LineHeightStyle.Alignment.Center,
-                                                    trim = LineHeightStyle.Trim.None
-                                                ),
-                                                color = theme.secondaryTextColor
-                                            ),
+                                            textStyle = editorTextStyle,
                                             cursorBrush = SolidColor(theme.primaryTextColor),
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -239,8 +283,8 @@ fun DiaryEditor(
                                                 .onFocusChanged { focusState ->
                                                     if (focusState.isFocused) {
                                                         editorState.activeBlockId = block.id
-                                                        if (editorState.isDocumentSelected) {
-                                                            editorState.clearDocumentSelection()
+                                                        if (editorState.hasBlockSelection) {
+                                                            editorState.clearBlockSelection()
                                                         }
                                                     }
                                                 }
@@ -259,16 +303,9 @@ fun DiaryEditor(
                                                 Box(modifier = Modifier.fillMaxWidth()) {
                                                     if (index == 0 && editorState.blocks.size == 1 && block.state.annotatedString.text.isEmpty()) {
                                                         Text(
-                                                            text = "What happened today?",
-                                                            style = TextStyle(
-                                                                fontFamily = displayLargeFontFamily,
-                                                                fontSize = 18.sp,
-                                                                lineHeight = 32.sp,
-                                                                lineHeightStyle = LineHeightStyle(
-                                                                    alignment = LineHeightStyle.Alignment.Center,
-                                                                    trim = LineHeightStyle.Trim.None
-                                                                ),
-                                                                color = Color.Gray,
+                                                            text = stringResource(R.string.ui_folder_view_diary_body_prompt),
+                                                            style = editorTextStyle.copy(
+                                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                                                                 textAlign = block.state.currentParagraphStyle.textAlign
                                                             ),
                                                             modifier = Modifier.fillMaxWidth()
@@ -283,8 +320,13 @@ fun DiaryEditor(
                                     is EditorBlock.Image -> {
                                         ArticleImageItem(
                                             uriString = block.uriString,
-                                            onRemove = {
-                                                editorState.removeBlock(block)
+                                            isSelected = isSelected,
+                                            onSelect = {
+                                                if (isSelected) {
+                                                    editorState.clearBlockSelection()
+                                                } else {
+                                                    editorState.selectBlock(index)
+                                                }
                                             },
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -296,14 +338,59 @@ fun DiaryEditor(
                                     is EditorBlock.Divider -> {
                                         EditorDividerItem(
                                             theme = theme,
-                                            onRemove = {
-                                                editorState.removeBlock(block)
-                                            },
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(vertical = 4.dp)
                                                 .padding(horizontal = 9.dp)
                                         )
+                                    }
+                                }
+
+                                // Dedicated visual drag handle when block is selected
+                                if (isSelected && index == editorState.selectedRange?.first) {
+                                    var handleDragAccumulator by remember { mutableFloatStateOf(0f) }
+
+                                    Surface(
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+                                        shadowElevation = 3.dp,
+                                        modifier = Modifier
+                                            .align(if (block is EditorBlock.Image) Alignment.TopStart else Alignment.TopEnd)
+                                            .padding(
+                                                top = 2.dp,
+                                                start = if (block is EditorBlock.Image) 4.dp else 0.dp,
+                                                end = if (block is EditorBlock.Image) 0.dp else 4.dp
+                                            )
+                                            .pointerInput(block.id, thresholdPx) {
+                                                detectDragGestures(
+                                                    onDragStart = { handleDragAccumulator = 0f },
+                                                    onDrag = { change, dragAmount ->
+                                                        change.consume()
+                                                        handleDragAccumulator = processBlockDrag(
+                                                            dragY = dragAmount.y,
+                                                            accumulator = handleDragAccumulator,
+                                                            thresholdPx = thresholdPx,
+                                                            onMoveUp = { editorState.moveSelectedBlocksUp() },
+                                                            onMoveDown = { editorState.moveSelectedBlocksDown() }
+                                                        )
+                                                    },
+                                                    onDragEnd = { handleDragAccumulator = 0f },
+                                                    onDragCancel = { handleDragAccumulator = 0f }
+                                                )
+                                            }
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_editor_select_block_move),
+                                                contentDescription = "Drag to move block",
+                                                modifier = Modifier.size(18.dp),
+                                                tint = theme.primaryTextColor
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -324,10 +411,11 @@ fun DiaryEditor(
                     )
                 }
 
-                // Floating Action Pill when whole document is selected via escalating "Select All"
-                if (editorState.isDocumentSelected) {
+                // Floating Action Pill when block selection is active
+                if (editorState.hasBlockSelection) {
                     Surface(
-                        color = theme.primaryTextColor,
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                         shape = RoundedCornerShape(24.dp),
                         shadowElevation = 6.dp,
                         modifier = Modifier
@@ -339,21 +427,54 @@ fun DiaryEditor(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            val count = editorState.selectedRange?.count() ?: 0
+                            val labelText = if (count >= editorState.blocks.size) {
+                                stringResource(R.string.ui_editor_all_blocks_selected)
+                            } else {
+                                stringResource(R.string.ui_editor_blocks_selected, count)
+                            }
                             Text(
-                                text = "All blocks selected",
+                                text = labelText,
                                 style = MaterialTheme.typography.labelMedium,
-                                color = theme.surfaceColor,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Medium
                             )
-                            TextButton(
-                                onClick = { editorState.copyAllToClipboard(context) }
+                            val canMoveUp = (editorState.selectedRange?.first ?: 0) > 0
+                            val canMoveDown = (editorState.selectedRange?.last ?: (editorState.blocks.size - 1)) < editorState.blocks.size - 1
+
+                            IconButton(
+                                onClick = { editorState.moveSelectedBlocksUp() },
+                                enabled = canMoveUp,
+                                modifier = Modifier.size(30.dp)
                             ) {
-                                Text("Copy", color = theme.surfaceColor)
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowUp,
+                                    contentDescription = stringResource(R.string.ui_editor_move_up),
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (canMoveUp) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                )
+                            }
+                            IconButton(
+                                onClick = { editorState.moveSelectedBlocksDown() },
+                                enabled = canMoveDown,
+                                modifier = Modifier.size(30.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowDown,
+                                    contentDescription = stringResource(R.string.ui_editor_move_down),
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (canMoveDown) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                )
+                            }
+                            TextButton(
+                                onClick = { editorState.copySelectedToClipboard(context) }
+                            ) {
+                                Text(stringResource(R.string.ui_editor_copy), color = MaterialTheme.colorScheme.primary)
                             }
                             TextButton(
                                 onClick = { editorState.deleteSelectedBlocks() }
                             ) {
-                                Text("Delete", color = Color(0xFFFF6B6B))
+                                Text(stringResource(R.string.ui_editor_delete), color = MaterialTheme.colorScheme.error)
                             }
                         }
                     }
@@ -364,7 +485,11 @@ fun DiaryEditor(
             EditorFormattingBar(
                 state = editorState.activeRichTextState,
                 theme = theme,
-                visible = editorState.showFormattingBar && !editorState.isDocumentSelected,
+                visible = editorState.showFormattingBar,
+                onToggleSpanStyle = { editorState.toggleSpanStyle(it) },
+                onAddParagraphStyle = { editorState.addParagraphStyle(it) },
+                onToggleUnorderedList = { editorState.toggleUnorderedList() },
+                onToggleOrderedList = { editorState.toggleOrderedList() },
                 onClose = { editorState.showFormattingBar = false }
             )
         }
@@ -378,7 +503,6 @@ fun DiaryEditor(
 fun EditorDividerItem(
     modifier: Modifier = Modifier,
     theme: TimelineCardPreference,
-    onRemove: (() -> Unit)? = null,
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -416,26 +540,26 @@ private fun ProvideEditorTextToolbar(
                 onCutRequested: (() -> Unit)?,
                 onSelectAllRequested: (() -> Unit)?
             ) {
-                val wrappedSelectAll: (() -> Unit)? = onSelectAllRequested?.let { originalSelectAll ->
+                val wrappedSelectAll: (() -> Unit)? = onSelectAllRequested?.let { native ->
                     {
                         if (editorState.isCurrentBlockFullySelected()) {
                             editorState.selectAllBlocks()
                         } else {
-                            originalSelectAll()
+                            native()
                         }
                     }
                 }
 
                 val wrappedCopy: () -> Unit = {
-                    if (editorState.isDocumentSelected) {
-                        editorState.copyAllToClipboard(context)
+                    if (editorState.hasBlockSelection) {
+                        editorState.copySelectedToClipboard(context)
                     } else {
                         onCopyRequested?.invoke()
                     }
                 }
 
                 val wrappedCut: () -> Unit = {
-                    if (editorState.isDocumentSelected) {
+                    if (editorState.hasBlockSelection) {
                         editorState.cutAllToClipboard(context)
                     } else {
                         onCutRequested?.invoke()
@@ -457,5 +581,26 @@ private fun ProvideEditorTextToolbar(
 
     CompositionLocalProvider(LocalTextToolbar provides customToolbar) {
         content()
+    }
+}
+
+private fun processBlockDrag(
+    dragY: Float,
+    accumulator: Float,
+    thresholdPx: Float,
+    onMoveUp: () -> Unit,
+    onMoveDown: () -> Unit
+): Float {
+    val total = accumulator + dragY
+    return when {
+        total < -thresholdPx -> {
+            onMoveUp()
+            0f
+        }
+        total > thresholdPx -> {
+            onMoveDown()
+            0f
+        }
+        else -> total
     }
 }

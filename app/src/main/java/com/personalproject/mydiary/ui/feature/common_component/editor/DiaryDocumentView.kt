@@ -68,8 +68,7 @@ fun DiaryDocumentView(
                 is EditorBlock.Image -> {
                     ArticleImageItem(
                         uriString = block.uriString,
-                        onRemove = null,
-                        modifier = Modifier
+                                                modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = blockBottomPadding)
                             .padding(horizontal = textPaddingHorizontal)
@@ -79,7 +78,6 @@ fun DiaryDocumentView(
                 is EditorBlock.Divider -> {
                     EditorDividerItem(
                         theme = theme,
-                        onRemove = null,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 4.dp)

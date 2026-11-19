@@ -11,7 +11,7 @@
     <string name="ui_folder_view_entry_count">件</string>
     <string name="ui_folder_view_today">今日</string>
     <string name="ui_folder_view_diary_title_prompt">タイトル</string>
-    <string name="ui_folder_view_diary_body_prompt">今日あったこと...</string>
+    <string name="ui_folder_view_diary_body_prompt">今日あったこと…</string>
     <string name="ui_diary_choose_mood0">未設定</string>
     <string name="ui_diary_choose_mood1">最悪</string>
     <string name="ui_diary_choose_mood2">わるい</string>
@@ -20,4 +20,15 @@
     <string name="ui_diary_choose_mood5">最高</string>
     <string name="ui_close">閉じる</string>
     <string name="ui_diary_choose_mood_prompt">気分を選択</string>
+    <string name="ui_editor_copy">コピー</string>
+    <string name="ui_editor_delete">削除</string>
+    <string name="ui_editor_block_selection">ブロック選択</string>
+    <string name="ui_editor_select_this_block">このブロックを選択</string>
+    <string name="ui_editor_extend_up">上に広げる</string>
+    <string name="ui_editor_extend_down">下に広げる</string>
+    <string name="ui_editor_select_all_blocks">すべてのブロックを選択</string>
+    <string name="ui_editor_all_blocks_selected">すべてのブロックを選択中</string>
+    <string name="ui_editor_blocks_selected">%1$d個のブロックを選択中</string>
+    <string name="ui_editor_move_up">上に移動</string>
+    <string name="ui_editor_move_down">下に移動</string>
 </resources>

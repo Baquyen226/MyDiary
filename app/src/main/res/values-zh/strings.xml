@@ -20,4 +20,15 @@
     <string name="ui_diary_choose_mood5">超棒</string>
     <string name="ui_close">关闭</string>
     <string name="ui_diary_choose_mood_prompt">选择心情</string>
+    <string name="ui_editor_copy">复制</string>
+    <string name="ui_editor_delete">删除</string>
+    <string name="ui_editor_block_selection">块选择</string>
+    <string name="ui_editor_select_this_block">选择当前块</string>
+    <string name="ui_editor_extend_up">向上延伸</string>
+    <string name="ui_editor_extend_down">向下延伸</string>
+    <string name="ui_editor_select_all_blocks">全选所有块</string>
+    <string name="ui_editor_all_blocks_selected">已选中全部块</string>
+    <string name="ui_editor_blocks_selected">已选中 %1$d 个块</string>
+    <string name="ui_editor_move_up">向上移动</string>
+    <string name="ui_editor_move_down">向下移动</string>
 </resources>

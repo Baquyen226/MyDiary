@@ -32,7 +32,6 @@ val chineseAestheticFontFamily =
     )
 
 val displayLargeFontFamily: FontFamily
-    @Composable
     get() {
         return defaultDisplayLargeFontFamily
     }

@@ -8,8 +8,12 @@ import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.os.Build
+import android.webkit.MimeTypeMap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -51,7 +55,9 @@ suspend fun copyUriToInternalStorage(context: Context, sourceUri: Uri): String? 
     runCatching {
         val inputStream = context.contentResolver.openInputStream(sourceUri) ?: return@runCatching null
         val mediaDir = File(context.filesDir, "diary_media").apply { if (!exists()) mkdirs() }
-        val targetFile = File(mediaDir, "img_${UUID.randomUUID()}.jpg")
+        val mimeType = context.contentResolver.getType(sourceUri)
+        val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "jpg"
+        val targetFile = File(mediaDir, "img_${UUID.randomUUID()}.$ext")
         inputStream.use { input ->
             FileOutputStream(targetFile).use { output ->
                 input.copyTo(output)
@@ -176,7 +182,8 @@ fun rememberAsyncImageBitmap(uriString: String, maxDimension: Int = 1080): Image
 @Composable
 fun ArticleImageItem(
     uriString: String,
-    onRemove: (() -> Unit)? = null,
+    isSelected: Boolean = false,
+    onSelect: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val bitmap = rememberAsyncImageBitmap(uriString = uriString)
@@ -194,6 +201,11 @@ fun ArticleImageItem(
                     .fillMaxWidth()
                     .heightIn(max = 480.dp)
                     .clip(RoundedCornerShape(12.dp))
+                    .then(
+                        if (onSelect != null) {
+                            Modifier.clickable(onClick = onSelect)
+                        } else Modifier
+                    )
             )
         } else {
             Box(
@@ -211,18 +223,21 @@ fun ArticleImageItem(
             }
         }
 
-        if (onRemove != null) {
+        if (onSelect != null) {
             IconButton(
-                onClick = onRemove,
+                onClick = onSelect,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
                     .size(28.dp)
-                    .background(Color.Black.copy(alpha = 0.6f), shape = CircleShape)
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.primary else Color.Black.copy(alpha = 0.6f),
+                        shape = CircleShape
+                    )
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_ui_close),
-                    contentDescription = "Remove image",
+                    painter = painterResource(id = R.drawable.ic_editor_select_this_block),
+                    contentDescription = stringResource(R.string.ui_editor_select_this_block),
                     tint = Color.White,
                     modifier = Modifier.size(16.dp)
                 )

@@ -23,7 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -42,6 +41,10 @@ fun EditorFormattingBar(
     theme: TimelineCardPreference,
     visible: Boolean,
     modifier: Modifier = Modifier,
+    onToggleSpanStyle: ((SpanStyle) -> Unit)? = null,
+    onAddParagraphStyle: ((ParagraphStyle) -> Unit)? = null,
+    onToggleUnorderedList: (() -> Unit)? = null,
+    onToggleOrderedList: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null
 ) {
     AnimatedVisibility(
@@ -71,11 +74,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentSpanStyle.fontWeight == FontWeight.Bold,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.toggleSpanStyle(
-                                SpanStyle(
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
+                            val style = SpanStyle(fontWeight = FontWeight.Bold)
+                            onToggleSpanStyle?.invoke(style) ?: state.toggleSpanStyle(style)
                         }
                     )
                 }
@@ -88,11 +88,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentSpanStyle.fontStyle == FontStyle.Italic,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.toggleSpanStyle(
-                                SpanStyle(
-                                    fontStyle = FontStyle.Italic
-                                )
-                            )
+                            val style = SpanStyle(fontStyle = FontStyle.Italic)
+                            onToggleSpanStyle?.invoke(style) ?: state.toggleSpanStyle(style)
                         }
                     )
                 }
@@ -105,11 +102,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentSpanStyle.textDecoration?.contains(TextDecoration.Underline) == true,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.toggleSpanStyle(
-                                SpanStyle(
-                                    textDecoration = TextDecoration.Underline
-                                )
-                            )
+                            val style = SpanStyle(textDecoration = TextDecoration.Underline)
+                            onToggleSpanStyle?.invoke(style) ?: state.toggleSpanStyle(style)
                         }
                     )
                 }
@@ -122,11 +116,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentSpanStyle.textDecoration?.contains(TextDecoration.LineThrough) == true,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.toggleSpanStyle(
-                                SpanStyle(
-                                    textDecoration = TextDecoration.LineThrough
-                                )
-                            )
+                            val style = SpanStyle(textDecoration = TextDecoration.LineThrough)
+                            onToggleSpanStyle?.invoke(style) ?: state.toggleSpanStyle(style)
                         }
                     )
                 }
@@ -140,7 +131,8 @@ fun EditorFormattingBar(
                                 state.currentParagraphStyle.textAlign == TextAlign.Unspecified,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.addParagraphStyle(ParagraphStyle(textAlign = TextAlign.Start))
+                            val style = ParagraphStyle(textAlign = TextAlign.Start)
+                            onAddParagraphStyle?.invoke(style) ?: state.addParagraphStyle(style)
                         }
                     )
                 }
@@ -153,7 +145,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentParagraphStyle.textAlign == TextAlign.Center,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.addParagraphStyle(ParagraphStyle(textAlign = TextAlign.Center))
+                            val style = ParagraphStyle(textAlign = TextAlign.Center)
+                            onAddParagraphStyle?.invoke(style) ?: state.addParagraphStyle(style)
                         }
                     )
                 }
@@ -166,7 +159,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentParagraphStyle.textAlign == TextAlign.End,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.addParagraphStyle(ParagraphStyle(textAlign = TextAlign.End))
+                            val style = ParagraphStyle(textAlign = TextAlign.End)
+                            onAddParagraphStyle?.invoke(style) ?: state.addParagraphStyle(style)
                         }
                     )
                 }
@@ -179,7 +173,8 @@ fun EditorFormattingBar(
                         isSelected = state.currentParagraphStyle.textAlign == TextAlign.Justify,
                         tintColor = theme.primaryTextColor,
                         onClick = {
-                            state.addParagraphStyle(ParagraphStyle(textAlign = TextAlign.Justify))
+                            val style = ParagraphStyle(textAlign = TextAlign.Justify)
+                            onAddParagraphStyle?.invoke(style) ?: state.addParagraphStyle(style)
                         }
                     )
                 }
@@ -191,7 +186,9 @@ fun EditorFormattingBar(
                         contentDescription = "Bullet List",
                         isSelected = state.isUnorderedList,
                         tintColor = theme.primaryTextColor,
-                        onClick = { state.toggleUnorderedList() }
+                        onClick = {
+                            onToggleUnorderedList?.invoke() ?: state.toggleUnorderedList()
+                        }
                     )
                 }
 
@@ -202,7 +199,9 @@ fun EditorFormattingBar(
                         contentDescription = "Numbered List",
                         isSelected = state.isOrderedList,
                         tintColor = theme.primaryTextColor,
-                        onClick = { state.toggleOrderedList() }
+                        onClick = {
+                            onToggleOrderedList?.invoke() ?: state.toggleOrderedList()
+                        }
                     )
                 }
 
