@@ -79,7 +79,7 @@ fun NoteHeader(
                     textAlign = TextAlign.Center,
                     lineHeight = 20.sp
                 )
-            } else { Spacer(modifier = Modifier.height(23.dp)) }
+            } else { Spacer(modifier = Modifier.height(8.dp)) }
         }
 
         IconButton(
@@ -96,4 +96,13 @@ fun NoteHeader(
             )
         }
     }
+}
+
+
+@Preview
+@Composable
+fun NoteHeaderPreview2() {
+    NoteHeader()
+
+    NoteHeader(noteEntry = MockEntry.mockNoteEntry_2)
 }

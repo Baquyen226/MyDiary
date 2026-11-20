@@ -36,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.data.mock.MockEntry
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.ui.feature.common_component.DiaryColorPickerDialog
 import com.personalproject.mydiary.ui.feature.common_component.DropdownFontSize
+import com.personalproject.mydiary.ui.feature.common_component.parseHexColor
 import com.personalproject.mydiary.ui.feature.entry.diary_entry.getMoodRes
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference

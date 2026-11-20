@@ -209,8 +209,78 @@ class DiaryEditorState(
 
     fun toggleSpanStyle(spanStyle: SpanStyle) = applyToSelectedTextBlocks { it.toggleSpanStyle(spanStyle) }
     fun addParagraphStyle(paragraphStyle: ParagraphStyle) = applyToSelectedTextBlocks { it.addParagraphStyle(paragraphStyle) }
-    fun toggleUnorderedList() = applyToSelectedTextBlocks { it.toggleUnorderedList() }
-    fun toggleOrderedList() = applyToSelectedTextBlocks { it.toggleOrderedList() }
+    fun toggleUnorderedList() {
+        applyToSelectedTextBlocks { it.toggleUnorderedList() }
+        resequenceOrderedLists()
+    }
+
+    fun toggleOrderedList() {
+        val range = selectedRange
+        if (range != null) {
+            val selectedTextBlocks = blocks.filterIndexed { index, _ -> index in range }
+                .filterIsInstance<EditorBlock.Text>()
+            if (selectedTextBlocks.isEmpty()) return
+
+            val allAlreadyOrdered = selectedTextBlocks.all { it.state.isOrderedList }
+            selectedTextBlocks.forEach { block ->
+                val len = block.state.annotatedString.text.length
+                block.state.selection = TextRange(0, len)
+                if (allAlreadyOrdered) {
+                    if (block.state.isOrderedList) {
+                        block.state.toggleOrderedList()
+                    }
+                } else {
+                    if (!block.state.isOrderedList) {
+                        block.state.toggleOrderedList()
+                    }
+                }
+            }
+        } else {
+            activeRichTextState.toggleOrderedList()
+        }
+        resequenceOrderedLists()
+    }
+
+    /**
+     * Resequences all ordered list text blocks across dividers/images to maintain
+     * contiguous numbering across the document. If an unformatted text block interrupts
+     * the sequence, the numbering restarts from 1.
+     */
+    fun resequenceOrderedLists() {
+        var currentNumber = 1
+
+        for (block in blocks) {
+            when (block) {
+                is EditorBlock.Text -> {
+                    if (block.state.isOrderedList) {
+                        val currentHtml = block.state.toHtml()
+                        val targetStart = currentNumber
+                        val updatedHtml = if (targetStart == 1) {
+                            currentHtml.replace(Regex("""<ol\b[^>]*\bstart=["']?\d+["']?[^>]*>""", RegexOption.IGNORE_CASE), "<ol>")
+                        } else {
+                            if (Regex("<ol\\b[^>]*>", RegexOption.IGNORE_CASE).containsMatchIn(currentHtml)) {
+                                currentHtml.replace(Regex("<ol\\b[^>]*>", RegexOption.IGNORE_CASE), "<ol start=\"$targetStart\">")
+                            } else {
+                                "<ol start=\"$targetStart\">$currentHtml</ol>"
+                            }
+                        }
+                        if (updatedHtml != currentHtml) {
+                            val sel = block.state.selection
+                            block.state.setHtml(updatedHtml)
+                            block.state.selection = sel
+                        }
+                        val itemCount = Regex("<li\\b", RegexOption.IGNORE_CASE).findAll(block.state.toHtml()).count().coerceAtLeast(1)
+                        currentNumber += itemCount
+                    } else {
+                        currentNumber = 1
+                    }
+                }
+                is EditorBlock.Divider, is EditorBlock.Image -> {
+                    // Non-text blocks between text blocks do not break ordered list continuity
+                }
+            }
+        }
+    }
 
     /**
      * Copies selected document text and media references to the system clipboard.

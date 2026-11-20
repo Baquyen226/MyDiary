@@ -13,6 +13,8 @@ import com.personalproject.mydiary.ui.feature.folder_list.FolderListScreen
 import com.personalproject.mydiary.ui.feature.folder_list.FolderListViewModel
 import com.personalproject.mydiary.ui.feature.folder_view.FolderViewScreen
 import com.personalproject.mydiary.ui.feature.folder_view.FolderViewViewModel
+import com.personalproject.mydiary.ui.feature.profile_edit.ProfileEditScreen
+import com.personalproject.mydiary.ui.feature.profile_edit.ProfileEditViewModel
 
 @Composable
 fun AppNavHost(
@@ -30,6 +32,19 @@ fun AppNavHost(
                 viewModel = viewModel,
                 onFolderClick = { folderId ->
                     navController.navigate(AppRoute.folderView(folderId))
+                },
+                onNavigateToProfileEdit = {
+                    navController.navigate(AppRoute.profileEditScreen)
+                }
+            )
+        }
+
+        composable(AppRoute.profileEditScreen) {
+            val viewModel: ProfileEditViewModel = viewModel(factory = ProfileEditViewModel.Factory)
+            ProfileEditScreen(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.personalproject.mydiary.MyDiaryApplication
+import com.personalproject.mydiary.core.util.LocationUtil
 import com.personalproject.mydiary.data.mock.MockEntryRepository
 import com.personalproject.mydiary.data.mock.MockFolderRepository
 import com.personalproject.mydiary.data.mock.MockNoteRepository
@@ -52,7 +53,8 @@ class FolderViewViewModel(
         title: String,
         content: String,
         imageUris: List<String> = emptyList(),
-        voiceNoteUri: String? = null
+        voiceNoteUri: String? = null,
+        location: String? = LocationUtil.UNKNOWN_LOCATION
     ) {
         val entry = DiaryEntry(
             id = UUID.randomUUID().toString(),
@@ -62,7 +64,8 @@ class FolderViewViewModel(
             content = content,
             colorHex = uiState.value.folder?.color,
             imageUris = imageUris,
-            voiceNoteUri = voiceNoteUri
+            voiceNoteUri = voiceNoteUri,
+            location = location ?: LocationUtil.UNKNOWN_LOCATION
         )
         viewModelScope.launch {
             entryRepository.addEntry(entry)
@@ -86,7 +89,8 @@ class FolderViewViewModel(
         title: String,
         description: String? = null,
         content: String,
-        imageUris: List<String> = emptyList()
+        imageUris: List<String> = emptyList(),
+        location: String? = null
     ) {
         val note = NoteEntry(
             id = UUID.randomUUID().toString(),
@@ -96,7 +100,8 @@ class FolderViewViewModel(
             description = description,
             content = content,
             colorHex = uiState.value.folder?.color,
-            imageUris = imageUris
+            imageUris = imageUris,
+            location = location
         )
         viewModelScope.launch {
             noteRepository.addEntry(note)

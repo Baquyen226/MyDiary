@@ -3,6 +3,7 @@
     <string name="ui_folder_view_entries" translatable="true">Entries</string>
     <string name="ui_folder_view_calendar" translatable="true">Calendar</string>
     <string name="ui_folder_view_diary" translatable="true">Diary</string>
+    <string name="ui_folder_view_editor" translatable="true">Editor</string>
     <string name="ui_folder_window_location_unknown">UNKNOWN</string>
     <string name="ui_folder_window_weather_unknown">Unknown</string>
     <string name="ui_folder_window_edit_diary">Edit Diary</string>
@@ -22,6 +23,9 @@
     <string name="ui_diary_choose_mood_prompt">Select Mood</string>
     <string name="ui_editor_copy">Copy</string>
     <string name="ui_editor_delete">Delete</string>
+    <string name="ui_dialog_delete_title">Delete Entry</string>
+    <string name="ui_dialog_delete_message">Are you sure you want to delete this entry? This action cannot be undone.</string>
+    <string name="ui_dialog_cancel">Cancel</string>
     <string name="ui_editor_block_selection">Block Selection</string>
     <string name="ui_editor_select_this_block">Select This Block</string>
     <string name="ui_editor_extend_up">Extend Up</string>
@@ -31,4 +35,46 @@
     <string name="ui_editor_blocks_selected">%1$d blocks selected</string>
     <string name="ui_editor_move_up">Move Up</string>
     <string name="ui_editor_move_down">Move Down</string>
+
+    <!-- Profile & Header -->
+    <string name="ui_profile">Profile</string>
+    <string name="ui_profile_edit">Edit</string>
+    <string name="ui_profile_edit_screen_title">Edit Profile</string>
+    <string name="ui_profile_theme_color">Theme Color</string>
+    <string name="ui_profile_share">Share</string>
+    <string name="ui_profile_share_placeholder">Share profile is not available yet</string>
+    <string name="ui_profile_unknown_user">Unknown User</string>
+    <string name="ui_profile_your_name">Your Name</string>
+    <string name="ui_profile_name">Name</string>
+    <string name="ui_profile_location">Location</string>
+    <string name="ui_profile_phone">Phone</string>
+    <string name="ui_profile_phone_number">Phone Number</string>
+    <string name="ui_profile_note">Note</string>
+    <string name="ui_profile_not_specified">Not specified</string>
+    <string name="ui_profile_no_notes">No notes</string>
+    <string name="ui_profile_save_changes">Save Changes</string>
+    <string name="ui_profile_folder_list_theme_color">Color Picker</string>
+    <string name="ui_profile_picture">Profile Picture</string>
+    <string name="ui_profile_header_banner">Header Banner</string>
+    <string name="ui_profile_banner_image">Banner Image</string>
+    <string name="ui_profile_change_banner">Change banner image</string>
+    <string name="ui_profile_change_avatar">Change profile picture</string>
+    <string name="ui_profile_more_options">More options</string>
+    <string name="ui_profile_back">Back</string>
+    <string name="ui_profile_save">Save</string>
+
+    <!-- Color Picker -->
+    <string name="ui_color_picker_change_color">Change Color</string>
+    <string name="ui_color_picker_change_diary_color">Change Diary Color</string>
+    <string name="ui_color_picker_current">Current</string>
+    <string name="ui_color_picker_preview">Preview</string>
+    <string name="ui_color_picker_invalid">Invalid</string>
+    <string name="ui_color_picker_hex_label">Color Hex</string>
+    <string name="ui_color_picker_hex_error">Enter valid hex format (e.g. #E57373)</string>
+    <string name="ui_color_picker_presets">Presets</string>
+    <string name="ui_color_picker_apply">Apply</string>
+
+    <!-- Bottom Bar & Navigation -->
+    <string name="ui_search">Search</string>
+    <string name="ui_settings">Settings</string>
 </resources>

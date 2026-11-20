@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ui_folder_view_diary">日记</string>
+    <string name="ui_folder_view_editor">编辑器</string>
     <string name="ui_folder_window_location_unknown">未知</string>
     <string name="ui_folder_window_weather_unknown">未知</string>
     <string name="ui_folder_view_entries">条目</string>
@@ -22,6 +23,9 @@
     <string name="ui_diary_choose_mood_prompt">选择心情</string>
     <string name="ui_editor_copy">复制</string>
     <string name="ui_editor_delete">删除</string>
+    <string name="ui_dialog_delete_title">删除条目</string>
+    <string name="ui_dialog_delete_message">确定要删除此条目吗？此操作无法撤消。</string>
+    <string name="ui_dialog_cancel">取消</string>
     <string name="ui_editor_block_selection">块选择</string>
     <string name="ui_editor_select_this_block">选择当前块</string>
     <string name="ui_editor_extend_up">向上延伸</string>
@@ -31,4 +35,46 @@
     <string name="ui_editor_blocks_selected">已选中 %1$d 个块</string>
     <string name="ui_editor_move_up">向上移动</string>
     <string name="ui_editor_move_down">向下移动</string>
+
+    <!-- Profile & Header -->
+    <string name="ui_profile">个人资料</string>
+    <string name="ui_profile_edit">编辑</string>
+    <string name="ui_profile_edit_screen_title">编辑个人资料</string>
+    <string name="ui_profile_theme_color">主题颜色</string>
+    <string name="ui_profile_share">分享</string>
+    <string name="ui_profile_share_placeholder">分享功能暂未开放</string>
+    <string name="ui_profile_unknown_user">未知用户</string>
+    <string name="ui_profile_your_name">您的姓名</string>
+    <string name="ui_profile_name">姓名</string>
+    <string name="ui_profile_location">位置</string>
+    <string name="ui_profile_phone">电话</string>
+    <string name="ui_profile_phone_number">电话号码</string>
+    <string name="ui_profile_note">备注</string>
+    <string name="ui_profile_not_specified">未指定</string>
+    <string name="ui_profile_no_notes">无备注</string>
+    <string name="ui_profile_save_changes">保存更改</string>
+    <string name="ui_profile_folder_list_theme_color">取色器</string>
+    <string name="ui_profile_picture">头像</string>
+    <string name="ui_profile_header_banner">顶部横幅</string>
+    <string name="ui_profile_banner_image">横幅图片</string>
+    <string name="ui_profile_change_banner">更换横幅图片</string>
+    <string name="ui_profile_change_avatar">更换头像</string>
+    <string name="ui_profile_more_options">更多选项</string>
+    <string name="ui_profile_back">返回</string>
+    <string name="ui_profile_save">保存</string>
+
+    <!-- Color Picker -->
+    <string name="ui_color_picker_change_color">更改颜色</string>
+    <string name="ui_color_picker_change_diary_color">更改日记颜色</string>
+    <string name="ui_color_picker_current">当前</string>
+    <string name="ui_color_picker_preview">预览</string>
+    <string name="ui_color_picker_invalid">无效</string>
+    <string name="ui_color_picker_hex_label">十六进制颜色代码</string>
+    <string name="ui_color_picker_hex_error">请输入有效的十六进制格式（例如 #E57373）</string>
+    <string name="ui_color_picker_presets">预设</string>
+    <string name="ui_color_picker_apply">应用</string>
+
+    <!-- Bottom Bar & Navigation -->
+    <string name="ui_search">搜索</string>
+    <string name="ui_settings">设置</string>
 </resources>

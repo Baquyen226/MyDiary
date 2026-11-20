@@ -66,13 +66,14 @@ data class NoteEntry(
         isBookmarked: Boolean = false,
         reminderTime: Instant? = null,
         isReminderActive: Boolean = false,
-        imageUris: List<String> = emptyList()
+        imageUris: List<String> = emptyList(),
+        location: String? = null
     ) : this(
         id = id,
         folderId = folderId,
         timestamp = timestamp,
         title = title,
-        location = null,
+        location = location,
         description = description,
         body = content ?: "",
         bodyPlain = content?.toPlainText() ?: "",

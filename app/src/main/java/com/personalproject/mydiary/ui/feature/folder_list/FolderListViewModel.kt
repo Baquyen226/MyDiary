@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class FolderListViewModel(
     private val folderRepository: FolderRepository,
@@ -52,6 +53,13 @@ class FolderListViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = FolderListUiState(isLoading = true)
     )
+
+    fun updateThemeColor(colorHex: String) {
+        viewModelScope.launch {
+            val currentProfile = uiState.value.profile ?: com.personalproject.mydiary.domain.profile.model.Profile()
+            profileRepository.updateProfile(currentProfile.copy(themeColor = colorHex))
+        }
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

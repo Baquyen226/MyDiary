@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ui_folder_view_diary">日記</string>
+    <string name="ui_folder_view_editor">エディタ</string>
     <string name="ui_folder_window_location_unknown">不明</string>
     <string name="ui_folder_window_weather_unknown">不明</string>
     <string name="ui_folder_view_entries">エントリー</string>
@@ -22,6 +23,9 @@
     <string name="ui_diary_choose_mood_prompt">気分を選択</string>
     <string name="ui_editor_copy">コピー</string>
     <string name="ui_editor_delete">削除</string>
+    <string name="ui_dialog_delete_title">エントリーを削除しますか？</string>
+    <string name="ui_dialog_delete_message">このエントリーを削除してもよろしいですか？この操作は取り消せません。</string>
+    <string name="ui_dialog_cancel">キャンセル</string>
     <string name="ui_editor_block_selection">ブロック選択</string>
     <string name="ui_editor_select_this_block">このブロックを選択</string>
     <string name="ui_editor_extend_up">上に広げる</string>
@@ -31,4 +35,46 @@
     <string name="ui_editor_blocks_selected">%1$d個のブロックを選択中</string>
     <string name="ui_editor_move_up">上に移動</string>
     <string name="ui_editor_move_down">下に移動</string>
+
+    <!-- Profile & Header -->
+    <string name="ui_profile">プロフィール</string>
+    <string name="ui_profile_edit">編集</string>
+    <string name="ui_profile_edit_screen_title">プロフィール編集</string>
+    <string name="ui_profile_theme_color">テーマカラー</string>
+    <string name="ui_profile_share">共有</string>
+    <string name="ui_profile_share_placeholder">プロフィールの共有はまだ利用できません</string>
+    <string name="ui_profile_unknown_user">不明なユーザー</string>
+    <string name="ui_profile_your_name">あなたの名前</string>
+    <string name="ui_profile_name">名前</string>
+    <string name="ui_profile_location">場所</string>
+    <string name="ui_profile_phone">電話番号</string>
+    <string name="ui_profile_phone_number">電話番号</string>
+    <string name="ui_profile_note">メモ</string>
+    <string name="ui_profile_not_specified">未設定</string>
+    <string name="ui_profile_no_notes">メモなし</string>
+    <string name="ui_profile_save_changes">変更を保存</string>
+    <string name="ui_profile_folder_list_theme_color">カラーピッカー</string>
+    <string name="ui_profile_picture">プロフィール画像</string>
+    <string name="ui_profile_header_banner">ヘッダーバナー</string>
+    <string name="ui_profile_banner_image">バナー画像</string>
+    <string name="ui_profile_change_banner">バナー画像を変更</string>
+    <string name="ui_profile_change_avatar">プロフィール画像を変更</string>
+    <string name="ui_profile_more_options">その他のオプション</string>
+    <string name="ui_profile_back">戻る</string>
+    <string name="ui_profile_save">保存</string>
+
+    <!-- Color Picker -->
+    <string name="ui_color_picker_change_color">色を変更</string>
+    <string name="ui_color_picker_change_diary_color">日記の色を変更</string>
+    <string name="ui_color_picker_current">現在</string>
+    <string name="ui_color_picker_preview">プレビュー</string>
+    <string name="ui_color_picker_invalid">無効</string>
+    <string name="ui_color_picker_hex_label">カラーコード (Hex)</string>
+    <string name="ui_color_picker_hex_error">有効なカラーコードを入力してください (例: #E57373)</string>
+    <string name="ui_color_picker_presets">プリセット</string>
+    <string name="ui_color_picker_apply">適用</string>
+
+    <!-- Bottom Bar & Navigation -->
+    <string name="ui_search">検索</string>
+    <string name="ui_settings">設定</string>
 </resources>

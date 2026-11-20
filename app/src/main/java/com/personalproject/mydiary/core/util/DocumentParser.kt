@@ -33,6 +33,7 @@ fun parseDiaryDocument(
 
     var openUl = false
     var openOl = false
+    var currentOlIndex = 1
 
     fun balanceChunk(chunk: String): String {
         var result = chunk.trim()
@@ -44,7 +45,7 @@ fun parseDiaryDocument(
         if (openUl && !hasUlOpen) {
             result = "<ul>$result"
         } else if (openOl && !hasOlOpen) {
-            result = "<ol>$result"
+            result = "<ol start=\"$currentOlIndex\">$result"
         }
 
         val totalUlOpens = Regex("<ul\\b", RegexOption.IGNORE_CASE).findAll(result).count()
@@ -62,8 +63,13 @@ fun parseDiaryDocument(
         if (totalOlOpens > totalOlCloses) {
             result = "$result</ol>"
             openOl = true
+            val liCount = Regex("<li\\b", RegexOption.IGNORE_CASE).findAll(result).count().coerceAtLeast(1)
+            val startMatch = Regex("""<ol\b[^>]*\bstart=["']?(\d+)""", RegexOption.IGNORE_CASE).find(result)
+            val chunkStart = startMatch?.groupValues?.get(1)?.toIntOrNull() ?: currentOlIndex
+            currentOlIndex = chunkStart + liCount
         } else {
             openOl = false
+            currentOlIndex = 1
         }
 
         return result

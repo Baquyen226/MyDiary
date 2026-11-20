@@ -89,7 +89,7 @@ object MockEntry {
         id = "D_000004",
         folderId = "2",
         timestamp = daysAgo(now, 29),
-        title = "東京生活９",
+        title = "東京生活９\uD83D\uDC95",
         location = "Shinjuku-ku, Tokyo, JAPAN",
         colorHex = "#E57373",
         description = "This is a test!",
@@ -121,7 +121,7 @@ object MockEntry {
         id = "D_000005",
         folderId = "2",
         timestamp = daysAgo(now, 32),
-        title = "東京生活８",
+        title = "東京生活８\uD83D\uDC95",
         location = "Shinjuku-ku, Tokyo, JAPAN",
         colorHex = "#E57373",
         description = "This is a test!",
@@ -229,6 +229,7 @@ object MockEntry {
         folderId = "3",
         timestamp = yesterday,
         title = "禁止事項　Ver.5",
+        colorHex = "#1E81B0",
         description = null,
         content = """
             <ul>

@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,6 +22,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.personalproject.mydiary.data.mock.MockEntry
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
+import com.personalproject.mydiary.ui.feature.common_component.DeletionConfirmDialog
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
@@ -35,6 +39,8 @@ import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
  * @param onEditClick Callback to enter the DiaryEditor with this entry.
  * @param onColorChange Callback when the diary's color hex is updated.
  * @param onMoodChange Callback when the diary's mood score is updated.
+ * @param onLocationClick Callback when the location button is clicked.
+ * @param onDeleteClick Callback when the entry is deleted.
  */
 @Composable
 fun DiaryEntryWindow(
@@ -43,9 +49,12 @@ fun DiaryEntryWindow(
    onDismiss: () -> Unit = {},
    onEditClick: () -> Unit = {},
    onColorChange: (String) -> Unit = {},
-   onMoodChange: (Int) -> Unit = {}
+   onMoodChange: (Int) -> Unit = {},
+   onLocationClick: () -> Unit = {},
+   onDeleteClick: () -> Unit = {}
 ) {
    val isDark = isSystemInDarkTheme()
+   var showDeleteConfirmation by remember { mutableStateOf(false) }
    val effectiveTheme = remember(entry.colorHex, theme, isDark) {
       entry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it, isDark) } ?: theme
    }
@@ -80,10 +89,25 @@ fun DiaryEntryWindow(
                theme = effectiveTheme,
                onEditClick = onEditClick,
                onColorChange = onColorChange,
-               onMoodChange = onMoodChange
+               onMoodChange = onMoodChange,
+               onLocationClick = onLocationClick,
+               onDeleteClick = { showDeleteConfirmation = true }
             )
          }
       }
+   }
+
+   if (showDeleteConfirmation) {
+      DeletionConfirmDialog(
+         theme = effectiveTheme,
+         onConfirm = {
+            showDeleteConfirmation = false
+            onDeleteClick()
+         },
+         onDismiss = {
+            showDeleteConfirmation = false
+         }
+      )
    }
 }
 

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.personalproject.mydiary.R
+import com.personalproject.mydiary.domain.folder.model.FolderType
 import com.personalproject.mydiary.ui.feature.common_component.SegmentedTabs
 import com.personalproject.mydiary.ui.feature.folder_view.FolderTab
 import com.personalproject.mydiary.ui.theme.displayLargeFontFamily
@@ -38,7 +39,8 @@ fun HeaderSection(
     onBackClick: () -> Unit,
     tintColor: Color,
     modifier: Modifier = Modifier,
-    showTabs: Boolean = true
+    showTabs: Boolean = true,
+    folderType: FolderType = FolderType.DIARY
 ) {
     Column(
         modifier = modifier
@@ -60,15 +62,13 @@ fun HeaderSection(
                     contentAlignment = Alignment.Center
                 ) {
                     SegmentedTabs(
-                        options = FolderTab.entries.map { stringResource(it.titleRes) },
+                        options = FolderTab.entries.map { stringResource(it.titleRes(folderType)) },
                         selectedIndex = selectedTab.ordinal,
                         onSelect = { index -> onTabSelect(FolderTab.entries[index]) },
                         tintColor = tintColor,
-                        modifier = Modifier.fillMaxWidth(0.85f)
+                        modifier = Modifier.fillMaxWidth(0.75f)
                     )
                 }
-
-                Spacer(modifier = Modifier.size(36.dp))
             }
 
             Spacer(modifier = Modifier.height(4.dp))

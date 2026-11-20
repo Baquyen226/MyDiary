@@ -156,7 +156,7 @@ fun DiaryEntryCard(
                     fontFamily = displayLargeFontFamily,
                     maxLines = 1,
                     color = effectiveTheme.subtitleTextColor,
-                    fontSize = 14.sp
+                    fontSize = 12.sp
                 )
             }
 

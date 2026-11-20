@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,6 +21,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.personalproject.mydiary.data.mock.MockEntry
 import com.personalproject.mydiary.domain.timeline.model.NoteEntry
+import com.personalproject.mydiary.ui.feature.common_component.DeletionConfirmDialog
 import com.personalproject.mydiary.ui.theme.BlueSky
 import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 import com.personalproject.mydiary.ui.theme.colorHexToCardPreference
@@ -54,6 +58,7 @@ fun NoteWindow(
     onBookmarkToggle: () -> Unit = {}
 ) {
     val isDark = isSystemInDarkTheme()
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
     val effectiveTheme = remember(noteEntry.colorHex, theme, isDark) {
         noteEntry.colorHex?.takeIf { it.isNotBlank() }?.let { colorHexToCardPreference(it, isDark) } ?: theme
     }
@@ -93,12 +98,25 @@ fun NoteWindow(
                     onEditClick = onEditClick,
                     onColorChange = onColorChange,
                     onAddAlarmClick = onAddAlarmClick,
-                    onDeleteClick = onDeleteClick,
+                    onDeleteClick = { showDeleteConfirmation = true },
                     onPinToggle = onPinToggle,
                     onBookmarkToggle = onBookmarkToggle
                 )
             }
         }
+    }
+
+    if (showDeleteConfirmation) {
+        DeletionConfirmDialog(
+            theme = effectiveTheme,
+            onConfirm = {
+                showDeleteConfirmation = false
+                onDeleteClick()
+            },
+            onDismiss = {
+                showDeleteConfirmation = false
+            }
+        )
     }
 }
 

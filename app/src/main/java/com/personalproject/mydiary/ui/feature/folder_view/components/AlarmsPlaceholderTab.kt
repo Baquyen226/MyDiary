@@ -40,27 +40,8 @@ fun AlarmsPlaceholderTab(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(88.dp)
-                .background(
-                    color = theme.primaryTextColor.copy(alpha = 0.12f),
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_folderview_type_event),
-                contentDescription = "Alarms & Events",
-                tint = theme.primaryTextColor,
-                modifier = Modifier.size(44.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(18.dp))
-
         Text(
-            text = "Alarms & Events",
+            text = "?",
             style = MaterialTheme.typography.headlineSmall,
             fontFamily = displayLargeFontFamily,
             fontWeight = FontWeight.Bold,
@@ -70,7 +51,7 @@ fun AlarmsPlaceholderTab(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Scheduled alarms, push reminders, and calendar tasks will be tracked here.",
+            text = "still not implemented",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

@@ -1,6 +1,8 @@
 package com.personalproject.mydiary.ui.feature.folder_view
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -20,11 +22,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.personalproject.mydiary.core.util.LocationUtil
 import com.personalproject.mydiary.core.util.toPlainText
 import com.personalproject.mydiary.domain.folder.model.FolderType
 import com.personalproject.mydiary.domain.timeline.model.DiaryEntry
@@ -69,50 +73,119 @@ fun FolderViewScreen(
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val context = LocalContext.current
+
+    var pendingSavePayload by remember {
+        mutableStateOf<Triple<String, String, List<String>>?>(null)
+    }
+    var pendingLocationRefreshForEntry by remember {
+        mutableStateOf<DiaryEntry?>(null)
+    }
+
+    val commitSave: (String, String, List<String>, String) -> Unit = { title, contentHtml, imageUris, location ->
+        if (folderType == FolderType.NOTES) {
+            val currentEditing = editingNote
+            if (currentEditing != null) {
+                viewModel.updateNote(
+                    currentEditing.copy(
+                        title = title,
+                        body = contentHtml,
+                        bodyPlain = contentHtml.toPlainText(),
+                        imageUris = imageUris,
+                        location = if (currentEditing.location.isNullOrBlank() || currentEditing.location == LocationUtil.UNKNOWN_LOCATION) {
+                            location
+                        } else {
+                            currentEditing.location
+                        }
+                    )
+                )
+                editingNote = null
+            } else {
+                viewModel.addNote(
+                    title = title,
+                    content = contentHtml,
+                    imageUris = imageUris,
+                    location = location
+                )
+            }
+        } else {
+            val currentEditing = editingEntry
+            if (currentEditing != null) {
+                viewModel.updateEntry(
+                    currentEditing.copy(
+                        title = title,
+                        body = contentHtml,
+                        bodyPlain = contentHtml.toPlainText(),
+                        imageUris = imageUris,
+                        location = if (currentEditing.location.isNullOrBlank() || currentEditing.location == LocationUtil.UNKNOWN_LOCATION) {
+                            location
+                        } else {
+                            currentEditing.location
+                        }
+                    )
+                )
+                editingEntry = null
+            } else {
+                viewModel.addEntry(
+                    title = title,
+                    content = contentHtml,
+                    imageUris = imageUris,
+                    location = location
+                )
+            }
+        }
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+        }
+    }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isGranted = LocationUtil.isAnyPermissionGranted(permissions)
+
+        val savePayload = pendingSavePayload
+        pendingSavePayload = null
+        if (savePayload != null) {
+            val (title, contentHtml, imageUris) = savePayload
+            coroutineScope.launch {
+                val location = if (isGranted) {
+                    LocationUtil.resolveLocation(context)
+                } else {
+                    LocationUtil.UNKNOWN_LOCATION
+                }
+                commitSave(title, contentHtml, imageUris, location)
+            }
+        }
+
+        val refreshEntry = pendingLocationRefreshForEntry
+        pendingLocationRefreshForEntry = null
+        if (refreshEntry != null) {
+            coroutineScope.launch {
+                val location = if (isGranted) {
+                    LocationUtil.resolveLocation(context)
+                } else {
+                    LocationUtil.UNKNOWN_LOCATION
+                }
+                val updated = refreshEntry.copy(location = location)
+                viewModel.updateEntry(updated)
+                if (selectedEntry?.id == updated.id) {
+                    selectedEntry = updated
+                }
+            }
+        }
+    }
 
     val editorState = rememberDiaryEditorState(
         onSave = { title, contentHtml, imageUris ->
-            if (folderType == FolderType.NOTES) {
-                val currentEditing = editingNote
-                if (currentEditing != null) {
-                    viewModel.updateNote(
-                        currentEditing.copy(
-                            title = title,
-                            body = contentHtml,
-                            bodyPlain = contentHtml.toPlainText(),
-                            imageUris = imageUris
-                        )
-                    )
-                    editingNote = null
-                } else {
-                    viewModel.addNote(
-                        title = title,
-                        content = contentHtml,
-                        imageUris = imageUris
-                    )
+            if (LocationUtil.hasLocationPermission(context)) {
+                coroutineScope.launch {
+                    val location = LocationUtil.resolveLocation(context)
+                    commitSave(title, contentHtml, imageUris, location)
                 }
             } else {
-                val currentEditing = editingEntry
-                if (currentEditing != null) {
-                    viewModel.updateEntry(
-                        currentEditing.copy(
-                            title = title,
-                            body = contentHtml,
-                            bodyPlain = contentHtml.toPlainText(),
-                            imageUris = imageUris
-                        )
-                    )
-                    editingEntry = null
-                } else {
-                    viewModel.addEntry(
-                        title = title,
-                        content = contentHtml,
-                        imageUris = imageUris
-                    )
-                }
-            }
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(FolderTab.ENTRIES.ordinal)
+                pendingSavePayload = Triple(title, contentHtml, imageUris)
+                locationPermissionLauncher.launch(LocationUtil.LOCATION_PERMISSIONS)
             }
         },
         onDiscard = {
@@ -161,6 +234,7 @@ fun FolderViewScreen(
         topBar = {
             HeaderSection(
                 title = uiState.folder?.name ?: "Folder",
+                folderType = folderType,
                 selectedTab = FolderTab.entries[pagerState.currentPage],
                 onTabSelect = { tab ->
                     coroutineScope.launch {
@@ -356,6 +430,23 @@ fun FolderViewScreen(
                     val updated = latestEntry.copy(moodScore = newMoodScore)
                     viewModel.updateEntry(updated)
                     selectedEntry = updated
+                },
+                onLocationClick = {
+                    if (LocationUtil.hasLocationPermission(context)) {
+                        coroutineScope.launch {
+                            val loc = LocationUtil.resolveLocation(context)
+                            val updated = latestEntry.copy(location = loc)
+                            viewModel.updateEntry(updated)
+                            selectedEntry = updated
+                        }
+                    } else {
+                        pendingLocationRefreshForEntry = latestEntry
+                        locationPermissionLauncher.launch(LocationUtil.LOCATION_PERMISSIONS)
+                    }
+                },
+                onDeleteClick = {
+                    viewModel.deleteEntry(latestEntry.id)
+                    selectedEntry = null
                 }
             )
         }

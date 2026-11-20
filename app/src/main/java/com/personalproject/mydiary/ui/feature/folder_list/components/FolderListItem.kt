@@ -27,12 +27,15 @@ import androidx.core.graphics.toColorInt
 import com.personalproject.mydiary.R
 import com.personalproject.mydiary.domain.folder.model.FolderType
 import com.personalproject.mydiary.ui.feature.folder_list.FolderSummary
+import com.personalproject.mydiary.ui.theme.TimelineCardPreference
 
 @Composable
 fun FolderListItem(
+    modifier: Modifier = Modifier,
     summary: FolderSummary,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    theme: TimelineCardPreference? = null,
+    themeColor: Color? = null,
+    onClick: () -> Unit
 ) {
     val folder = summary.folder
     val iconRes = when (folder.type) {
@@ -105,10 +108,13 @@ fun FolderListItem(
             )
         }
 
+        val defaultDividerColor = if (isDark) MaterialTheme.colorScheme.primary else Color(0xFF4A5D74)
+        val dividerColor = themeColor ?: theme?.primaryTextColor ?: defaultDividerColor
+
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 0.5.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            color = dividerColor
         )
     }
 }
