@@ -1,8 +1,8 @@
 package com.personalproject.mydiary.domain.profile
 
 import com.personalproject.mydiary.data.local.entity.ProfileEntity
-import com.personalproject.mydiary.data.local.entity.toDomain
-import com.personalproject.mydiary.data.local.entity.toEntity
+import com.personalproject.mydiary.data.local.mapper.toDomain
+import com.personalproject.mydiary.data.local.mapper.toEntity
 import com.personalproject.mydiary.data.mock.MockProfileRepository
 import com.personalproject.mydiary.domain.profile.model.Profile
 import kotlinx.coroutines.flow.first

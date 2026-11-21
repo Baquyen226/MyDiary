@@ -26,7 +26,8 @@ fun FolderListScreen(
     modifier: Modifier = Modifier,
     viewModel: FolderListViewModel,
     onFolderClick: (String) -> Unit,
-    onNavigateToProfileEdit: () -> Unit = {}
+    onNavigateToProfileEdit: () -> Unit = {},
+    onAddFolderClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val cardTheme = rememberTimelineCardPreference(uiState.profile?.themeColor)
@@ -52,7 +53,10 @@ fun FolderListScreen(
             )
         },
         bottomBar = {
-            BottomBar(theme = cardTheme)
+            BottomBar(
+                theme = cardTheme,
+                onAddFolderClick = onAddFolderClick
+            )
         }
     ) { innerPadding ->
         if (uiState.isLoading) {

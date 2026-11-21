@@ -75,6 +75,7 @@
     <string name="ui_color_picker_apply">適用</string>
 
     <!-- Bottom Bar & Navigation -->
+    <string name="ui_folder_list_add_folder">フォルダを追加</string>
     <string name="ui_search">検索</string>
     <string name="ui_settings">設定</string>
 </resources>

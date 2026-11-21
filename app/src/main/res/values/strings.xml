@@ -75,6 +75,7 @@
     <string name="ui_color_picker_apply">Apply</string>
 
     <!-- Bottom Bar & Navigation -->
+    <string name="ui_folder_list_add_folder">Add Folder</string>
     <string name="ui_search">Search</string>
     <string name="ui_settings">Settings</string>
 </resources>
